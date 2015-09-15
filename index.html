@@ -4,6 +4,9 @@
    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
    <meta name="author"             content="Alan G. Labouseur" />
    <link rel="stylesheet" href="tsos.css" type="text/css" media="screen" />
+   <link rel="stylesheet" href="css/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="css/bootstrap-theme.css" type="text/css" />
+    <link rel="stylesheet" href="css/" type="text/css" />
    <title>
       TSOS - a browser-based virtual Operating System in TypeScript
    </title>
@@ -32,7 +35,10 @@
    <script type="text/javascript" src="distrib/utils.js"></script>
    <!-- Uncomment this line below to enable GLaDOS testing -->
    <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script>
-</head>
+    <!--Bootstrap JS -->
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    
+    </head>
 
 <body onload="onDocumentLoad()">
 
@@ -42,7 +48,7 @@
       <input type="button"
              id = "btnStartOS"
              name="brnStartOS"
-             class="normal_button"
+             class="btn btn-success"
              value="Start"
              tabindex="0"
              onclick="TSOS.Control.hostBtnStartOS_click(this);">
@@ -50,7 +56,7 @@
       <input type="button"
              id = "btnHaltOS"
              name="brnHaltOS"
-             class="normal_button"
+             class="btn btn-danger"
              disabled="disabled"
              value="Halt"
              tabindex="1"
@@ -59,7 +65,7 @@
       <input type="button"
              id = "btnReset"
              name="brnReset"
-             class="normal_button"
+             class="btn btn-warning"
              disabled="disabled"
              value="Reset"
              tabindex="2"
