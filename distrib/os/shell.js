@@ -49,6 +49,10 @@ var TSOS;
             // prompt <string>
             sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
+            //date
+            sc = new TSOS.ShellCommand(this.shellDate, "date", "displays the current date and time");
+            this.commandList[this.commandList.length] = sc;
+            
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -195,6 +199,28 @@ var TSOS;
                     case "help":
                         _StdOut.putText("Help displays a list of (hopefully) valid commands.");
                         break;
+                    case "ver":
+                        _StdOut.putText("ver displays the current version data.");
+                        break;
+                    case "shutdown":
+                        _StdOut.putText("shutdown shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
+                        break;
+                    case "cls":
+                        _StdOut.putText("cls clears the console screen and adjusts cursor");
+                        break;
+                    case "man":
+                        _StdOut.putText("man <topic> displays a manual for the given topic");
+                        break;
+                    case "trace":
+                        _StdOut.putText("trace [on || off] turns os trace on or off");
+                        break;
+                    case "rot13":
+                        _StdOut.putText("rot13 <string> - Does rot13 obfuscation on <string>.");
+                        break;
+                    case "prompt":
+                        _StdOut.putText("prompt <string> - Sets the prompt.");
+                        break;
+                                    
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -246,6 +272,19 @@ var TSOS;
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
         };
+        
+        Shell.prototype.shellDate = function(args){
+            var theDate=new Date()
+            var month=theDate.getMonth()+1;
+
+            _StdOut.putText(month+"/"+theDate.getUTCDate()+"/"+theDate.getUTCFullYear()+" "+theDate.getHours()+":"+theDate.getMinutes()+":"+theDate.getSeconds());
+        };
+        
+        
+        
+        
+       
+            
         return Shell;
     })();
     TSOS.Shell = Shell;
