@@ -18,6 +18,7 @@ var TSOS;
             // Properties
             this.promptStr = ">";
             this.commandList = [];
+            this.bufferList=[];
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
         }
@@ -52,7 +53,12 @@ var TSOS;
             //date
             sc = new TSOS.ShellCommand(this.shellDate, "date", "displays the current date and time");
             this.commandList[this.commandList.length] = sc;
-            
+            //whereami
+            sc = new TSOS.ShellCommand(this.shellWhereami, "whereami", "displays your location");
+            this.commandList[this.commandList.length] = sc;
+            //again
+            sc = new TSOS.ShellCommand(this.shellAgain, "again", "repeats last command");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -83,6 +89,12 @@ var TSOS;
                 if (this.commandList[index].command === cmd) {
                     found = true;
                     fn = this.commandList[index].func;
+                    //adds buffer to buffer list
+                _OsShell.bufferList[_OsShell.bufferList.length]=buffer;
+                    
+                   
+                  
+                    
                 }
                 else {
                     ++index;
@@ -90,6 +102,8 @@ var TSOS;
             }
             if (found) {
                 this.execute(fn, args);
+                
+                
             }
             else {
                 // It's not found, so check for curses and apologies before declaring the command invalid.
@@ -220,6 +234,12 @@ var TSOS;
                     case "prompt":
                         _StdOut.putText("prompt <string> - Sets the prompt.");
                         break;
+                    case "date":
+                        _StdOut.putText("date displays the month/day/year and hours:minutes:seconds");
+                        break;
+                    case "whereami":
+                        _StdOut.putText("whereami displays your current location");
+                        break;
                                     
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -280,6 +300,20 @@ var TSOS;
             _StdOut.putText(month+"/"+theDate.getUTCDate()+"/"+theDate.getUTCFullYear()+" "+theDate.getHours()+":"+theDate.getMinutes()+":"+theDate.getSeconds());
         };
         
+        Shell.prototype.shellWhereami = function (args){
+            _StdOut.putText("How should I know? I'm just an operating system.");
+        };
+        
+        Shell.prototype.shellAgain = function(args){
+            _StdOut.putText(_OsShell.bufferList[_OsShell.bufferList.length-2]);
+            _OsShell.handleInput(_OsShell.bufferList[_OsShell.bufferList.length-2]);
+            
+          
+        };
+            
+                        
+        
+            
         
         
         
