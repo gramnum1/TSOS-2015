@@ -59,6 +59,9 @@ var TSOS;
             //again
             sc = new TSOS.ShellCommand(this.shellAgain, "again", "repeats last command");
             this.commandList[this.commandList.length] = sc;
+            //sprint
+            sc = new TSOS.ShellCommand(this.shellSprint, "sprint", "print to status bar");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -310,6 +313,8 @@ var TSOS;
             
           
         };
+        
+        
             
                         
         

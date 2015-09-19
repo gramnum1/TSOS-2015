@@ -36,6 +36,12 @@ h3 {
   cursor: default;
 }
 
+#sbar {
+    background-color:#FFF;
+  border: 2px solid Black;
+  cursor: default;
+}
+
 .normal_button {
   width: 100px;
 }
