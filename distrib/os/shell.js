@@ -53,6 +53,7 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellDate, "date", "displays the current date and time");
             this.commandList[this.commandList.length] = sc;
 <<<<<<< HEAD
+<<<<<<< HEAD
             //whereami
             sc = new TSOS.ShellCommand(this.shellWhereami, "whereami", "displays your location");
             this.commandList[this.commandList.length] = sc;
@@ -62,6 +63,9 @@ var TSOS;
             //sprint
             sc = new TSOS.ShellCommand(this.shellSprint, "sprint", "print to status bar");
             this.commandList[this.commandList.length] = sc;
+=======
+            
+>>>>>>> parent of 56b5e00... Again
 =======
             
 >>>>>>> parent of 56b5e00... Again
@@ -293,6 +297,7 @@ var TSOS;
         };
         
 <<<<<<< HEAD
+<<<<<<< HEAD
         Shell.prototype.shellWhereami = function (args){
             _StdOut.putText("How should I know? I'm just an operating system.");
         };
@@ -309,6 +314,8 @@ var TSOS;
                         
         
             
+=======
+>>>>>>> parent of 56b5e00... Again
 =======
 >>>>>>> parent of 56b5e00... Again
         
