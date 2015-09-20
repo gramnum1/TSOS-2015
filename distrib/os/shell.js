@@ -52,6 +52,7 @@ var TSOS;
             //date
             sc = new TSOS.ShellCommand(this.shellDate, "date", "displays the current date and time");
             this.commandList[this.commandList.length] = sc;
+<<<<<<< HEAD
 
             //whereami
             sc = new TSOS.ShellCommand(this.shellWhereami, "whereami", "displays your location");
@@ -65,6 +66,9 @@ var TSOS;
 
             
 
+=======
+            
+>>>>>>> parent of 56b5e00... Again
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -292,6 +296,7 @@ var TSOS;
             _StdOut.putText(month+"/"+theDate.getUTCDate()+"/"+theDate.getUTCFullYear()+" "+theDate.getHours()+":"+theDate.getMinutes()+":"+theDate.getSeconds());
         };
         
+<<<<<<< HEAD
 
         Shell.prototype.shellWhereami = function (args){
             _StdOut.putText("How should I know? I'm just an operating system.");
@@ -303,6 +308,8 @@ var TSOS;
             
           
         };
+=======
+>>>>>>> parent of 56b5e00... Again
         
         
             
