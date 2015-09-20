@@ -1,17 +1,12 @@
-///<reference path="../globals.ts" />
-///<reference path="../utils.ts" />
-///<reference path="shellCommand.ts" />
-///<reference path="userCommand.ts" />
-
 
 /* ------------
-   Shell.ts
+ Shell.ts
 
-   The OS Shell - The "command line interface" (CLI) for the console.
+ The OS Shell - The "command line interface" (CLI) for the console.
 
-    Note: While fun and learning are the primary goals of all enrichment center activities,
-          serious injuries may occur when trying to write your own Operating System.
-   ------------ */
+ Note: While fun and learning are the primary goals of all enrichment center activities,
+ serious injuries may occur when trying to write your own Operating System.
+ ------------ */
 
 // TODO: Write a base class / prototype for system services and let Shell inherit from it.
 
@@ -24,6 +19,7 @@ module TSOS {
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
 
+
         constructor() {
 
         }
@@ -35,69 +31,70 @@ module TSOS {
 
             // ver
             sc = new ShellCommand(this.shellVer,
-                                  "ver",
-                                  "- Displays the current version data.");
+                "ver",
+                "- Displays the current version data.");
             this.commandList[this.commandList.length] = sc;
 
             // help
             sc = new ShellCommand(this.shellHelp,
-                                  "help",
-                                  "- This is the help command. Seek help.");
+                "help",
+                "- This is the help command. Seek help.");
             this.commandList[this.commandList.length] = sc;
 
             // shutdown
             sc = new ShellCommand(this.shellShutdown,
-                                  "shutdown",
-                                  "- Shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
+                "shutdown",
+                "- Shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
             this.commandList[this.commandList.length] = sc;
 
             // cls
             sc = new ShellCommand(this.shellCls,
-                                  "cls",
-                                  "- Clears the screen and resets the cursor position.");
+                "cls",
+                "- Clears the screen and resets the cursor position.");
             this.commandList[this.commandList.length] = sc;
 
             // man <topic>
             sc = new ShellCommand(this.shellMan,
-                                  "man",
-                                  "<topic> - Displays the MANual page for <topic>.");
+                "man",
+                "<topic> - Displays the MANual page for <topic>.");
             this.commandList[this.commandList.length] = sc;
 
             // trace <on | off>
             sc = new ShellCommand(this.shellTrace,
-                                  "trace",
-                                  "<on | off> - Turns the OS trace on or off.");
+                "trace",
+                "<on | off> - Turns the OS trace on or off.");
             this.commandList[this.commandList.length] = sc;
 
             // rot13 <string>
             sc = new ShellCommand(this.shellRot13,
-                                  "rot13",
-                                  "<string> - Does rot13 obfuscation on <string>.");
+                "rot13",
+                "<string> - Does rot13 obfuscation on <string>.");
             this.commandList[this.commandList.length] = sc;
 
             // prompt <string>
             sc = new ShellCommand(this.shellPrompt,
-                                  "prompt",
-                                  "<string> - Sets the prompt.");
+                "prompt",
+                "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
-            
+
             //date
-            sc= new ShellCommand(this.shellDate, 
-                                 "date",
-                                 "displays the current date and time");
+            sc= new ShellCommand(this.shellDate,
+                "date",
+                "displays the current date and time");
             this.commandList[this.commandList.length]=sc;
-            
+
             //whereami
-            sc= new ShellCommand(this.shellWhereami, 
-                                 "whereami",
-                                 "displays your location");
+            sc= new ShellCommand(this.shellWhereami,
+                "whereami",
+                "displays your location");
             this.commandList[this.commandList.length]=sc;
-            
+
             //again
-            sc= new ShellCommand(this.shellAgain, 
-                                 "again",
-                                 "executes previous command");
+            sc= new ShellCommand(this.shellAgain,
+                "again",
+                "executes previous command");
             this.commandList[this.commandList.length]=sc;
+
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -217,14 +214,14 @@ module TSOS {
         }
 
         public shellApology() {
-           if (_SarcasticMode) {
-              _StdOut.putText("I think we can put our differences behind us.");
-              _StdOut.advanceLine();
-              _StdOut.putText("For science . . . You monster.");
-              _SarcasticMode = false;
-           } else {
-              _StdOut.putText("For what?");
-           }
+            if (_SarcasticMode) {
+                _StdOut.putText("I think we can put our differences behind us.");
+                _StdOut.advanceLine();
+                _StdOut.putText("For science . . . You monster.");
+                _SarcasticMode = false;
+            } else {
+                _StdOut.putText("For what?");
+            }
         }
 
         public shellVer(args) {
@@ -240,8 +237,8 @@ module TSOS {
         }
 
         public shellShutdown(args) {
-             _StdOut.putText("Shutting down...");
-             // Call Kernel shutdown routine.
+            _StdOut.putText("Shutting down...");
+            // Call Kernel shutdown routine.
             _Kernel.krnShutdown();
             // TODO: Stop the final prompt from being displayed.  If possible.  Not a high priority.  (Damn OCD!)
         }
@@ -337,22 +334,24 @@ module TSOS {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
         }
-        
+
         public shellDate(args) {
-        var theDate=new Date();
-        var month= theDate.getUTCMonth()+1;
-        _StdOut.putText(month+"/"+theDate.getUTCDate()+"/"+theDate.getUTCFullYear()+" "+theDate.getHours()+":"+theDate.getMinutes()+":"+theDate.getSeconds());
+            var theDate=new Date();
+            var month= theDate.getUTCMonth()+1;
+            _StdOut.putText(month+"/"+theDate.getUTCDate()+"/"+theDate.getUTCFullYear()+" "+theDate.getHours()+":"+theDate.getMinutes()+":"+theDate.getSeconds());
         }
-        
+
         public shellWhereami(args){
-        _StdOut.putText("Slaving away at OS in some dark corner");
+            _StdOut.putText("Slaving away at OS in some dark corner");
         }
-        
+
         public shellAgain(args){
-        _StdOut.putText(_OsShell.bufferList[_OsShell.bufferList.length-2]);
-        _OsShell.handleInput(_OsShell.bufferList[_OsShell.bufferList.length-2]);
+            _StdOut.putText(_OsShell.bufferList[_OsShell.bufferList.length-2]);
+            _OsShell.handleInput(_OsShell.bufferList[_OsShell.bufferList.length-2]);
         }
-        
+
+
+
 
     }
 }

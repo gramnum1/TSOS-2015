@@ -1,18 +1,18 @@
 /* ------------
-   Globals.ts
+ Globals.ts
 
-   Global CONSTANTS and _Variables.
-   (Global over both the OS and Hardware Simulation / Host.)
+ Global CONSTANTS and _Variables.
+ (Global over both the OS and Hardware Simulation / Host.)
 
-   This code references page numbers in the text book:
-   Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
-   ------------ */
+ This code references page numbers in the text book:
+ Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
+ ------------ */
 
 //
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
-const APP_NAME: string    = "Charles Harrison TSOS";   // 'cause Bob and I were at a loss for a better name.
-const APP_VERSION: string = "0.10";   // What did you expect?
+const APP_NAME: string    = "TSOS";   // 'cause Bob and I were at a loss for a better name.
+const APP_VERSION: string = "0.07";   // What did you expect?
 
 const CPU_CLOCK_INTERVAL: number = 100;   // This is in ms (milliseconds) so 1000 = 1 second.
 
@@ -66,5 +66,5 @@ var Glados: any = null;  // This is the function Glados() in glados.js on Labous
 var _GLaDOS: any = null; // If the above is linked in, this is the instantiated instance of Glados.
 
 var onDocumentLoad = function() {
-	TSOS.Control.hostInit();
+   TSOS.Control.hostInit();
 };
