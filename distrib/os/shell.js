@@ -18,6 +18,7 @@ var TSOS;
             // Properties
             this.promptStr = ">";
             this.commandList = [];
+            this.bufferList = [];
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
         }
@@ -49,9 +50,15 @@ var TSOS;
             // prompt <string>
             sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
-
-
-
+            //date
+            sc = new TSOS.ShellCommand(this.shellDate, "date", "displays the current date and time");
+            this.commandList[this.commandList.length] = sc;
+            //whereami
+            sc = new TSOS.ShellCommand(this.shellWhereami, "whereami", "displays your location");
+            this.commandList[this.commandList.length] = sc;
+            //again
+            sc = new TSOS.ShellCommand(this.shellAgain, "again", "executes previous command");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -82,6 +89,7 @@ var TSOS;
                 if (this.commandList[index].command === cmd) {
                     found = true;
                     fn = this.commandList[index].func;
+                    _OsShell.bufferList[_OsShell.bufferList.length] = buffer;
                 }
                 else {
                     ++index;
@@ -198,6 +206,36 @@ var TSOS;
                     case "help":
                         _StdOut.putText("Help displays a list of (hopefully) valid commands.");
                         break;
+                    case "ver":
+                        _StdOut.putText("Ver Displays the version number");
+                        break;
+                    case "shutdown":
+                        _StdOut.putText("Shutdown turns off the os");
+                        break;
+                    case "cls":
+                        _StdOut.putText("Cls clears the screen");
+                        break;
+                    case "man":
+                        _StdOut.putText("man displays the manual for given topic");
+                        break;
+                    case "rot13":
+                        _StdOut.putText("Rot13 does rot13 obfuscation on <string>");
+                        break;
+                    case "trace":
+                        _StdOut.putText("Trace [on \\ off] turns trace on and off");
+                        break;
+                    case "prompt":
+                        _StdOut.putText("Prompt sets the prompt string");
+                        break;
+                    case "date":
+                        _StdOut.putText("date displays the current date.");
+                        break;
+                    case "whereami":
+                        _StdOut.putText("whereami displays your location");
+                        break;
+                    case "again":
+                        _StdOut.putText("again executes the last command");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -249,7 +287,18 @@ var TSOS;
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
         };
-
+        Shell.prototype.shellDate = function (args) {
+            var theDate = new Date();
+            var month = theDate.getUTCMonth() + 1;
+            _StdOut.putText(month + "/" + theDate.getUTCDate() + "/" + theDate.getUTCFullYear() + " " + theDate.getHours() + ":" + theDate.getMinutes() + ":" + theDate.getSeconds());
+        };
+        Shell.prototype.shellWhereami = function (args) {
+            _StdOut.putText("Slaving away at OS in some dark corner");
+        };
+        Shell.prototype.shellAgain = function (args) {
+            _StdOut.putText(_OsShell.bufferList[_OsShell.bufferList.length - 2]);
+            _OsShell.handleInput(_OsShell.bufferList[_OsShell.bufferList.length - 2]);
+        };
         return Shell;
     })();
     TSOS.Shell = Shell;
