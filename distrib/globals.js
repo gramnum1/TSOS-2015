@@ -10,8 +10,8 @@
 //
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
-var APP_NAME = "Graham TSOS"; // 'cause Bob and I were at a loss for a better name.
-var APP_VERSION = "0.08"; // What did you expect?
+var APP_NAME = "Charles Harrison TSOS"; // 'cause Bob and I were at a loss for a better name.
+var APP_VERSION = "0.09"; // What did you expect?
 var CPU_CLOCK_INTERVAL = 100; // This is in ms (milliseconds) so 1000 = 1 second.
 var TIMER_IRQ = 0; // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
 // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
@@ -24,12 +24,7 @@ var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is 
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
 var _Canvas; // Initialized in Control.hostInit().
-
-
-
 var _DrawingContext; // = _Canvas.getContext("2d");  // Assigned here for type safety, but re-initialized in Control.hostInit() for OCD and logic.
-
-
 var _DefaultFontFamily = "sans"; // Ignored, I think. The was just a place-holder in 2008, but the HTML canvas may have use for it.
 var _DefaultFontSize = 13;
 var _FontHeightMargin = 4; // Additional space added to font size when advancing a line.
@@ -44,9 +39,6 @@ var _StdIn; // Same "to null or not to null" issue as above.
 var _StdOut;
 // UI
 var _Console;
-
- 
-
 var _OsShell;
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode = false;

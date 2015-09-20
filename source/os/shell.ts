@@ -20,11 +20,11 @@ module TSOS {
         // Properties
         public promptStr = ">";
         public commandList = [];
-        public bufferList=[];
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
 
         constructor() {
+
         }
 
         public init() {
@@ -79,18 +79,6 @@ module TSOS {
                                   "prompt",
                                   "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
-            
-             //date
-            sc = new ShellCommand(this.shellDate, "date", "displays the current date and time");
-            this.commandList[this.commandList.length] = sc;
-            //whereami
-            sc = new ShellCommand(this.shellWhereami, "whereami", "displays your location");
-            this.commandList[this.commandList.length] = sc;
-            //again
-            sc = new ShellCommand(this.shellAgain, "again", "repeats last command");
-            this.commandList[this.commandList.length] = sc;
-            //sprint
-            sc = new ShellCommand(this.shellSprint, "sprint", "print to status bar");
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -125,7 +113,6 @@ module TSOS {
                 if (this.commandList[index].command === cmd) {
                     found = true;
                     fn = this.commandList[index].func;
-                    _OsShell.bufferList[_OsShell.bufferList.length]=buffer;
                 } else {
                     ++index;
                 }
@@ -142,7 +129,6 @@ module TSOS {
                     this.execute(this.shellInvalidCommand);
                 }
             }
-        }
         }
 
         // Note: args is an option parameter, ergo the ? which allows TypeScript to understand that.
@@ -253,34 +239,6 @@ module TSOS {
                         _StdOut.putText("Help displays a list of (hopefully) valid commands.");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
-                     case "ver":
-                        _StdOut.putText("ver displays the current version data.");
-                        break;
-                    case "shutdown":
-                        _StdOut.putText("shutdown shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
-                        break;
-                    case "cls":
-                        _StdOut.putText("cls clears the console screen and adjusts cursor");
-                        break;
-                    case "man":
-                        _StdOut.putText("man <topic> displays a manual for the given topic");
-                        break;
-                    case "trace":
-                        _StdOut.putText("trace [on || off] turns os trace on or off");
-                        break;
-                    case "rot13":
-                        _StdOut.putText("rot13 <string> - Does rot13 obfuscation on <string>.");
-                        break;
-                    case "prompt":
-                        _StdOut.putText("prompt <string> - Sets the prompt.");
-                        break;
-                    case "date":
-                        _StdOut.putText("date displays the month/day/year and hours:minutes:seconds");
-                        break;
-                    case "whereami":
-                        _StdOut.putText("whereami displays your current location");
-                        break;
-                                    
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -329,24 +287,6 @@ module TSOS {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
         }
-public shellDate(args){
-  var theDate=new Date()
-            var month=theDate.getMonth()+1;
-
-            _StdOut.putText(month+"/"+theDate.getUTCDate()+"/"+theDate.getUTCFullYear()+" "+theDate.getHours()+":"+theDate.getMinutes()+":"+theDate.getSeconds());
-        }
-        
-        public shellWhereami(args){
-        _StdOut.putText("How should I know? I'm just an operating system.");
-        
-        }
-        
-        public shellAgain(args){
-         _StdOut.putText(_OsShell.bufferList[_OsShell.bufferList.length-2]);
-        _OsShell.handleInput(_OsShell.bufferList[_OsShell.bufferList.length-2]);
-        
-        }
-
 
     }
 }
