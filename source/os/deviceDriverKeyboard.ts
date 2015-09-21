@@ -55,8 +55,8 @@ module TSOS {
                     _KernelInputQueue.enqueue(chr);
                 } else if ((keyCode >= 48) && (keyCode <= 57) ||   // digits
                     (keyCode == 32) ||   // space
-                    (keyCode == 13) ||//enter
-                    (keyCode==8)) {                       // backspace
+                    (keyCode == 13) ||
+                    (keyCode==8)) {                       // enter
                     if(isShifted){
                         if(wrongAssign.indexOf(keyCode) <= -1) {
                             keyCode = keyCode - 16;

@@ -37,7 +37,9 @@ var TSOS;
             this.buffer = this.buffer.substring(0, lastLetter);
             _Kernel.krnTrace("Buffer Length =" + bufferLength + " Buffer= " + this.buffer);
             _Kernel.krnTrace("character= " + c.toString());
-            _DrawingContext.clearRect(this.currentXPosition - c.width, this.currentYPosition, c.width, this.currentFontSize);
+            _DrawingContext.clearRect(0, this.currentYPosition - this.currentFontSize, _Canvas.width, this.currentFontSize + 5);
+            this.currentXPosition = 0;
+            this.putText(">" + this.buffer);
         };
         Console.prototype.resetXY = function () {
             this.currentXPosition = 0;
