@@ -29,6 +29,12 @@ var TSOS;
         Console.prototype.clearScreen = function () {
             _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
         };
+        Console.prototype.remove = function () {
+            var bufferLength = this.buffer.length;
+            var c = this.buffer.charAt(bufferLength - 1).toString();
+            _Kernel.krnTrace("Buffer Length =" + bufferLength + " Buffer= " + this.buffer);
+            _Kernel.krnTrace("character= " + c);
+        };
         Console.prototype.resetXY = function () {
             this.currentXPosition = 0;
             this.currentYPosition = this.currentFontSize;
@@ -44,6 +50,10 @@ var TSOS;
                     _OsShell.handleInput(this.buffer);
                     // ... and reset our buffer.
                     this.buffer = "";
+                }
+                else if (chr === String.fromCharCode(8)) {
+                    _Kernel.krnTrace("remove");
+                    this.remove();
                 }
                 else {
                     // This is a "normal" character, so ...
