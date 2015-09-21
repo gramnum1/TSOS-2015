@@ -54,9 +54,12 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             //again
             sc = new ShellCommand(this.shellAgain, "again", "executes previous command");
+<<<<<<< HEAD
             this.commandList[this.commandList.length] = sc;
             //status
             sc = new TSOS.ShellCommand(this.shelStatus, "status", "<string> -gives status update");
+=======
+>>>>>>> parent of cf1bee8... Back
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.

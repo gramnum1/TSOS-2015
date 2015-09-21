@@ -96,9 +96,12 @@ module TSOS {
             this.commandList[this.commandList.length]=sc;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
             //status
             sc=new ShellCommand(this.shelStatus, "status", "<string> -gives status update");
             this.commandList[this.commandList.length]=sc;
+=======
+>>>>>>> parent of cf1bee8... Back
 =======
 >>>>>>> parent of cf1bee8... Back
 
@@ -357,10 +360,15 @@ module TSOS {
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         public shellStatus(args){
             _BarOut.
             _StdOut.putText("status update");
         }
+=======
+
+
+>>>>>>> parent of cf1bee8... Back
 =======
 
 
