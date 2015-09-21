@@ -37,9 +37,12 @@ var _KernelBuffers = null; // when clearly 'any' is not what we want. There is l
 // Standard input and output
 var _StdIn; // Same "to null or not to null" issue as above.
 var _StdOut;
+//var _BarOut;
 // UI
 var _Console;
 var _OsShell;
+//var _Status: TSOS.Status;
+var _Bar;
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode = false;
 // Global Device Driver Objects - page 12

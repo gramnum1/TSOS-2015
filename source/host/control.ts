@@ -32,6 +32,7 @@ module TSOS {
 
             // Get a global reference to the canvas.  TODO: Should we move this stuff into a Display Device Driver?
             _Canvas = <HTMLCanvasElement>document.getElementById('display');
+            _Bar=<HTMLInputElement>document.getElementById("sbar");
 
             // Get a global reference to the drawing context.
             _DrawingContext = _Canvas.getContext("2d");
@@ -42,6 +43,8 @@ module TSOS {
             // Clear the log text box.
             // Use the TypeScript cast to HTMLInputElement
             (<HTMLInputElement> document.getElementById("taHostLog")).value="";
+            _Bar.value="hello";
+
 
             // Set focus on the start button.
             // Use the TypeScript cast to HTMLInputElement
@@ -75,6 +78,8 @@ module TSOS {
         }
 
 
+
+
         //
         // Host Events
         //
@@ -90,13 +95,13 @@ module TSOS {
             document.getElementById("display").focus();
 
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
-            _CPU = new Cpu();  // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
+            _CPU = new TSOS.Cpu();  // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init();       //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
 
             // ... then set the host clock pulse ...
-            _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
+            _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
-            _Kernel = new Kernel();
+            _Kernel = new TSOS.Kernel();
             _Kernel.krnBootstrap();  // _GLaDOS.afterStartup() will get called in there, if configured.
         }
 

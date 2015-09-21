@@ -30,6 +30,7 @@ var TSOS;
             // This is called from index.html's onLoad event via the onDocumentLoad function pointer.
             // Get a global reference to the canvas.  TODO: Should we move this stuff into a Display Device Driver?
             _Canvas = document.getElementById('display');
+            _Bar = document.getElementById("sbar");
             // Get a global reference to the drawing context.
             _DrawingContext = _Canvas.getContext("2d");
             // Enable the added-in canvas text functions (see canvastext.ts for provenance and details).
@@ -37,6 +38,7 @@ var TSOS;
             // Clear the log text box.
             // Use the TypeScript cast to HTMLInputElement
             document.getElementById("taHostLog").value = "";
+            _Bar.value = "hello";
             // Set focus on the start button.
             // Use the TypeScript cast to HTMLInputElement
             document.getElementById("btnStartOS").focus();

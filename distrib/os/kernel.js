@@ -33,7 +33,7 @@ var TSOS;
             _StdOut = _Console;
             // Load the Keyboard Device Driver
             this.krnTrace("Loading the keyboard device driver.");
-            _krnKeyboardDriver = new TSOS.DeviceDriverKeyboard(); // Construct it.
+            _krnKeyboardDriver = new DeviceDriverKeyboard(); // Construct it.
             _krnKeyboardDriver.driverEntry(); // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
             //
@@ -44,7 +44,7 @@ var TSOS;
             this.krnEnableInterrupts();
             // Launch the shell.
             this.krnTrace("Creating and Launching the shell.");
-            _OsShell = new TSOS.Shell();
+            _OsShell = new Shell();
             _OsShell.init();
             // Finally, initiate student testing protocol.
             if (_GLaDOS) {
@@ -87,12 +87,12 @@ var TSOS;
         //
         Kernel.prototype.krnEnableInterrupts = function () {
             // Keyboard
-            TSOS.Devices.hostEnableKeyboardInterrupt();
+            Devices.hostEnableKeyboardInterrupt();
             // Put more here.
         };
         Kernel.prototype.krnDisableInterrupts = function () {
             // Keyboard
-            TSOS.Devices.hostDisableKeyboardInterrupt();
+            Devices.hostDisableKeyboardInterrupt();
             // Put more here.
         };
         Kernel.prototype.krnInterruptHandler = function (irq, params) {

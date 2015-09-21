@@ -98,6 +98,10 @@ module TSOS {
                 "executes previous command");
             this.commandList[this.commandList.length]=sc;
 
+            //status
+            sc=new ShellCommand(this.shelStatus, "status", "<string> -gives status update");
+            this.commandList[this.commandList.length]=sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -350,6 +354,11 @@ module TSOS {
         public shellAgain(args){
             _StdOut.putText(_OsShell.bufferList[_OsShell.bufferList.length-2]);
             _OsShell.handleInput(_OsShell.bufferList[_OsShell.bufferList.length-2]);
+        }
+
+        public shellStatus(args){
+            _BarOut.
+            _StdOut.putText("status update");
         }
 
     }

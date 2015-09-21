@@ -48,10 +48,14 @@ var _KernelBuffers: any[] = null;   // when clearly 'any' is not what we want. T
 // Standard input and output
 var _StdIn;    // Same "to null or not to null" issue as above.
 var _StdOut;
+//var _BarOut;
 
 // UI
 var _Console: TSOS.Console;
 var _OsShell: TSOS.Shell;
+//var _Status: TSOS.Status;
+
+var _Bar: HTMLInputElement;
 
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode: boolean = false;

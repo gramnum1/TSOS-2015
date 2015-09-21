@@ -20,7 +20,7 @@ module TSOS {
         // OS Startup and Shutdown Routines
         //
         public krnBootstrap() {      // Page 8. {
-            Control.hostLog("bootstrap", "host");  // Use hostLog because we ALWAYS want this, even if _Trace is off.
+            TSOS.Control.hostLog("bootstrap", "host");  // Use hostLog because we ALWAYS want this, even if _Trace is off.
 
             // Initialize our global queues.
             _KernelInterruptQueue = new Queue();  // A (currently) non-priority queue for interrupt requests (IRQs).
@@ -28,7 +28,7 @@ module TSOS {
             _KernelInputQueue = new Queue();      // Where device input lands before being processed out somewhere.
 
             // Initialize the console.
-            _Console = new Console();          // The command line interface / console I/O device.
+            _Console = new TSOS.Console();          // The command line interface / console I/O device.
             _Console.init();
 
             // Initialize standard input and output to the _Console.
@@ -163,16 +163,16 @@ module TSOS {
                     if (_OSclock % 10 == 0) {
                         // Check the CPU_CLOCK_INTERVAL in globals.ts for an
                         // idea of the tick rate and adjust this line accordingly.
-                        Control.hostLog(msg, "OS");
+                        TSOS.Control.hostLog(msg, "OS");
                     }
                 } else {
-                    Control.hostLog(msg, "OS");
+                    TSOS.Control.hostLog(msg, "OS");
                 }
              }
         }
 
         public krnTrapError(msg) {
-            Control.hostLog("OS ERROR - TRAP: " + msg);
+            TSOS.Control.hostLog("OS ERROR - TRAP: " + msg);
             // TODO: Display error on console, perhaps in some sort of colored screen. (Maybe blue?)
             this.krnShutdown();
         }

@@ -59,6 +59,9 @@ var TSOS;
             //again
             sc = new TSOS.ShellCommand(this.shellAgain, "again", "executes previous command");
             this.commandList[this.commandList.length] = sc;
+            //status
+            sc = new TSOS.ShellCommand(this.shelStatus, "status", "<string> -gives status update");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -298,6 +301,10 @@ var TSOS;
         Shell.prototype.shellAgain = function (args) {
             _StdOut.putText(_OsShell.bufferList[_OsShell.bufferList.length - 2]);
             _OsShell.handleInput(_OsShell.bufferList[_OsShell.bufferList.length - 2]);
+        };
+        Shell.prototype.shellStatus = function (args) {
+            _BarOut.
+                _StdOut.putText("status update");
         };
         return Shell;
     })();
