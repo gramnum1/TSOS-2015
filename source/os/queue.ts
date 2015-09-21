@@ -22,7 +22,7 @@ module TSOS {
         }
 
         public enqueue(element) {
-            _Kernel.krnTrace("enqueue "+element);
+            _Kernel.krnTrace("enqueue "+element.toString());
             this.q.push(element);
         }
 

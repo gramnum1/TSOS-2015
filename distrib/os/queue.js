@@ -21,7 +21,7 @@ var TSOS;
             return (this.q.length == 0);
         };
         Queue.prototype.enqueue = function (element) {
-            _Kernel.krnTrace("enqueue " + element);
+            _Kernel.krnTrace("enqueue " + element.toString());
             this.q.push(element);
         };
         Queue.prototype.dequeue = function () {
