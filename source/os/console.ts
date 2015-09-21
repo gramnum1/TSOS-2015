@@ -1,5 +1,6 @@
 ///<reference path="../globals.ts" />
 
+
 /* ------------
      Console.ts
 
@@ -34,9 +35,14 @@ module TSOS {
 
 
             var bufferLength=this.buffer.length;
-            var c = this.buffer.charAt(bufferLength - 1).toString();
+            var lastLetter=bufferLength - 1;
+            var cCode = this.buffer.charCodeAt(lastLetter);
+            var c = CanvasTextFunctions.letter(this.buffer.charAt(lastLetter));
+            this.buffer=this.buffer.substring(0, lastLetter);
             _Kernel.krnTrace("Buffer Length ="+bufferLength+" Buffer= "+this.buffer);
-            _Kernel.krnTrace("character= "+c);
+            _Kernel.krnTrace("character= "+c.toString());
+            _DrawingContext.clearRect( this.currentXPosition - c.width,this.currentYPosition , c.width,this.currentFontSize);
+
 
 
 
@@ -61,7 +67,7 @@ module TSOS {
                     // ... and reset our buffer.
                     this.buffer = "";
                 }else if(chr===String.fromCharCode(8)){//backspace
-                    _Kernel.krnTrace("remove");
+
                     this.remove();
 
                 }

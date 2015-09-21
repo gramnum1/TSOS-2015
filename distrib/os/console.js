@@ -31,9 +31,13 @@ var TSOS;
         };
         Console.prototype.remove = function () {
             var bufferLength = this.buffer.length;
-            var c = this.buffer.charAt(bufferLength - 1).toString();
+            var lastLetter = bufferLength - 1;
+            var cCode = this.buffer.charCodeAt(lastLetter);
+            var c = TSOS.CanvasTextFunctions.letter(this.buffer.charAt(lastLetter));
+            this.buffer = this.buffer.substring(0, lastLetter);
             _Kernel.krnTrace("Buffer Length =" + bufferLength + " Buffer= " + this.buffer);
-            _Kernel.krnTrace("character= " + c);
+            _Kernel.krnTrace("character= " + c.toString());
+            _DrawingContext.clearRect(this.currentXPosition - c.width, this.currentYPosition, c.width, this.currentFontSize);
         };
         Console.prototype.resetXY = function () {
             this.currentXPosition = 0;
@@ -52,7 +56,6 @@ var TSOS;
                     this.buffer = "";
                 }
                 else if (chr === String.fromCharCode(8)) {
-                    _Kernel.krnTrace("remove");
                     this.remove();
                 }
                 else {
