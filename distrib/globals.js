@@ -1,17 +1,17 @@
 /* ------------
- Globals.ts
+   Globals.ts
 
- Global CONSTANTS and _Variables.
- (Global over both the OS and Hardware Simulation / Host.)
+   Global CONSTANTS and _Variables.
+   (Global over both the OS and Hardware Simulation / Host.)
 
- This code references page numbers in the text book:
- Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
- ------------ */
+   This code references page numbers in the text book:
+   Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
+   ------------ */
 //
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
-var APP_NAME = "TSOS"; // 'cause Bob and I were at a loss for a better name.
-var APP_VERSION = "0.07"; // What did you expect?
+var APP_NAME = "Charles Harrison TSOS"; // 'cause Bob and I were at a loss for a better name.
+var APP_VERSION = "0.11"; // What did you expect?
 var CPU_CLOCK_INTERVAL = 100; // This is in ms (milliseconds) so 1000 = 1 second.
 var TIMER_IRQ = 0; // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
 // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
@@ -37,12 +37,9 @@ var _KernelBuffers = null; // when clearly 'any' is not what we want. There is l
 // Standard input and output
 var _StdIn; // Same "to null or not to null" issue as above.
 var _StdOut;
-//var _BarOut;
 // UI
 var _Console;
 var _OsShell;
-//var _Status: TSOS.Status;
-var _Bar;
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode = false;
 // Global Device Driver Objects - page 12
