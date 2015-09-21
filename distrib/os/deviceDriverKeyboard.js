@@ -3,8 +3,7 @@
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 /* ----------------------------------
    DeviceDriverKeyboard.ts
@@ -42,14 +41,22 @@ var TSOS;
                 // ... then check the shift key and re-adjust if necessary.
                 if (isShifted) {
                     chr = String.fromCharCode(keyCode);
+                    _Kernel.krnTrace("symbol " + chr + " KeyCode " + keyCode);
                 }
                 // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (((keyCode >= 48) && (keyCode <= 57)) ||
+            else if ((keyCode >= 48) && (keyCode <= 57) ||
                 (keyCode == 32) ||
                 (keyCode == 13)) {
-                chr = String.fromCharCode(keyCode);
+                if (isShifted) {
+                    keyCode = keyCode - 47;
+                    chr = String.fromCharCode(keyCode);
+                    _Kernel.krnTrace("symbol " + chr + " Keycode " + keyCode);
+                }
+                else {
+                    chr = String.fromCharCode(keyCode);
+                }
                 _KernelInputQueue.enqueue(chr);
             }
         };

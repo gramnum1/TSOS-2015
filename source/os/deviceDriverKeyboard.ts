@@ -32,6 +32,7 @@ module TSOS {
             _Kernel.krnTrace("Key code:" + keyCode + " shifted:" + isShifted);
             var chr = "";
             // Check to see if we even want to deal with the key that was pressed.
+
             if (((keyCode >= 65) && (keyCode <= 90)) ||   // A..Z
                 ((keyCode >= 97) && (keyCode <= 123))) {  // a..z {
                 // Determine the character we want to display.
@@ -40,15 +41,28 @@ module TSOS {
                 // ... then check the shift key and re-adjust if necessary.
                 if (isShifted) {
                     chr = String.fromCharCode(keyCode);
+                    _Kernel.krnTrace("symbol "+chr+" KeyCode "+keyCode);
                 }
                 // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
-            } else if (((keyCode >= 48) && (keyCode <= 57)) ||   // digits
+            } else if ((keyCode >= 48) && (keyCode <= 57) ||   // digits
                         (keyCode == 32)                     ||   // space
-                        (keyCode == 13)) {                       // enter
-                chr = String.fromCharCode(keyCode);
+                        (keyCode == 13))  {                       // enter
+
+                if(isShifted) {
+                    keyCode=keyCode - 47;
+                    chr = String.fromCharCode(keyCode);
+                    _Kernel.krnTrace("symbol "+chr+" Keycode "+keyCode);
+                }else{
+                    chr = String.fromCharCode(keyCode);
+
+                }
+
+
                 _KernelInputQueue.enqueue(chr);
-            }
+
+
+
         }
     }
-}
+}}

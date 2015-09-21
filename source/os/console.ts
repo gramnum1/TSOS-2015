@@ -46,6 +46,7 @@ module TSOS {
                     // ... and reset our buffer.
                     this.buffer = "";
                 } else {
+
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
                     this.putText(chr);

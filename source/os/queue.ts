@@ -22,6 +22,7 @@ module TSOS {
         }
 
         public enqueue(element) {
+            _Kernel.krnTrace("enqueue "+element);
             this.q.push(element);
         }
 
@@ -29,6 +30,7 @@ module TSOS {
             var retVal = null;
             if (this.q.length > 0) {
                 retVal = this.q.shift();
+                _Kernel.krnTrace("dequeue "+retVal);
             }
             return retVal;
         }
