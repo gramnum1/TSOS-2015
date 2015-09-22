@@ -59,6 +59,9 @@ var TSOS;
             //again
             sc = new TSOS.ShellCommand(this.shellAgain, "again", "executes previous command");
             this.commandList[this.commandList.length] = sc;
+            //hello
+            sc = new TSOS.ShellCommand(this.shellHello, "hello", "says hello world");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -280,7 +283,6 @@ var TSOS;
             }
         };
         Shell.prototype.shellPrompt = function (args) {
-            cd;
             if (args.length > 0) {
                 _OsShell.promptStr = args[0];
             }
@@ -299,6 +301,9 @@ var TSOS;
         Shell.prototype.shellAgain = function (args) {
             _StdOut.putText(_OsShell.bufferList[_OsShell.bufferList.length - 2]);
             _OsShell.handleInput(_OsShell.bufferList[_OsShell.bufferList.length - 2]);
+        };
+        Shell.prototype.shellHello = function (args) {
+            _StdOut.putText("Hello World");
         };
         return Shell;
     })();

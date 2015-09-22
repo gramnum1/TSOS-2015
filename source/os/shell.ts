@@ -97,6 +97,12 @@ module TSOS {
                 "executes previous command");
             this.commandList[this.commandList.length]=sc;
 
+            //hello
+            sc = new ShellCommand(this.shellHello,
+                "hello",
+                "says hello world");
+            this.commandList[this.commandList.length]=sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -328,7 +334,7 @@ module TSOS {
             }
         }
 
-        public shellPrompt(args) {cd
+        public shellPrompt(args) {
             if (args.length > 0) {
                 _OsShell.promptStr = args[0];
             } else {
@@ -349,6 +355,11 @@ module TSOS {
         public shellAgain(args){
             _StdOut.putText(_OsShell.bufferList[_OsShell.bufferList.length-2]);
             _OsShell.handleInput(_OsShell.bufferList[_OsShell.bufferList.length-2]);
+        }
+
+        public shellHello(args){
+            _StdOut.putText("Hello World");
+
         }
 
 

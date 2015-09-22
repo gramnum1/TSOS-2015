@@ -53,6 +53,23 @@ module TSOS {
 
         }
 
+        public autoComplete():void {
+            var match = [];
+            for (var i = 0; i < _OsShell.commandList.length; i++) {
+                if (_OsShell.commandList[i].command.startsWith(this.buffer)) {
+                    this.buffer = _OsShell.commandList[i].command.toString();
+
+                }
+
+
+
+
+            }
+            _DrawingContext.clearRect( 0,this.currentYPosition-this.currentFontSize , _Canvas.width,this.currentFontSize+5);
+            this.currentXPosition=0;
+            this.putText(">"+this.buffer);
+        }
+
 
         private resetXY(): void {
             this.currentXPosition = 0;
@@ -75,6 +92,8 @@ module TSOS {
 
                     this.remove();
 
+                }else if(chr===String.fromCharCode(9)){
+                    this.autoComplete();
                 }
 
 

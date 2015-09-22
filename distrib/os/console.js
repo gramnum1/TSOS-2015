@@ -41,6 +41,17 @@ var TSOS;
             this.currentXPosition = 0;
             this.putText(">" + this.buffer);
         };
+        Console.prototype.autoComplete = function () {
+            var match = [];
+            for (var i = 0; i < _OsShell.commandList.length; i++) {
+                if (_OsShell.commandList[i].command.startsWith(this.buffer)) {
+                    this.buffer = _OsShell.commandList[i].command.toString();
+                }
+            }
+            _DrawingContext.clearRect(0, this.currentYPosition - this.currentFontSize, _Canvas.width, this.currentFontSize + 5);
+            this.currentXPosition = 0;
+            this.putText(">" + this.buffer);
+        };
         Console.prototype.resetXY = function () {
             this.currentXPosition = 0;
             this.currentYPosition = this.currentFontSize;
@@ -59,6 +70,9 @@ var TSOS;
                 }
                 else if (chr === String.fromCharCode(8)) {
                     this.remove();
+                }
+                else if (chr === String.fromCharCode(9)) {
+                    this.autoComplete();
                 }
                 else {
                     // This is a "normal" character, so ...
