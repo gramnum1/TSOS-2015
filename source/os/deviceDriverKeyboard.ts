@@ -38,10 +38,23 @@ module TSOS {
             var chr = "";
             // Check to see if we even want to deal with the key that was pressed.
 
+            if((keyCode==38|| keyCode==40)&& (isShifted==false)){
+                switch (keyCode){
+                    case 38:
+                        keyCode=17;
+                        break;
+                    case 40:
+                        keyCode=18;
+                        break;
 
 
 
-                if (((keyCode >= 65) && (keyCode <= 90)) ||   // A..Z
+                }
+                _Kernel.krnTrace("ARROW ARROW ARROW");
+                chr = String.fromCharCode(keyCode);
+                _KernelInputQueue.enqueue(chr);
+
+            }else if (((keyCode >= 65) && (keyCode <= 90)) ||   // A..Z
                     ((keyCode >= 97) && (keyCode <= 123))) {  // a..z {
                     // Determine the character we want to display.
                     // Assume it's lowercase...

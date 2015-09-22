@@ -137,6 +137,7 @@ module TSOS {
                     found = true;
                     fn = this.commandList[index].func;
                     _OsShell.bufferList[_OsShell.bufferList.length]=buffer;
+
                 } else {
                     ++index;
                 }

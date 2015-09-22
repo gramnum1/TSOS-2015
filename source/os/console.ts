@@ -13,12 +13,16 @@
 module TSOS {
 
     export class Console {
+        //Properties
+
 
         constructor(public currentFont = _DefaultFontFamily,
                     public currentFontSize = _DefaultFontSize,
                     public currentXPosition = 0,
                     public currentYPosition = _DefaultFontSize,
-                    public buffer = "") {
+                    public buffer = "",
+                    public bufferArray=[],
+                    public bufferIndexer=0) {
         }
 
         public init(): void {
@@ -57,7 +61,7 @@ module TSOS {
 
         }
 
-        public autoComplete():void {
+        private autoComplete():void {
             //this.clearLine();
             var lastMatch="";
             var matchFound=false;
@@ -71,10 +75,14 @@ module TSOS {
                     this.putText(">"+_OsShell.commandList[i].command);
                     lastMatch=_OsShell.commandList[i].command;
                 }
+
+
             }
             if(matchFound) {
                 this.buffer = lastMatch;
             }else{
+                this.clearLine();
+                this.buffer="";
                 this.putText("No Match");
                 this.advanceLine();
                 this.putText(">");
@@ -82,6 +90,38 @@ module TSOS {
             }
 
         }
+
+
+        public history(chr): void{
+
+
+
+
+
+                if (chr === String.fromCharCode(17)) {
+                    if (this.bufferIndexer < this.bufferArray.length) {
+                        ++this.bufferIndexer;
+                        this.clearLine();
+                        this.putText(">" + this.bufferArray[this.bufferArray.length - this.bufferIndexer]);
+                        this.buffer=this.bufferArray[this.bufferArray.length - this.bufferIndexer];
+                        _Kernel.krnTrace("Index At " + this.bufferIndexer);
+
+                    }
+                }
+                if (chr === String.fromCharCode(18)) {
+                    if(this.bufferIndexer >=2) {
+                        --this.bufferIndexer;
+                        this.clearLine();
+                        this.putText(">" + this.bufferArray[this.bufferArray.length - this.bufferIndexer]);
+                        _Kernel.krnTrace("Index At "+this.bufferIndexer);
+                        this.buffer=this.bufferArray[this.bufferArray.length - this.bufferIndexer];
+                    }
+                }
+            }
+
+
+
+
 
 
         private resetXY(): void {
@@ -97,9 +137,11 @@ module TSOS {
                 if (chr === String.fromCharCode(13)) { //     Enter key
                     // The enter key marks the end of a console command, so ...
                     // ... tell the shell ...
+                    this.bufferArray[this.bufferArray.length]=this.buffer;
                     _OsShell.handleInput(this.buffer);
                     // ... and reset our buffer.
                     this.buffer = "";
+                    this.bufferIndexer=0;
 
                 }else if(chr===String.fromCharCode(8)){//backspace
 
@@ -107,10 +149,9 @@ module TSOS {
 
                 }else if(chr===String.fromCharCode(9)){
                     this.autoComplete();
-                }
-
-
-                 else {
+                }else if(chr===String.fromCharCode(17)||chr===String.fromCharCode(18)){
+                    this.history(chr);
+                }else {
 
 
 

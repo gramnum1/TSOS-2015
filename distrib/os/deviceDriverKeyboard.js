@@ -38,7 +38,20 @@ var TSOS;
             _Kernel.krnTrace("Key code:" + keyCode + " shifted:" + isShifted);
             var chr = "";
             // Check to see if we even want to deal with the key that was pressed.
-            if (((keyCode >= 65) && (keyCode <= 90)) ||
+            if ((keyCode == 38 || keyCode == 40) && (isShifted == false)) {
+                switch (keyCode) {
+                    case 38:
+                        keyCode = 17;
+                        break;
+                    case 40:
+                        keyCode = 18;
+                        break;
+                }
+                _Kernel.krnTrace("ARROW ARROW ARROW");
+                chr = String.fromCharCode(keyCode);
+                _KernelInputQueue.enqueue(chr);
+            }
+            else if (((keyCode >= 65) && (keyCode <= 90)) ||
                 ((keyCode >= 97) && (keyCode <= 123))) {
                 // Determine the character we want to display.
                 // Assume it's lowercase...
