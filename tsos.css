@@ -34,6 +34,17 @@ h3 {
   background-color:#DFDBC3;
   border: 2px solid red;
   cursor: default;
+  height: auto;
+    
+    
+}
+
+#divConsole{
+    overflow: scroll;
+    
+
+    
+    
 }
 
 #sbar {

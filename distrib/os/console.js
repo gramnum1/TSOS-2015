@@ -92,6 +92,11 @@ var TSOS;
                 }
             }
         };
+        Console.prototype.scroll = function () {
+            var myImageData = _DrawingContext.createImageData(_Canvas.width, _Canvas.height);
+            _Canvas.height += 50;
+            _DrawingContext.drawImage(myImageData, 0, 0);
+        };
         Console.prototype.resetXY = function () {
             this.currentXPosition = 0;
             this.currentYPosition = this.currentFontSize;
@@ -155,6 +160,9 @@ var TSOS;
             this.currentYPosition += _DefaultFontSize +
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
+            if (this.currentYPosition > _Canvas.height - 50) {
+                this.scroll();
+            }
             // TODO: Handle scrolling. (iProject 1)
         };
         return Console;

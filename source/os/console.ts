@@ -120,6 +120,28 @@ module TSOS {
             }
 
 
+        public scroll():void{
+            var myImageData = _DrawingContext.createImageData(_Canvas.width, _Canvas.height);
+
+
+
+               _Canvas.height+=50;
+            _DrawingContext.drawImage(myImageData, 0,0);
+
+
+           }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -194,7 +216,13 @@ module TSOS {
                                      _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                                      _FontHeightMargin;
 
+            if(this.currentYPosition >_Canvas.height-50){
+
+                this.scroll();
+
+            }
             // TODO: Handle scrolling. (iProject 1)
+
         }
     }
  }
