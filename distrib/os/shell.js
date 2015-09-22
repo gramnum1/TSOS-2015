@@ -65,6 +65,9 @@ var TSOS;
             //status
             sc = new TSOS.ShellCommand(this.shellStatus, "status", "this command displays a status");
             this.commandList[this.commandList.length] = sc;
+            //load
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "Loads from the user program section");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -311,8 +314,8 @@ var TSOS;
         Shell.prototype.shellStatus = function (args) {
             var theDate = new Date();
             var month = theDate.getUTCMonth() + 1;
-            var date = month + "/" + theDate.getUTCDate() + "/" + theDate.getUTCFullYear() + " " + theDate.getHours() + ":" + theDate.getMinutes() + ":" + theDate.getSeconds();
-            _Bar.value = date;
+            var date2 = month + "/" + theDate.getUTCDate() + "/" + theDate.getUTCFullYear() + " " + theDate.getHours() + ":" + theDate.getMinutes() + ":" + theDate.getSeconds();
+            _Bar.value = date2;
             if (args.length > 0) {
                 var topic = args[0];
                 switch (topic) {
@@ -325,6 +328,23 @@ var TSOS;
                     default:
                         _Bar.value += " please enter [canvas || buffer]";
                 }
+            }
+        };
+        Shell.prototype.shellLoad = function (args) {
+            var program = _Program.value;
+            _Kernel.krnTrace(program);
+            var pass = false;
+            var correct = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", " "];
+            for (var i = 0; i < program.length; i++) {
+                if (correct.indexOf(program.charAt(i)) > -1) {
+                    pass = true;
+                }
+            }
+            if (pass) {
+                _StdOut.putText("Program is good");
+            }
+            else {
+                _StdOut.putText("program is invalid");
             }
         };
         return Shell;

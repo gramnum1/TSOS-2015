@@ -33,6 +33,7 @@ module TSOS {
             // Get a global reference to the canvas.  TODO: Should we move this stuff into a Display Device Driver?
             _Canvas = <HTMLCanvasElement>document.getElementById('display');
             _Bar=<HTMLTextAreaElement>document.getElementById('sbar');
+            _Program=<HTMLTextAreaElement>document.getElementById('taProgramInput');
 
             var theDate = new Date();
             var month=theDate.getUTCMonth()+1;
