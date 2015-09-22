@@ -29,6 +29,10 @@ var TSOS;
         Console.prototype.clearScreen = function () {
             _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
         };
+        Console.prototype.clearLine = function () {
+            _DrawingContext.clearRect(0, this.currentYPosition - this.currentFontSize, _Canvas.width, this.currentFontSize + 5);
+            this.currentXPosition = 0;
+        };
         Console.prototype.remove = function () {
             var bufferLength = this.buffer.length;
             var lastLetter = bufferLength - 1;
@@ -37,20 +41,27 @@ var TSOS;
             this.buffer = this.buffer.substring(0, lastLetter);
             _Kernel.krnTrace("Buffer Length =" + bufferLength + " Buffer= " + this.buffer);
             _Kernel.krnTrace("character= " + c.toString());
-            _DrawingContext.clearRect(0, this.currentYPosition - this.currentFontSize, _Canvas.width, this.currentFontSize + 5);
-            this.currentXPosition = 0;
+            this.clearLine();
             this.putText(">" + this.buffer);
         };
         Console.prototype.autoComplete = function () {
-            var match = [];
-            for (var i = 0; i < _OsShell.commandList.length; i++) {
+            //this.clearLine();
+            var lastMatch = "";
+            var matchFound = false;
+            for (var i = 0; i < _OsShell.commandList.length; ++i) {
                 if (_OsShell.commandList[i].command.startsWith(this.buffer)) {
-                    this.buffer = _OsShell.commandList[i].command.toString();
+                    matchFound = true;
+                    this.advanceLine();
+                    this.putText(">" + _OsShell.commandList[i].command);
+                    lastMatch = _OsShell.commandList[i].command;
                 }
             }
-            _DrawingContext.clearRect(0, this.currentYPosition - this.currentFontSize, _Canvas.width, this.currentFontSize + 5);
-            this.currentXPosition = 0;
-            this.putText(">" + this.buffer);
+            if (matchFound && lastMatch != "") {
+                this.buffer = lastMatch;
+            }
+            else {
+                this.putText("No Match");
+            }
         };
         Console.prototype.resetXY = function () {
             this.currentXPosition = 0;
