@@ -29,15 +29,17 @@ module TSOS {
             // Parse the params.    TODO: Check that the params are valid and osTrapError if not.
             var keyCode = params[0];
             var isShifted = params[1];
-            var wrongAssign= [50,54,55,56,57,48];
-            var symbolKey=[189, 187, 192, 186, 222, 188, 190, 191, 219, 221, 220];
-            var symbolLower=[45,61,96, 59, 39,44,46,47,91,93,92];
-            var symbolUpper=[95,43,126,58,34,60,62,63,123,125,124];
+
+            var wrongAssign= [50,54,55,56,57,48];  //digits that dont match correct keycode
+            var symbolKey=[189, 187, 192, 186, 222, 188, 190, 191, 219, 221, 220]; //keyCode of symbol key
+            var symbolLower=[45,61,96, 59, 39,44,46,47,91,93,92]; //corresponding lower case
+            var symbolUpper=[95,43,126,58,34,60,62,63,123,125,124]; //corresponding upper case
             var symbolHold;
             _Kernel.krnTrace("Key code:" + keyCode + " shifted:" + isShifted);
             var chr = "";
             // Check to see if we even want to deal with the key that was pressed.
 
+            //Check for up and down arrows
             if((keyCode==38|| keyCode==40)&& (isShifted==false)){
                 switch (keyCode){
                     case 38:
@@ -68,17 +70,19 @@ module TSOS {
                     _KernelInputQueue.enqueue(chr);
                 } else if ((keyCode >= 48) && (keyCode <= 57) ||   // digits
                     (keyCode == 32) ||   // space
-                    (keyCode == 13) ||
-                    (keyCode==8) ||
-                    (keyCode==9)) {                       // enter
-                    if(isShifted){
+                    (keyCode == 13) || //enter
+                    (keyCode==8) || //backspace
+                    (keyCode==9)) {  //tab
+                //Check if shifted
+                if(isShifted){
+                        //if not in wrong assignments
                         if(wrongAssign.indexOf(keyCode) <= -1) {
                             keyCode = keyCode - 16;
                             _Kernel.krnTrace("symbol " + chr + " KeyCode " + keyCode);
                             chr = String.fromCharCode(keyCode);
                             _KernelInputQueue.enqueue(chr);
                         }else if(wrongAssign.indexOf(keyCode)>-1){
-
+                            //Switch through incorrect assignments
                             switch(keyCode) {
                                 case 50:
                                     keyCode = 64;
@@ -119,7 +123,7 @@ module TSOS {
 
 
 
-
+                //iterate through arrays to find correct symbol character
                 }else if(symbolKey.indexOf(keyCode)>-1){
                     symbolHold=symbolKey.indexOf(keyCode);
 

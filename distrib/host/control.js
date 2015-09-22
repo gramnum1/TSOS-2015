@@ -30,8 +30,9 @@ var TSOS;
             // This is called from index.html's onLoad event via the onDocumentLoad function pointer.
             // Get a global reference to the canvas.  TODO: Should we move this stuff into a Display Device Driver?
             _Canvas = document.getElementById('display');
-            _Bar = document.getElementById('sbar');
-            _Program = document.getElementById('taProgramInput');
+            _Bar = document.getElementById('sbar'); //Status Bar HTML TextArea
+            _Program = document.getElementById('taProgramInput'); //User Program Input TextArea
+            //Create the date string and put it in _Bar
             var theDate = new Date();
             var month = theDate.getUTCMonth() + 1;
             var date = month + "/" + theDate.getUTCDate() + "/" + theDate.getUTCFullYear() + " " + theDate.getHours() + ":" + theDate.getMinutes() + ":" + theDate.getSeconds();

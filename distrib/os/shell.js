@@ -20,6 +20,7 @@ var TSOS;
             this.commandList = [];
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
+            //bufferList stores commands entered
             this.bufferList = [];
         }
         Shell.prototype.init = function () {
@@ -101,6 +102,7 @@ var TSOS;
                 if (this.commandList[index].command === cmd) {
                     found = true;
                     fn = this.commandList[index].func;
+                    //puts the buffer into bufferList
                     _OsShell.bufferList[_OsShell.bufferList.length] = buffer;
                 }
                 else {
@@ -299,21 +301,28 @@ var TSOS;
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
         };
+        //shellDate()  Outputs the date onto the console
         Shell.prototype.shellDate = function (args) {
             var theDate = new Date();
             var month = theDate.getUTCMonth() + 1;
             _StdOut.putText(month + "/" + theDate.getUTCDate() + "/" + theDate.getUTCFullYear() + " " + theDate.getHours() + ":" + theDate.getMinutes() + ":" + theDate.getSeconds());
         };
+        //shellWhereami() outputs your location to the console
         Shell.prototype.shellWhereami = function (args) {
             _StdOut.putText("Slaving away at OS in some dark corner");
         };
+        //shellAgain(args) executes the last executed command once more
         Shell.prototype.shellAgain = function (args) {
+            //output the command to the console
             _StdOut.putText(_OsShell.bufferList[_OsShell.bufferList.length - 2]);
+            //re execute the command
             _OsShell.handleInput(_OsShell.bufferList[_OsShell.bufferList.length - 2]);
         };
+        //shellHello()  outputs hello world.
         Shell.prototype.shellHello = function (args) {
             _StdOut.putText("Hello World");
         };
+        //shelStatus(args)  puts date in the status bar and some information depending on a topic
         Shell.prototype.shellStatus = function (args) {
             var theDate = new Date();
             var month = theDate.getUTCMonth() + 1;
@@ -333,6 +342,7 @@ var TSOS;
                 }
             }
         };
+        //shellLoad()  takes value of user program input and if its valid prints program is good, if invalid outputs program is invalid
         Shell.prototype.shellLoad = function (args) {
             var program = _Program.value;
             _Kernel.krnTrace(program);

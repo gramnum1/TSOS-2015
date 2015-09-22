@@ -22,6 +22,7 @@ module TSOS {
         public commandList = [];
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
+        //bufferList stores commands entered
         public bufferList=[];
 
         constructor() {
@@ -158,6 +159,7 @@ module TSOS {
                 if (this.commandList[index].command === cmd) {
                     found = true;
                     fn = this.commandList[index].func;
+                    //puts the buffer into bufferList
                     _OsShell.bufferList[_OsShell.bufferList.length]=buffer;
 
                 } else {
@@ -364,27 +366,29 @@ module TSOS {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
         }
-
+        //shellDate()  Outputs the date onto the console
         public shellDate(args) {
             var theDate=new Date();
             var month= theDate.getUTCMonth()+1;
             _StdOut.putText(month+"/"+theDate.getUTCDate()+"/"+theDate.getUTCFullYear()+" "+theDate.getHours()+":"+theDate.getMinutes()+":"+theDate.getSeconds());
         }
-
+        //shellWhereami() outputs your location to the console
         public shellWhereami(args){
             _StdOut.putText("Slaving away at OS in some dark corner");
         }
-
+        //shellAgain(args) executes the last executed command once more
         public shellAgain(args){
+            //output the command to the console
             _StdOut.putText(_OsShell.bufferList[_OsShell.bufferList.length-2]);
+            //re execute the command
             _OsShell.handleInput(_OsShell.bufferList[_OsShell.bufferList.length-2]);
         }
-
+        //shellHello()  outputs hello world.
         public shellHello(args){
             _StdOut.putText("Hello World");
 
         }
-
+        //shelStatus(args)  puts date in the status bar and some information depending on a topic
         public shellStatus(args){
             var theDate=new Date();
             var month= theDate.getUTCMonth()+1;
@@ -395,10 +399,10 @@ module TSOS {
 
                 var topic = args[0];
                 switch (topic) {
-                    case "canvas":
+                    case "canvas": //gives canvas height
                         _Bar.value+=" Canvas Height is "+_Canvas.height;
                         break;
-                    case "buffer":
+                    case "buffer": //gives number of commands in bufferList[]
                         _Bar.value+=" There are "+_OsShell.bufferList.length+" Commands stored in history";
                         break;
                     default:
@@ -408,6 +412,7 @@ module TSOS {
 
         }
     }
+        //shellLoad()  takes value of user program input and if its valid prints program is good, if invalid outputs program is invalid
         public shellLoad(args){
             var program=_Program.value;
             _Kernel.krnTrace(program);
