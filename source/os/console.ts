@@ -121,15 +121,29 @@ module TSOS {
 
 
         public scroll():void{
-            var myImageData = _DrawingContext.createImageData(_Canvas.width, _Canvas.height);
+
+            var myImageData = _DrawingContext.getImageData(0,0,_Canvas.width, _Canvas.height);
 
 
 
-               _Canvas.height+=50;
-            _DrawingContext.drawImage(myImageData, 0,0);
+                _Kernel.krnTrace("EXTEND!!!!!");
+
+                _Canvas.height+=500;
+            _DrawingContext.putImageData(myImageData, 0,0);
 
 
-           }
+
+
+
+
+
+
+
+
+
+
+
+        }
 
 
 
@@ -207,6 +221,7 @@ module TSOS {
 
         public advanceLine(): void {
             this.currentXPosition = 0;
+
             /*
              * Font size measures from the baseline to the highest point in the font.
              * Font descent measures from the baseline to the lowest point in the font.
@@ -216,9 +231,15 @@ module TSOS {
                                      _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                                      _FontHeightMargin;
 
-            if(this.currentYPosition >_Canvas.height-50){
+            if(this.currentYPosition >_Canvas.height){
+
+                _Kernel.krnTrace("WEVE REACHED THE END");
+
+
+
 
                 this.scroll();
+
 
             }
             // TODO: Handle scrolling. (iProject 1)

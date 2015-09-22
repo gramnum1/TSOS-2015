@@ -62,6 +62,9 @@ var TSOS;
             //hello
             sc = new TSOS.ShellCommand(this.shellHello, "hello", "says hello world");
             this.commandList[this.commandList.length] = sc;
+            //status
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "this command displays a status");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -304,6 +307,25 @@ var TSOS;
         };
         Shell.prototype.shellHello = function (args) {
             _StdOut.putText("Hello World");
+        };
+        Shell.prototype.shellStatus = function (args) {
+            var theDate = new Date();
+            var month = theDate.getUTCMonth() + 1;
+            var date = month + "/" + theDate.getUTCDate() + "/" + theDate.getUTCFullYear() + " " + theDate.getHours() + ":" + theDate.getMinutes() + ":" + theDate.getSeconds();
+            _Bar.value = date;
+            if (args.length > 0) {
+                var topic = args[0];
+                switch (topic) {
+                    case "canvas":
+                        _Bar.value += " Canvas Height is " + _Canvas.height;
+                        break;
+                    case "buffer":
+                        _Bar.value += " There are " + _OsShell.bufferList.length + " Commands stored in history";
+                        break;
+                    default:
+                        _Bar.value += " please enter [canvas || buffer]";
+                }
+            }
         };
         return Shell;
     })();
