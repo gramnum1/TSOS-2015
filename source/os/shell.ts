@@ -115,6 +115,14 @@ module TSOS {
                                 "Loads from the user program section");
             this.commandList[this.commandList.length]=sc;
 
+            //error
+            sc= new ShellCommand(this.shellError,
+                                "error",
+                                "displays an error");
+            this.commandList[this.commandList.length]=sc;
+
+
+
 
 
             // ps  - list the running processes and their IDs
@@ -416,6 +424,10 @@ module TSOS {
                 _StdOut.putText("program is invalid");
             }
 
+        }
+
+        public shellError(args){
+            _Kernel.krnTrapError("a random error");
         }
 
 

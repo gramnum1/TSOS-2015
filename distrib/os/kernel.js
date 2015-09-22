@@ -54,6 +54,8 @@ var TSOS;
         Kernel.prototype.krnShutdown = function () {
             this.krnTrace("begin shutdown OS");
             // TODO: Check for running processes.  If there are some, alert and stop. Else...
+            if (_CPU.isExecuting) {
+            }
             // ... Disable the Interrupts.
             this.krnTrace("Disabling the interrupts.");
             this.krnDisableInterrupts();
@@ -155,6 +157,7 @@ var TSOS;
         Kernel.prototype.krnTrapError = function (msg) {
             TSOS.Control.hostLog("OS ERROR - TRAP: " + msg);
             // TODO: Display error on console, perhaps in some sort of colored screen. (Maybe blue?)
+            _StdOut.putText("An Error has been encountered.  Os is terminating");
             this.krnShutdown();
         };
         return Kernel;

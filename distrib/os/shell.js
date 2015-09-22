@@ -68,6 +68,9 @@ var TSOS;
             //load
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "Loads from the user program section");
             this.commandList[this.commandList.length] = sc;
+            //error
+            sc = new TSOS.ShellCommand(this.shellError, "error", "displays an error");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -346,6 +349,9 @@ var TSOS;
             else {
                 _StdOut.putText("program is invalid");
             }
+        };
+        Shell.prototype.shellError = function (args) {
+            _Kernel.krnTrapError("a random error");
         };
         return Shell;
     })();
