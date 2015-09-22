@@ -49,18 +49,20 @@ var TSOS;
             var lastMatch = "";
             var matchFound = false;
             for (var i = 0; i < _OsShell.commandList.length; ++i) {
-                if (_OsShell.commandList[i].command.startsWith(this.buffer)) {
+                if ((_OsShell.commandList[i].command.startsWith(this.buffer)) && this.buffer != "") {
                     matchFound = true;
                     this.advanceLine();
                     this.putText(">" + _OsShell.commandList[i].command);
                     lastMatch = _OsShell.commandList[i].command;
                 }
             }
-            if (matchFound && lastMatch != "") {
+            if (matchFound) {
                 this.buffer = lastMatch;
             }
             else {
                 this.putText("No Match");
+                this.advanceLine();
+                this.putText(">");
             }
         };
         Console.prototype.resetXY = function () {
