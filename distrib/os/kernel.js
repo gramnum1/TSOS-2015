@@ -158,6 +158,11 @@ var TSOS;
             TSOS.Control.hostLog("OS ERROR - TRAP: " + msg);
             // TODO: Display error on console, perhaps in some sort of colored screen. (Maybe blue?)
             _StdOut.putText("An Error has been encountered.  Os is terminating");
+            var img = new Image();
+            img.onload = function () {
+                _DrawingContext.drawImage(img, 0, 0);
+            };
+            img.src = "distrib/images/trap.jpg";
             this.krnShutdown();
         };
         return Kernel;

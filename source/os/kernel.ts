@@ -180,6 +180,11 @@ module TSOS {
 
 
             _StdOut.putText("An Error has been encountered.  Os is terminating");
+            var img= new Image();
+            img.onload=function(){
+            _DrawingContext.drawImage(img, 0, 0);
+            }
+            img.src= "distrib/images/trap.jpg";
             this.krnShutdown();
         }
     }

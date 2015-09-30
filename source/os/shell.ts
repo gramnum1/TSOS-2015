@@ -416,7 +416,10 @@ module TSOS {
         public shellLoad(args){
             var program=_Program.value;
             _Kernel.krnTrace(program);
+            var toMemory="";
             var pass=false;
+            var i=0;
+            var index=0;
             var correct=["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F", " "];
             for(var i = 0; i < program.length; i++){
                 if(correct.indexOf(program.charAt(i))>-1){
@@ -425,6 +428,34 @@ module TSOS {
             }
             if(pass){
                 _StdOut.putText("Program is good");
+                program=program.replace(/\s+/g, '');
+                _StdOut.putText(program);
+                _StdOut.advanceLine();
+
+                for(var i = 0; i < program.length; i++){
+                    _StdOut.putText(program.slice(i, i+2)+" ");
+                    _StdOut.advanceLine();
+                    toMemory=program.slice(i, i+2);
+                    _CPU.memory[index]=toMemory;
+                    _Kernel.krnTrace("Index: "+index+" value: "+_CPU.memory[index].toString());
+                    i++;
+                    index++;
+
+
+
+
+                }
+
+                /*
+
+                    toMemory=program.charAt(i)+program.charAt(i+1);
+                    _CPU.memory[_CPU.memory.length]=toMemory;
+                    _Kernel.krnTrace(toMemory);
+                }
+                */
+
+
+
             }else{
                 _StdOut.putText("program is invalid");
             }

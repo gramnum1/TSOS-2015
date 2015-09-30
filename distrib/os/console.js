@@ -100,10 +100,14 @@ var TSOS;
         //scroll() allows console to scroll
         Console.prototype.scroll = function () {
             //capture existing text
-            var myImageData = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
+            var myImageData = _DrawingContext.getImageData(0, this.currentFontSize + 7, _Canvas.width, _Canvas.height);
             _Kernel.krnTrace("EXTEND!!!!!");
+            this.clearScreen();
+            this.currentYPosition -= _DefaultFontSize +
+                _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                _FontHeightMargin;
             //increase canvas height by 500
-            _Canvas.height += 500;
+            //_Canvas.height+=21;
             //restore previous text
             _DrawingContext.putImageData(myImageData, 0, 0);
         };
@@ -170,6 +174,7 @@ var TSOS;
             this.currentYPosition += _DefaultFontSize +
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
+            _Kernel.krnTrace("Y Position: " + this.currentYPosition);
             if (this.currentYPosition > _Canvas.height) {
                 _Kernel.krnTrace("WEVE REACHED THE END");
                 this.scroll();
