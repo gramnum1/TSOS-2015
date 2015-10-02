@@ -14,7 +14,7 @@
 const APP_NAME: string    = "Charles Harrison TSOS";   // 'cause Bob and I were at a loss for a better name.
 
 const APP_VERSION: string = "0.195";   // What did you expect?
-=======
+
 const APP_VERSION: string = "0.17";   // What did you expect?
 
 
