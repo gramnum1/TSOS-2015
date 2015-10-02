@@ -359,11 +359,7 @@ var TSOS;
             if (pass) {
                 _StdOut.putText("Program is good");
                 program = program.replace(/\s+/g, '');
-                _StdOut.putText(program);
-                _StdOut.advanceLine();
                 for (var i = 0; i < program.length; i++) {
-                    _StdOut.putText(program.slice(i, i + 2) + " ");
-                    _StdOut.advanceLine();
                     toMemory = program.slice(i, i + 2);
                     _CPU.memory[index] = toMemory;
                     _Kernel.krnTrace("Index: " + index + " value: " + _CPU.memory[index].toString());
