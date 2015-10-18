@@ -34,6 +34,7 @@ var TSOS;
             _Program = document.getElementById('taProgramInput'); //User Program Input TextArea
             _MemTable = document.getElementById('mTable');
             _CPUTable = document.getElementById('cpuTable');
+            _Light = document.getElementById('light');
             this.initMemoryTable();
             //Create the date string and put it in _Bar
             var theDate = new Date();
@@ -76,6 +77,7 @@ var TSOS;
         // Host Events
         //
         Control.hostBtnStartOS_click = function (btn) {
+            _Light.style.color = "red";
             // Disable the (passed-in) start button...
             btn.disabled = true;
             // .. enable the Halt and Reset buttons ...
@@ -88,6 +90,7 @@ var TSOS;
             _CPU.init(); //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
             _Mem = new TSOS.Memory();
             _Mem.init();
+            _MemMan = new TSOS.MemoryManager();
             this.initCPUTable();
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
@@ -113,7 +116,7 @@ var TSOS;
         };
         Control.initCPUTable = function () {
             _CPUTable.rows[1].cells[0].innerHTML = _CPU.PC;
-            _CPUTable.rows[1].cells[1].innerHTML = "instruction?";
+            _CPUTable.rows[1].cells[1].innerHTML = _CPU.op;
             _CPUTable.rows[1].cells[2].innerHTML = _CPU.Acc;
             _CPUTable.rows[1].cells[3].innerHTML = _CPU.Xreg;
             _CPUTable.rows[1].cells[4].innerHTML = _CPU.Yreg;
@@ -157,6 +160,14 @@ var TSOS;
                         }
                     }
                 }
+            }
+        };
+        Control.checkExe = function () {
+            if (_CPU.isExecuting) {
+                _Light.style.color = "green";
+            }
+            else {
+                _Light.style.color = "red";
             }
         };
         return Control;

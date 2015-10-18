@@ -36,6 +36,8 @@ module TSOS {
             _Program=<HTMLTextAreaElement>document.getElementById('taProgramInput');  //User Program Input TextArea
             _MemTable=<HTMLTableElement>document.getElementById('mTable');
             _CPUTable=<HTMLTableElement>document.getElementById('cpuTable');
+            _Light=<HTMLSpanElement>document.getElementById('light');
+
             this.initMemoryTable();
             //Create the date string and put it in _Bar
             var theDate = new Date();
@@ -89,6 +91,7 @@ module TSOS {
         // Host Events
         //
         public static hostBtnStartOS_click(btn): void {
+            _Light.style.color="red";
             // Disable the (passed-in) start button...
             btn.disabled = true;
 
@@ -104,6 +107,7 @@ module TSOS {
             _CPU.init();       //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
             _Mem= new Memory();
             _Mem.init();
+            _MemMan=new MemoryManager();
             this.initCPUTable();
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
@@ -132,7 +136,7 @@ module TSOS {
 
         public static initCPUTable():void{
             _CPUTable.rows[1].cells[0].innerHTML=_CPU.PC;
-            _CPUTable.rows[1].cells[1].innerHTML="instruction?";
+            _CPUTable.rows[1].cells[1].innerHTML=_CPU.op;
             _CPUTable.rows[1].cells[2].innerHTML=_CPU.Acc;
             _CPUTable.rows[1].cells[3].innerHTML=_CPU.Xreg;
             _CPUTable.rows[1].cells[4].innerHTML=_CPU.Yreg;
@@ -192,6 +196,15 @@ module TSOS {
 
 
             }
+        public static checkExe():void{
+            if(_CPU.isExecuting){
+                _Light.style.color="green";
+
+
+            }else{
+                _Light.style.color="red";
+            }
+        }
 
         }
     }

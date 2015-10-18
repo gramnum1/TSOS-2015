@@ -31,6 +31,7 @@ const KEYBOARD_IRQ: number = 1;
 var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 var _PCB: TSOS.PCB;
 var _Mem: TSOS.Memory;
+var _MemMan: TSOS.MemoryManager;
 var _OSclock: number = 0;  // Page 23.
 
 var _Mode: number = 0;     // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
@@ -40,6 +41,7 @@ var _Bar: HTMLTextAreaElement;  //initialized in Control.hostInit().
 var _Program: HTMLTextAreaElement;  //initialized in Control.hostInit().
 var _MemTable: HTMLTableElement;
 var _CPUTable: HTMLTableElement;
+var _Light: HTMLSpanElement;
 var _DrawingContext: any; // = _Canvas.getContext("2d");  // Assigned here for type safety, but re-initialized in Control.hostInit() for OCD and logic.
 var _DefaultFontFamily: string = "sans";        // Ignored, I think. The was just a place-holder in 2008, but the HTML canvas may have use for it.
 var _DefaultFontSize: number = 13;
@@ -75,4 +77,5 @@ var _GLaDOS: any = null; // If the above is linked in, this is the instantiated 
 
 var onDocumentLoad = function() {
 	TSOS.Control.hostInit();
+
 };

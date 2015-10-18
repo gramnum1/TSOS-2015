@@ -21,7 +21,7 @@
      <script type="text/javascript" src="distrib/host/Memory.js"></script>
 
    <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
-   
+    <script type="text/javascript" src="distrib/os/MemoryManager.js"></script>
     <script type="text/javascript" src="distrib/os/interrupt.js"></script>
    <script type="text/javascript" src="distrib/os/canvastext.js"></script>
    <script type="text/javascript" src="distrib/os/console.js"></script>
@@ -130,7 +130,8 @@
         </div>
         
         <div class="row">
-            <div id="MemoryTable">
+            <label for="mem">Memory</label>
+            <div name= "mem" id="MemoryTable">
              <table id="mTable" class="table table-condensed table-bordered">
                  <tbody>
                  </tbody>
@@ -140,8 +141,10 @@
         
 </div>
         <div class="row">
-        <div id="CPUTable">
-            <table id="cpuTable" class="table table-condensed table-bordered">
+        <label for="cpu">CPU <span id="light" class="glyphicon glyphicon-flash"></label>
+            <div id="CPUTable">
+            
+            <table name="cpu" id="cpuTable" class="table table-condensed table-bordered">
             <tr>
             <th>PC</th>
             <th>Instr Reg</th>

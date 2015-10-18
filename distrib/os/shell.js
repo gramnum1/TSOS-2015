@@ -364,18 +364,7 @@ var TSOS;
             if (pass) {
                 _StdOut.putText("Program is good");
                 program = program.replace(/\s+/g, '');
-                for (var i = 0; i < program.length; i++) {
-                    toMemory = program.slice(i, i + 2);
-                    _Mem.coreM[index] = toMemory;
-                    _Kernel.krnTrace("Index: " + index + " value: " + _Mem.coreM[index].toString());
-                    i++;
-                    index++;
-                }
-                _PCB = new TSOS.PCB();
-                _PCB.init();
-                _StdOut.putText("new process, pid= " + _PCB.pid);
-                _OsShell.pid++;
-                TSOS.Control.updateMemoryTable();
+                _MemMan.loadProgram(program);
             }
             else {
                 _StdOut.putText("program is invalid");
@@ -386,6 +375,7 @@ var TSOS;
         };
         Shell.prototype.shellRun = function (args) {
             _CPU.isExecuting = true;
+            _CPU.PC = 0;
         };
         return Shell;
     })();

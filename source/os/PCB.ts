@@ -2,17 +2,6 @@
 
 /* ------------
  PCB.ts
-
- Requires global.ts.
-
- Routines for the host CPU simulation, NOT for the OS itself.
- In this manner, it's A LITTLE BIT like a hypervisor,
- in that the Document environment inside a browser is the "bare metal" (so to speak) for which we write code
- that hosts our client OS. But that analogy only goes so far, and the lines are blurred, because we are using
- TypeScript/JavaScript in both the host and client environments.
-
- This code references page numbers in the text book:
- Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
  ------------ */
 
 module TSOS {
@@ -25,8 +14,8 @@ module TSOS {
                     public Xreg: number = 0,
                     public Yreg: number = 0,
                     public Zflag: number = 0,
-
-                    public memorylimit: number =256){
+                    public base: number=0,
+                    public limit: number=0){
 
         }
 
@@ -37,7 +26,8 @@ module TSOS {
             this.Xreg = 0;
             this.Yreg = 0;
             this.Zflag = 0;
-            this.memorylimit=256;
+            this.base=0;
+            this.limit=0;
         }
 
 

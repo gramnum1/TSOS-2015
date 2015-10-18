@@ -440,44 +440,14 @@ module TSOS {
             if(pass){
                 _StdOut.putText("Program is good");
                 program=program.replace(/\s+/g, '');
-
-
-
-                for(var i = 0; i < program.length; i++){
-
-
-                    toMemory=program.slice(i, i+2);
-                    _Mem.coreM[index]=toMemory;
-                    _Kernel.krnTrace("Index: "+index+" value: "+_Mem.coreM[index].toString());
-                    i++;
-                    index++;
+                _MemMan.loadProgram(program);
 
 
 
 
-                }
-                _PCB=new PCB();
-                _PCB.init();
-                _StdOut.putText("new process, pid= "+_PCB.pid);
-                _OsShell.pid++;
-
-                Control.updateMemoryTable();
-
-                /*
-
-                    toMemory=program.charAt(i)+program.charAt(i+1);
-                    _CPU.memory[_CPU.memory.length]=toMemory;
-                    _Kernel.krnTrace(toMemory);
-                }
-                */
-
-
-
-            }else{
-                _StdOut.putText("program is invalid");
-            }
-
-        }
+        }else{
+        _StdOut.putText("program is invalid");
+    }
 
         public shellError(args){
             _Kernel.krnTrapError("a random error");
@@ -485,6 +455,7 @@ module TSOS {
 
         public shellRun(args){
             _CPU.isExecuting=true;
+            _CPU.PC=0;
 
         }
 
