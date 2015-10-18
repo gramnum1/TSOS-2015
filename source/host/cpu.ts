@@ -19,17 +19,16 @@ module TSOS {
 
     export class Cpu {
 
-        constructor(public PC: number = 0,
-                    public Acc: number = 0,
-                    public Xreg: number = 0,
-                    public Yreg: number = 0,
-                    public Zflag: number = 0,
-                    public isExecuting: boolean = false,
-                    public memory=[256]){
+        constructor(public PC:number = 0,
+                    public Acc:number = 0,
+                    public Xreg:number = 0,
+                    public Yreg:number = 0,
+                    public Zflag:number = 0,
+                    public isExecuting:boolean = false) {
 
         }
 
-        public init(): void {
+        public init():void {
             this.PC = 0;
             this.Acc = 0;
             this.Xreg = 0;
@@ -38,12 +37,53 @@ module TSOS {
             this.isExecuting = false;
         }
 
-        public cycle(): void {
+        public cycle():void {
+            var instruction;
+            var holder;
             _Kernel.krnTrace('CPU cycle');
-            // TODO: Accumulate CPU usage and profiling statistics here.
-            // Do the real work here. Be sure to set this.isExecuting appropriately.
+            while (this.isExecuting) {
+                instruction = _Mem.coreM[this.PC];
+                switch (instruction) {
+                    case "00":
+                        this.isExecuting = false;
+                        //this.PC=0;
+                        break;
+                    case "A9":
+                        this.PC++;
+                        this.Acc = this.getConstantNumber(_Mem.coreM[this.PC]);
+                        this.PC++;
+                        break;
+                    case  "A2":
+                        this.PC++;
+                        this.Xreg=this.getConstantNumber(_Mem.coreM[this.PC]);
+                        this.PC++;
+                        break;
+                    case "A0":
+                        this.PC++;
+                        this.Yreg=this.getConstantNumber(_Mem.coreM[this.PC]);
+                        this.PC++;
+                        break;
+                }
+                Control.initCPUTable();
+                Control.updateMemoryTable();
 
+
+            }
+
+        }
+
+
+        public getConstantNumber(num:string):number {
+            var v = parseInt(num, 16);
+            return v;
+
+
+        }
+        public static littleEndianConvert(address: string){
+            var holder;
+            for
 
         }
     }
 }
+

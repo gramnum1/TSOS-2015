@@ -3,12 +3,15 @@ C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\utils.ts
 C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\host\control.ts
 C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\host\cpu.ts
 C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\host\devices.ts
+C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\host\Memory.ts
 C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\canvastext.ts
 C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\console.ts
 C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\deviceDriver.ts
 C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\deviceDriverKeyboard.ts
 C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\interrupt.ts
 C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\kernel.ts
+C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\MemoryManager.ts
+C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\PCB.ts
 C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\queue.ts
 C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\shell.ts
 C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\shellCommand.ts

@@ -187,7 +187,7 @@ module TSOS {
             this.currentYPosition += _DefaultFontSize + 
                                      _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                                      _FontHeightMargin;
-            _Kernel.krnTrace("Y Position: "+this.currentYPosition);
+           // _Kernel.krnTrace("Y Position: "+this.currentYPosition);
 
             if(this.currentYPosition >_Canvas.height){//check if we need more space on console
                 _Kernel.krnTrace("WEVE REACHED THE END");

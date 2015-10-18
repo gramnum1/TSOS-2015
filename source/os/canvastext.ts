@@ -155,7 +155,16 @@ module TSOS {
             ctx.lineWidth = 2.0 * mag;
             ctx.strokeStyle = "black";
 
+
+
             for (var i = 0; i < len; i++) {
+                //line wrap
+                if(x>490){
+                    x=0+c.width*mag;
+
+                    _StdOut.advanceLine();
+
+                }
                 var c = CanvasTextFunctions.letter(str.charAt(i));
                 if (!c) {
                     continue;
@@ -176,8 +185,14 @@ module TSOS {
                         ctx.lineTo( x + a[0]*mag, y - a[1]*mag);
                     }
                 }
+
+
                 ctx.stroke();
+
                 x += c.width*mag;
+               // _Kernel.krnTrace("linewrap: x= "+x+" y= "+y);
+
+
             }
             ctx.restore();
             return total;

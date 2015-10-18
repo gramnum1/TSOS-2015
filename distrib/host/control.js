@@ -32,6 +32,9 @@ var TSOS;
             _Canvas = document.getElementById('display');
             _Bar = document.getElementById('sbar'); //Status Bar HTML TextArea
             _Program = document.getElementById('taProgramInput'); //User Program Input TextArea
+            _MemTable = document.getElementById('mTable');
+            _CPUTable = document.getElementById('cpuTable');
+            this.initMemoryTable();
             //Create the date string and put it in _Bar
             var theDate = new Date();
             var month = theDate.getUTCMonth() + 1;
@@ -83,6 +86,9 @@ var TSOS;
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
             _CPU = new TSOS.Cpu(); // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init(); //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
+            _Mem = new TSOS.Memory();
+            _Mem.init();
+            this.initCPUTable();
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
@@ -104,6 +110,54 @@ var TSOS;
             // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
+        };
+        Control.initCPUTable = function () {
+            _CPUTable.rows[1].cells[0].innerHTML = _CPU.PC;
+            _CPUTable.rows[1].cells[1].innerHTML = "instruction?";
+            _CPUTable.rows[1].cells[2].innerHTML = _CPU.Acc;
+            _CPUTable.rows[1].cells[3].innerHTML = _CPU.Xreg;
+            _CPUTable.rows[1].cells[4].innerHTML = _CPU.Yreg;
+            _CPUTable.rows[1].cells[5].innerHTML = _CPU.Zflag;
+        };
+        Control.initMemoryTable = function () {
+            for (var i = 0; i < 256 / 8; ++i) {
+                var row = _MemTable.insertRow(i);
+                for (var j = 0; j < 9; ++j) {
+                    var cell = row.insertCell(j);
+                    if (j == 0) {
+                        var lable = (i * 8).toString(16).toLocaleUpperCase();
+                        cell.innerHTML = "0x" + lable;
+                    }
+                    else {
+                        cell.innerHTML = "00";
+                    }
+                }
+            }
+        };
+        Control.updateMemoryTable = function () {
+            var memoryIndex = 0;
+            var rowIndex;
+            var colIndex;
+            for (var i = 0; i < 256 / 8; ++i) {
+                rowIndex = i;
+                for (var j = 0; j < 9; ++j) {
+                    colIndex = j;
+                    if (colIndex == 0) {
+                        var lable = (i * 8).toString(16).toLocaleUpperCase();
+                        _MemTable.rows[rowIndex].cells[colIndex].innerHTML = "0x" + lable;
+                    }
+                    else {
+                        if (_Mem.coreM[memoryIndex] == null) {
+                            _MemTable.rows[rowIndex].cells[colIndex].innerHTML = "00";
+                            memoryIndex++;
+                        }
+                        else {
+                            _MemTable.rows[rowIndex].cells[colIndex].innerHTML = _Mem.coreM[memoryIndex];
+                            memoryIndex++;
+                        }
+                    }
+                }
+            }
         };
         return Control;
     })();

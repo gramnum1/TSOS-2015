@@ -4,6 +4,8 @@
 ///<reference path="userCommand.ts" />
 
 
+
+
 /* ------------
    Shell.ts
 
@@ -24,6 +26,8 @@ module TSOS {
         public apologies = "[sorry]";
         //bufferList stores commands entered
         public bufferList=[];
+        public pid=0;
+
 
         constructor() {
         }
@@ -120,6 +124,10 @@ module TSOS {
             sc= new ShellCommand(this.shellError,
                                 "error",
                                 "displays an error");
+            this.commandList[this.commandList.length]=sc;
+
+            //run
+            sc=new ShellCommand(this.shellRun, "run", "runs program");
             this.commandList[this.commandList.length]=sc;
 
 
@@ -421,8 +429,11 @@ module TSOS {
             var i=0;
             var index=0;
             var correct=["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F", " "];
+
+            var pcb;
+
             for(var i = 0; i < program.length; i++){
-                if(correct.indexOf(program.charAt(i))>-1){
+                if(correct.indexOf(program.charAt(i))>-1 && program!=""){
                     pass=true;
                 }
             }
@@ -436,8 +447,8 @@ module TSOS {
 
 
                     toMemory=program.slice(i, i+2);
-                    _CPU.memory[index]=toMemory;
-                    _Kernel.krnTrace("Index: "+index+" value: "+_CPU.memory[index].toString());
+                    _Mem.coreM[index]=toMemory;
+                    _Kernel.krnTrace("Index: "+index+" value: "+_Mem.coreM[index].toString());
                     i++;
                     index++;
 
@@ -445,6 +456,12 @@ module TSOS {
 
 
                 }
+                _PCB=new PCB();
+                _PCB.init();
+                _StdOut.putText("new process, pid= "+_PCB.pid);
+                _OsShell.pid++;
+
+                Control.updateMemoryTable();
 
                 /*
 
@@ -464,6 +481,11 @@ module TSOS {
 
         public shellError(args){
             _Kernel.krnTrapError("a random error");
+        }
+
+        public shellRun(args){
+            _CPU.isExecuting=true;
+
         }
 
 

@@ -16,21 +16,19 @@
 var TSOS;
 (function (TSOS) {
     var Cpu = (function () {
-        function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting, memory) {
+        function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (Xreg === void 0) { Xreg = 0; }
             if (Yreg === void 0) { Yreg = 0; }
             if (Zflag === void 0) { Zflag = 0; }
             if (isExecuting === void 0) { isExecuting = false; }
-            if (memory === void 0) { memory = [256]; }
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;
             this.Yreg = Yreg;
             this.Zflag = Zflag;
             this.isExecuting = isExecuting;
-            this.memory = memory;
         }
         Cpu.prototype.init = function () {
             this.PC = 0;
@@ -41,9 +39,39 @@ var TSOS;
             this.isExecuting = false;
         };
         Cpu.prototype.cycle = function () {
+            var instruction;
+            var holder;
             _Kernel.krnTrace('CPU cycle');
-            // TODO: Accumulate CPU usage and profiling statistics here.
-            // Do the real work here. Be sure to set this.isExecuting appropriately.
+            while (this.isExecuting) {
+                instruction = _Mem.coreM[this.PC];
+                switch (instruction) {
+                    case "00":
+                        this.isExecuting = false;
+                        //this.PC=0;
+                        break;
+                    case "A9":
+                        this.PC++;
+                        this.Acc = this.getConstantNumber(_Mem.coreM[this.PC]);
+                        this.PC++;
+                        break;
+                    case "A2":
+                        this.PC++;
+                        this.Xreg = this.getConstantNumber(_Mem.coreM[this.PC]);
+                        this.PC++;
+                        break;
+                    case "A0":
+                        this.PC++;
+                        this.Yreg = this.getConstantNumber(_Mem.coreM[this.PC]);
+                        this.PC++;
+                        break;
+                }
+                TSOS.Control.initCPUTable();
+                TSOS.Control.updateMemoryTable();
+            }
+        };
+        Cpu.prototype.getConstantNumber = function (num) {
+            var v = parseInt(num, 16);
+            return v;
         };
         return Cpu;
     })();

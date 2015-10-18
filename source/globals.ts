@@ -13,9 +13,8 @@
 //
 const APP_NAME: string    = "Charles Harrison TSOS";   // 'cause Bob and I were at a loss for a better name.
 
-const APP_VERSION: string = "0.195";   // What did you expect?
+const APP_VERSION: string = "0.20";   // What did you expect?
 
-const APP_VERSION: string = "0.17";   // What did you expect?
 
 
 const CPU_CLOCK_INTERVAL: number = 100;   // This is in ms (milliseconds) so 1000 = 1 second.
@@ -30,7 +29,8 @@ const KEYBOARD_IRQ: number = 1;
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
 var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
-
+var _PCB: TSOS.PCB;
+var _Mem: TSOS.Memory;
 var _OSclock: number = 0;  // Page 23.
 
 var _Mode: number = 0;     // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
@@ -38,6 +38,8 @@ var _Mode: number = 0;     // (currently unused)  0 = Kernel Mode, 1 = User Mode
 var _Canvas: HTMLCanvasElement; // Initialized in Control.hostInit().
 var _Bar: HTMLTextAreaElement;  //initialized in Control.hostInit().
 var _Program: HTMLTextAreaElement;  //initialized in Control.hostInit().
+var _MemTable: HTMLTableElement;
+var _CPUTable: HTMLTableElement;
 var _DrawingContext: any; // = _Canvas.getContext("2d");  // Assigned here for type safety, but re-initialized in Control.hostInit() for OCD and logic.
 var _DefaultFontFamily: string = "sans";        // Ignored, I think. The was just a place-holder in 2008, but the HTML canvas may have use for it.
 var _DefaultFontSize: number = 13;

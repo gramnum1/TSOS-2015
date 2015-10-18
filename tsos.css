@@ -64,3 +64,21 @@ h3 {
   font-size: 8pt;
   text-align: center;
 }
+
+#MemoryTable{
+    overflow-y:auto; 
+    overflow-x:hidden;
+    height:150px; 
+    width:400px;
+    border:solid;
+    border-color: black;
+    background-color: white;
+    margin-bottom: 30px;
+}
+#CPUTable{
+    height: auto;
+    width:400px;
+    border: solid;
+    border-color:black;
+    background-color: white;
+}

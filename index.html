@@ -18,6 +18,7 @@
     <script type="text/javascript" src="distrib/host/control.js"></script>
    <script type="text/javascript" src="distrib/host/devices.js"></script>
    <script type="text/javascript" src="distrib/host/cpu.js"></script>
+     <script type="text/javascript" src="distrib/host/Memory.js"></script>
 
    <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
    
@@ -30,7 +31,7 @@
    <script type="text/javascript" src="distrib/os/shell.js"></script>
    <script type="text/javascript" src="distrib/os/shellCommand.js"></script>
    <script type="text/javascript" src="distrib/os/userCommand.js"></script>
-    <script type="text/javascript" src="distrib/os/status.js"></script>
+    <script type="text/javascript" src="distrib/os/PCB.js"></script>
     
    <script type="text/javascript" src="distrib/os/kernel.js"></script>
    
@@ -39,7 +40,7 @@
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
    <!-- Uncomment this line below to enable GLaDOS testing -->
-   <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script>
+   <!--<script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script>-->
     <!--Bootstrap JS -->
     <script type="text/javascript" src="js/bootstrap.js"></script>
     
@@ -114,6 +115,7 @@
        </div>
     
     <div class="col-md-4">
+    <div class="row">    
    <div id="divUserProgramInput" >
       <label>
          User Program Input
@@ -124,8 +126,43 @@
                    cols="48"
          ></textarea>
       </label>
-   </div>
+        </div>
+        </div>
+        
+        <div class="row">
+            <div id="MemoryTable">
+             <table id="mTable" class="table table-condensed table-bordered">
+                 <tbody>
+                 </tbody>
+                </table>
+            </div>
+                 
+        
 </div>
+        <div class="row">
+        <div id="CPUTable">
+            <table id="cpuTable" class="table table-condensed table-bordered">
+            <tr>
+            <th>PC</th>
+            <th>Instr Reg</th>
+            <th>Acc</th>    
+            <th>Xreg</th>
+            <th>Yreg</th>
+            <th>zflag</th>    
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                </tr>    
+            </table>
+            
+            </div>
+        </div>
+       </div>
     </div> 
 <p class="footerText" style="clear:both;">
    <br>
