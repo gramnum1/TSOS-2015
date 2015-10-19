@@ -48,6 +48,8 @@ var _DefaultFontSize: number = 13;
 var _FontHeightMargin: number = 4;              // Additional space added to font size when advancing a line.
 
 var _Trace: boolean = true;  // Default the OS trace to be on.
+var _StepMode: boolean=false;
+var _Step: boolean=false;
 
 // The OS Kernel and its queues.
 var _Kernel: TSOS.Kernel;

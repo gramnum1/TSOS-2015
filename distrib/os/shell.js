@@ -363,6 +363,7 @@ var TSOS;
             }
             if (pass) {
                 _StdOut.putText("Program is good");
+                _StdOut.advanceLine();
                 program = program.replace(/\s+/g, '');
                 _MemMan.loadProgram(program);
             }
@@ -374,8 +375,13 @@ var TSOS;
             _Kernel.krnTrapError("a random error");
         };
         Shell.prototype.shellRun = function (args) {
-            _CPU.isExecuting = true;
-            _CPU.PC = 0;
+            if (args == _PCB.pid) {
+                _CPU.isExecuting = true;
+                _CPU.PC = 0;
+            }
+            else {
+                _StdOut.putText("not a valid pid");
+            }
         };
         return Shell;
     })();

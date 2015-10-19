@@ -41,129 +41,145 @@ var TSOS;
             this.isExecuting = false;
         };
         Cpu.prototype.cycle = function () {
+            if (this.isExecuting) {
+                if (_StepMode == false) {
+                    _Kernel.krnTrace('CPU cycle');
+                    this.execute();
+                }
+                if (_StepMode == true && _Step == true) {
+                    _Kernel.krnTrace('CPU cycle');
+                    this.execute();
+                    _Step = false;
+                }
+                TSOS.Control.initCPUTable();
+                TSOS.Control.updateMemoryTable();
+                TSOS.Control.checkExe();
+            }
+        };
+        Cpu.prototype.execute = function () {
             var instruction;
             var i;
             var a;
             var b;
             var c;
             var char;
-            _Kernel.krnTrace('CPU cycle');
-            if (this.isExecuting) {
-                instruction = _Mem.coreM[this.PC];
-                switch (instruction) {
-                    case "00":
-                        this.op = "00";
+            instruction = _Mem.coreM[this.PC];
+            switch (instruction) {
+                case "00":
+                    this.op = "00";
+                    this.isExecuting = false;
+                    //this.PC=0;
+                    break;
+                case "A9":
+                    this.op = "A9";
+                    this.PC++;
+                    this.Acc = parseInt(_Mem.coreM[this.PC], 16);
+                    this.PC++;
+                    break;
+                case "A2":
+                    this.op = "A2";
+                    this.PC++;
+                    this.Xreg = parseInt(_Mem.coreM[this.PC], 16);
+                    this.PC++;
+                    break;
+                case "A0":
+                    this.op = "A0";
+                    this.PC++;
+                    this.Yreg = parseInt(_Mem.coreM[this.PC], 16);
+                    this.PC++;
+                    break;
+                case "AD":
+                    this.op = "AD";
+                    i = _MemMan.toAddress();
+                    this.Acc = parseInt(_Mem.coreM[i], 16);
+                    this.PC++;
+                    break;
+                case "8D":
+                    this.op = "8d";
+                    i = _MemMan.toAddress();
+                    _Mem.coreM[i] = this.Acc.toString(16);
+                    this.PC++;
+                    break;
+                case "6D":
+                    this.op = "6d";
+                    i = _MemMan.toAddress();
+                    a = this.getConstantNumber(_Mem.coreM[i]);
+                    b = this.getConstantNumber(this.Acc.toString(16));
+                    c = a + b;
+                    this.Acc = parseInt(c.toString(), 16);
+                    this.PC++;
+                    break;
+                case "AE":
+                    this.op = "AE";
+                    i = _MemMan.toAddress();
+                    this.Xreg = parseInt(_Mem.coreM[i], 16);
+                    this.PC++;
+                    break;
+                case "AC":
+                    this.op = "AC";
+                    i = _MemMan.toAddress();
+                    this.Yreg = parseInt(_Mem.coreM[i], 16);
+                    this.PC++;
+                    break;
+                case "EE":
+                    this.op = "EE";
+                    i = _MemMan.toAddress();
+                    a = parseInt(_Mem.coreM[i], 16);
+                    a = a + 1;
+                    _Mem.coreM[i] = a.toString(16);
+                    this.PC++;
+                    break;
+                case "EA":
+                    this.op = "EA";
+                    this.PC++;
+                    break;
+                case "EC":
+                    this.op = "EC";
+                    i = _MemMan.toAddress();
+                    a = this.getConstantNumber(_Mem.coreM[i]);
+                    b = this.getConstantNumber(this.Xreg.toString());
+                    if (a == b) {
+                        this.Zflag = 0;
+                    }
+                    else {
+                        this.Zflag = 1;
+                    }
+                    this.PC++;
+                    break;
+                case "D0":
+                    this.op = "D0";
+                    this.PC++;
+                    i = parseInt(_Mem.coreM[this.PC], 16);
+                    if (this.Zflag == 1) {
+                        this.PC = 255 - i;
+                    }
+                    else {
+                        this.PC++;
+                    }
+                    break;
+                case "FF":
+                    this.op = "FF";
+                    if (this.Xreg == 01) {
+                        _StdOut.putText("Number is " + this.Yreg);
+                        this.PC++;
+                    }
+                    else if (this.Xreg == 02) {
+                        i = this.Yreg;
+                        while (_Mem.coreM[i] != 00) {
+                            char = String.fromCharCode(parseInt(_Mem.coreM[i], 16));
+                            _StdOut.putText(char);
+                            i++;
+                        }
+                        this.PC++;
+                    }
+                    else {
+                        _StdOut.putText("Value in Xreg must be 1 or 0");
                         this.isExecuting = false;
-                        //this.PC=0;
-                        break;
-                    case "A9":
-                        this.op = "A9";
-                        this.PC++;
-                        this.Acc = parseInt(_Mem.coreM[this.PC], 16);
-                        this.PC++;
-                        break;
-                    case "A2":
-                        this.op = "A2";
-                        this.PC++;
-                        this.Xreg = parseInt(_Mem.coreM[this.PC], 16);
-                        this.PC++;
-                        break;
-                    case "A0":
-                        this.op = "A0";
-                        this.PC++;
-                        this.Yreg = parseInt(_Mem.coreM[this.PC], 16);
-                        this.PC++;
-                        break;
-                    case "AD":
-                        this.op = "AD";
-                        i = _MemMan.toAddress();
-                        this.Acc = parseInt(_Mem.coreM[i], 16);
-                        this.PC++;
-                        break;
-                    case "8D":
-                        this.op = "8d";
-                        i = _MemMan.toAddress();
-                        _Mem.coreM[i] = this.Acc.toString(16);
-                        this.PC++;
-                        break;
-                    case "6D":
-                        this.op = "6d";
-                        i = _MemMan.toAddress();
-                        a = this.getConstantNumber(_Mem.coreM[i]);
-                        b = this.getConstantNumber(this.Acc.toString(16));
-                        c = a + b;
-                        this.Acc = parseInt(c.toString(), 16);
-                        this.PC++;
-                        break;
-                    case "AE":
-                        this.op = "AE";
-                        i = _MemMan.toAddress();
-                        this.Xreg = parseInt(_Mem.coreM[i], 16);
-                        this.PC++;
-                        break;
-                    case "AC":
-                        this.op = "AC";
-                        i = _MemMan.toAddress();
-                        this.Yreg = parseInt(_Mem.coreM[i], 16);
-                        this.PC++;
-                        break;
-                    case "EE":
-                        this.op = "EE";
-                        i = _MemMan.toAddress();
-                        a = parseInt(_Mem.coreM[i], 16);
-                        a = a + 1;
-                        _Mem.coreM[i] = a.toString(16);
-                        this.PC++;
-                        break;
-                    case "EA":
-                        this.op = "EA";
-                        this.PC++;
-                        break;
-                    case "EC":
-                        this.op = "EC";
-                        i = _MemMan.toAddress();
-                        a = this.getConstantNumber(_Mem.coreM[i]);
-                        b = this.getConstantNumber(this.Xreg.toString());
-                        if (a == b) {
-                            this.Zflag = 0;
-                        }
-                        else {
-                            this.Zflag = 1;
-                        }
-                        this.PC++;
-                        break;
-                    case "D0":
-                        this.op = "D0";
-                        this.PC++;
-                        i = parseInt(_Mem.coreM[this.PC], 16);
-                        if (this.Zflag == 1) {
-                            this.PC = 255 - i;
-                        }
-                        else {
-                            this.PC++;
-                        }
-                        break;
-                    case "FF":
-                        this.op = "FF";
-                        if (this.Xreg == 01) {
-                            _StdOut.putText("Number is " + this.Yreg);
-                            this.PC++;
-                        }
-                        else if (this.Xreg == 02) {
-                            this.PC++;
-                        }
-                        else {
-                            _StdOut.putText("Value in Xreg must be 1 or 0");
-                            this.isExecuting = false;
-                        }
-                        break;
-                    default:
-                        this.isExecuting = false;
-                        _StdOut.putText("Error no match found: " + _Mem.coreM[this.PC]);
-                }
-                TSOS.Control.initCPUTable();
-                TSOS.Control.updateMemoryTable();
-                TSOS.Control.checkExe();
+                    }
+                    break;
+                default:
+                    this.isExecuting = false;
+                    _StdOut.putText("Error no match found: " + _Mem.coreM[this.PC]);
             }
         };
         Cpu.prototype.getConstantNumber = function (num) {

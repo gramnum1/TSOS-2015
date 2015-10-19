@@ -13,9 +13,7 @@ module TSOS {
                     public Acc: number = 0,
                     public Xreg: number = 0,
                     public Yreg: number = 0,
-                    public Zflag: number = 0,
-                    public base: number=0,
-                    public limit: number=0){
+                    public Zflag: number = 0){
 
         }
 
@@ -26,8 +24,7 @@ module TSOS {
             this.Xreg = 0;
             this.Yreg = 0;
             this.Zflag = 0;
-            this.base=0;
-            this.limit=0;
+
         }
 
 

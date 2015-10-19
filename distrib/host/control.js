@@ -114,6 +114,20 @@ var TSOS;
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
         };
+        Control.singleStepToggle = function (tog) {
+            var btnStep = document.getElementById('step');
+            if (_StepMode == false) {
+                _StepMode = true;
+                btnStep.disabled = false;
+            }
+            else {
+                _StepMode = false;
+                btnStep.disabled = true;
+            }
+        };
+        Control.step = function (btn) {
+            _Step = true;
+        };
         Control.initCPUTable = function () {
             _CPUTable.rows[1].cells[0].innerHTML = _CPU.PC;
             _CPUTable.rows[1].cells[1].innerHTML = _CPU.op;

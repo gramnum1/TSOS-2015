@@ -38,6 +38,7 @@ module TSOS {
             _CPUTable=<HTMLTableElement>document.getElementById('cpuTable');
             _Light=<HTMLSpanElement>document.getElementById('light');
 
+
             this.initMemoryTable();
             //Create the date string and put it in _Bar
             var theDate = new Date();
@@ -132,6 +133,24 @@ module TSOS {
             // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
+        }
+        public static singleStepToggle(tog): void{
+            var btnStep=document.getElementById('step');
+            if(_StepMode==false){
+                _StepMode=true;
+                btnStep.disabled=false;
+
+
+
+            }else{
+                _StepMode=false;
+                btnStep.disabled=true;
+
+
+            }
+        }
+        public static step(btn): void{
+            _Step=true;
         }
 
         public static initCPUTable():void{
