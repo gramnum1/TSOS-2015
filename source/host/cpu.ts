@@ -39,11 +39,13 @@ module TSOS {
         }
 
         public cycle():void {
+
             var instruction;
             var i;
             var a;
             var b;
             var c;
+            var char;
             _Kernel.krnTrace('CPU cycle');
             if (this.isExecuting) {
                 instruction = _Mem.coreM[this.PC];
@@ -55,6 +57,7 @@ module TSOS {
                         break;
                     case "A9":  //load acc with const
                         this.op="A9";
+
                         this.PC++;
                         this.Acc =parseInt(_Mem.coreM[this.PC], 16);
                         this.PC++;
@@ -134,7 +137,7 @@ module TSOS {
                         this.PC++;
                         i=parseInt(_Mem.coreM[this.PC],16);
                         if(this.Zflag==1){
-                            this.PC=i;
+                            this.PC=255-i;
 
 
                         }else{
@@ -150,7 +153,8 @@ module TSOS {
 
 
                         }else if(this.Xreg==02){
-                            _StdOut.putText("some String")
+
+
                             this.PC++;
 
                         }else{

@@ -46,6 +46,7 @@ var TSOS;
             var a;
             var b;
             var c;
+            var char;
             _Kernel.krnTrace('CPU cycle');
             if (this.isExecuting) {
                 instruction = _Mem.coreM[this.PC];
@@ -136,7 +137,7 @@ var TSOS;
                         this.PC++;
                         i = parseInt(_Mem.coreM[this.PC], 16);
                         if (this.Zflag == 1) {
-                            this.PC = i;
+                            this.PC = 255 - i;
                         }
                         else {
                             this.PC++;
@@ -149,7 +150,6 @@ var TSOS;
                             this.PC++;
                         }
                         else if (this.Xreg == 02) {
-                            _StdOut.putText("some String");
                             this.PC++;
                         }
                         else {
