@@ -36,6 +36,7 @@ module TSOS {
             _Program=<HTMLTextAreaElement>document.getElementById('taProgramInput');  //User Program Input TextArea
             _MemTable=<HTMLTableElement>document.getElementById('mTable');
             _CPUTable=<HTMLTableElement>document.getElementById('cpuTable');
+            _PCBTable=<HTMLTableElement>document.getElementById('pcbTable');
             _Light=<HTMLSpanElement>document.getElementById('light');
 
 
@@ -169,8 +170,8 @@ module TSOS {
                 for(var j=0; j<9; ++j){
                     var cell=row.insertCell(j);
                     if(j==0) {
-                        var lable = (i * 8).toString(16).toLocaleUpperCase();
-                        cell.innerHTML = "0x" + lable;
+                        var label = (i * 8).toString(16).toLocaleUpperCase();
+                        cell.innerHTML = "0x" + label;
                     }else{
                         cell.innerHTML="00";
                     }
@@ -215,6 +216,16 @@ module TSOS {
 
 
             }
+        public static updatePCBTable(): void{
+            _PCBTable.rows[1].cells[0].innerHTML=_PCB.pid;
+            _PCBTable.rows[1].cells[1].innerHTML=_PCB.state;
+            _PCBTable.rows[1].cells[2].innerHTML=_PCB.PC;
+            _PCBTable.rows[1].cells[3].innerHTML=_PCB.Acc;
+            _PCBTable.rows[1].cells[4].innerHTML=_PCB.Xreg;
+            _PCBTable.rows[1].cells[5].innerHTML=_PCB.Yreg;
+            _PCBTable.rows[1].cells[6].innerHTML=_PCB.Zflag;
+
+        }
         public static checkExe():void{
             if(_CPU.isExecuting){
                 _Light.style.color="green";

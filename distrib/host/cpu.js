@@ -69,6 +69,7 @@ var TSOS;
                     this.op = "00";
                     this.isExecuting = false;
                     //this.PC=0;
+                    this.loadOffPCB();
                     break;
                 case "A9":
                     this.op = "A9";
@@ -185,6 +186,15 @@ var TSOS;
         Cpu.prototype.getConstantNumber = function (num) {
             var v = parseInt(num, 16);
             return v;
+        };
+        Cpu.prototype.loadOffPCB = function () {
+            _PCB.state = "terminated";
+            _PCB.PC = this.PC;
+            _PCB.Acc = this.Acc;
+            _PCB.Xreg = this.Xreg;
+            _PCB.Yreg = this.Yreg;
+            _PCB.Zflag = this.Zflag;
+            TSOS.Control.updatePCBTable();
         };
         return Cpu;
     })();

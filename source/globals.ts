@@ -41,6 +41,7 @@ var _Bar: HTMLTextAreaElement;  //initialized in Control.hostInit().
 var _Program: HTMLTextAreaElement;  //initialized in Control.hostInit().
 var _MemTable: HTMLTableElement;
 var _CPUTable: HTMLTableElement;
+var _PCBTable: HTMLTableElement;
 var _Light: HTMLSpanElement;
 var _DrawingContext: any; // = _Canvas.getContext("2d");  // Assigned here for type safety, but re-initialized in Control.hostInit() for OCD and logic.
 var _DefaultFontFamily: string = "sans";        // Ignored, I think. The was just a place-holder in 2008, but the HTML canvas may have use for it.

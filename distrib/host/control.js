@@ -34,6 +34,7 @@ var TSOS;
             _Program = document.getElementById('taProgramInput'); //User Program Input TextArea
             _MemTable = document.getElementById('mTable');
             _CPUTable = document.getElementById('cpuTable');
+            _PCBTable = document.getElementById('pcbTable');
             _Light = document.getElementById('light');
             this.initMemoryTable();
             //Create the date string and put it in _Bar
@@ -175,6 +176,15 @@ var TSOS;
                     }
                 }
             }
+        };
+        Control.updatePCBTable = function () {
+            _PCBTable.rows[1].cells[0].innerHTML = _PCB.pid;
+            _PCBTable.rows[1].cells[1].innerHTML = _PCB.state;
+            _PCBTable.rows[1].cells[2].innerHTML = _PCB.PC;
+            _PCBTable.rows[1].cells[3].innerHTML = _PCB.Acc;
+            _PCBTable.rows[1].cells[4].innerHTML = _PCB.Xreg;
+            _PCBTable.rows[1].cells[5].innerHTML = _PCB.Yreg;
+            _PCBTable.rows[1].cells[6].innerHTML = _PCB.Zflag;
         };
         Control.checkExe = function () {
             if (_CPU.isExecuting) {

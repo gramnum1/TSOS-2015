@@ -74,6 +74,7 @@ module TSOS {
                     this.op="00";
                     this.isExecuting = false;
                     //this.PC=0;
+                    this.loadOffPCB();
                     break;
                 case "A9":  //load acc with const
                     this.op="A9";
@@ -208,6 +209,16 @@ module TSOS {
             return v;
 
 
+        }
+        public loadOffPCB(): void{
+            _PCB.state="terminated";
+            _PCB.PC=this.PC;
+            _PCB.Acc=this.Acc;
+            _PCB.Xreg=this.Xreg;
+            _PCB.Yreg=this.Yreg;
+            _PCB.Zflag=this.Zflag;
+
+            Control.updatePCBTable();
         }
 
 
