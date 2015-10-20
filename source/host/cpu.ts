@@ -41,21 +41,24 @@ module TSOS {
         public cycle():void {
 
 
-
             if (this.isExecuting) {
+                //check if single step mode is on
                 if(_StepMode==false){
                     _Kernel.krnTrace('CPU cycle');
                     this.execute();
                 }
+                /*If step mode is on and
+                 *Step button has been pressed
+                 */
                 if(_StepMode==true && _Step==true){
                     _Kernel.krnTrace('CPU cycle');
                     this.execute();
                     _Step=false;
                 }
 
-                Control.initCPUTable();
-                Control.updateMemoryTable();
-                Control.checkExe();
+                Control.initCPUTable(); //update CPUTable
+                Control.updateMemoryTable(); //Update memory Table
+                Control.checkExe();          //manage CPU dashboard light
 
 
             }
@@ -155,7 +158,9 @@ module TSOS {
                     this.op="EA";
                     this.PC++;
                     break;
-                //BNE
+                /*if mem addr=xreg, zflag=1
+                  if mem addr!=xreg, zflag=0
+                 */
                 case "EC":
                     this.op="EC";
                     i=_MemMan.toAddress();
@@ -168,32 +173,34 @@ module TSOS {
                     }
                     this.PC++;
                     break;
-
+                //BNE
                 case "D0":
                     this.op="D0";
                     ++this.PC;
+                   //jump amount=where yuou are + number after D0
                     var branch=this.PC+this.getConstantNumber(_Mem.coreM[this.PC]);
 
-                    //_StdOut.putText(branch.toString()+" ");
+
                     if(this.Zflag==0){
                         this.PC=branch+1;
+                        //if branch is too large deal with it.
                         if(this.PC>255){
                             this.PC-=256;
                         }
 
-
+                     //Zflag=1
                     }else{
                         this.PC++;
                     }
                     break;
+                //syscall
                 case "FF":
                     this.op="FF";
-
+                    //print int
                     if(this.Xreg==1){
                         _StdOut.putText(this.Yreg.toString());
                         this.PC++;
-
-
+                    //print string
                     }else if(this.Xreg==2) {
                         i = this.Yreg;
                         while(_Mem.coreM[i]!=00) {
@@ -224,13 +231,24 @@ module TSOS {
 
         }
 
-
+        /*getConstantNumber(num)
+        probably didn't have to be its own method
+        but oh well.
+        takes a hex string and turns it into a decimal number
+         */
         public getConstantNumber(num:string):number {
             var v = parseInt(num, 16);
             return v;
 
 
         }
+
+        /*loadOffPCB()
+        at the end of process execution
+        load off all cpu info onto
+        the PCB and update the
+        PCBTable
+         */
         public loadOffPCB(): void{
             _PCB.state="terminated";
             _PCB.PC=this.PC;

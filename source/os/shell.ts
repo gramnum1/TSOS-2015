@@ -462,6 +462,12 @@ module TSOS {
             _Kernel.krnTrapError("a random error");
         }
 
+        /*shellRun(args)
+        checks to see if number after run
+        matches number in PCB.pid,
+        turns on isExecuting
+        resets PC back to 0
+         */
         public shellRun(args){
             if(args==_PCB.pid) {
                 _CPU.isExecuting = true;

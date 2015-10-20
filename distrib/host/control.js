@@ -115,6 +115,10 @@ var TSOS;
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
         };
+        /*singleStepToggle(tog)
+        Manages turning on and off
+        single step mode with the toggle
+         */
         Control.singleStepToggle = function (tog) {
             var btnStep = document.getElementById('step');
             if (_StepMode == false) {
@@ -128,9 +132,17 @@ var TSOS;
                 btnStep.style.display = "none";
             }
         };
+        /*step(btn)
+        turns makes _Step true when
+        step button is pressed
+         */
         Control.step = function (btn) {
             _Step = true;
         };
+        /*initCPUTable()
+        initializes and updates the
+        CPUTable
+         */
         Control.initCPUTable = function () {
             _CPUTable.rows[1].cells[0].innerHTML = _CPU.PC;
             _CPUTable.rows[1].cells[1].innerHTML = _CPU.op;
@@ -139,12 +151,19 @@ var TSOS;
             _CPUTable.rows[1].cells[4].innerHTML = _CPU.Yreg;
             _CPUTable.rows[1].cells[5].innerHTML = _CPU.Zflag;
         };
+        /*initMemoryTable()
+        initializes the Memory Table
+         */
         Control.initMemoryTable = function () {
+            //create new rows
             for (var i = 0; i < 256 / 8; ++i) {
                 var row = _MemTable.insertRow(i);
+                //create cells in these new rows
                 for (var j = 0; j < 9; ++j) {
                     var cell = row.insertCell(j);
+                    //first col
                     if (j == 0) {
+                        //label marks the first address in a row
                         var label = (i * 8).toString(16).toLocaleUpperCase();
                         cell.innerHTML = "0x" + label;
                     }
@@ -154,17 +173,21 @@ var TSOS;
                 }
             }
         };
+        /*updateMemoryTable
+        Updates the memory Table
+        durring runtime
+         */
         Control.updateMemoryTable = function () {
             var memoryIndex = 0;
             var rowIndex;
             var colIndex;
+            //grab existing row
             for (var i = 0; i < 256 / 8; ++i) {
                 rowIndex = i;
+                //grab existing cell
                 for (var j = 0; j < 9; ++j) {
                     colIndex = j;
                     if (colIndex == 0) {
-                        var lable = (i * 8).toString(16).toLocaleUpperCase();
-                        _MemTable.rows[rowIndex].cells[colIndex].innerHTML = "0x" + lable;
                     }
                     else {
                         if (_Mem.coreM[memoryIndex] == null) {
@@ -179,6 +202,10 @@ var TSOS;
                 }
             }
         };
+        /*
+        updatePCBTable()
+        updates the PCBTable after process terminates
+         */
         Control.updatePCBTable = function () {
             _PCBTable.rows[1].cells[0].innerHTML = _PCB.pid;
             _PCBTable.rows[1].cells[1].innerHTML = _PCB.state;
@@ -188,6 +215,13 @@ var TSOS;
             _PCBTable.rows[1].cells[5].innerHTML = _PCB.Yreg;
             _PCBTable.rows[1].cells[6].innerHTML = _PCB.Zflag;
         };
+        /*checkExe()
+        if CPU is executing light is green
+        if CPU is not executing light is red
+        usefull for nowing whether cpu is done
+        executing or is in an infinite loop
+        or is done executing
+         */
         Control.checkExe = function () {
             if (_CPU.isExecuting) {
                 _Light.style.color = "green";

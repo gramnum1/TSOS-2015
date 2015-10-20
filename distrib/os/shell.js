@@ -378,6 +378,12 @@ var TSOS;
         Shell.prototype.shellError = function (args) {
             _Kernel.krnTrapError("a random error");
         };
+        /*shellRun(args)
+        checks to see if number after run
+        matches number in PCB.pid,
+        turns on isExecuting
+        resets PC back to 0
+         */
         Shell.prototype.shellRun = function (args) {
             if (args == _PCB.pid) {
                 _CPU.isExecuting = true;

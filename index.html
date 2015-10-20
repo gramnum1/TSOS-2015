@@ -81,7 +81,7 @@
              tabindex="2"
              onclick="TSOS.Control.hostBtnReset_click(this);">
    
-       <input  name="stepMode" type="checkbox" data-on-color="success" data-off-color="danger"data-inverse="true" data-label-text="Step Mode" data-size="large"  onchange="TSOS.Control.singleStepToggle(this)" checked />
+       <input  name="stepMode" type="checkbox" data-on-color="success" data-off-color="danger"data-inverse="true" data-label-text="Step" data-size="large"  onchange="TSOS.Control.singleStepToggle(this)" checked />
        <button class="btn btn-primary" id="step" onclick="TSOS.Control.step(this)" disabled style="display: none;">
            <span class="glyphicon glyphicon-play"></span></button>
     </div>
@@ -112,7 +112,7 @@
        
        <div class="col-md-4">
    <div id="divLog" >
-      <label>
+      <label style="margin-left: 50px !important">
          Host Log
          <br>
          <textarea name="taHostLog"

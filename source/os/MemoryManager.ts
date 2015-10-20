@@ -7,14 +7,18 @@ module TSOS {
 
         constructor(){}
 
-
+        /*loadProgram(program)
+          loads a program into memory and  creates a PCB
+          and assigns it a PID
+         */
         public loadProgram(program: string):void {
             var toMemory;
             var index=0;
             for (var i = 0; i < program.length; i++) {
 
-
+                //pull bytes out of string two char at a time
                 toMemory = program.slice(i, i + 2);
+                //throw byte into memory
                 _Mem.coreM[index] = toMemory;
                 _Kernel.krnTrace("Index: " + index + " value: " + _Mem.coreM[index].toString());
                 i++;
@@ -22,11 +26,13 @@ module TSOS {
 
 
             }
+
+            //create new PCB
             _PCB = new PCB();
             _PCB.init();
             _StdOut.putText("new process, pid= " + _PCB.pid);
             _OsShell.pid++;
-
+            //update memory Table
             Control.updateMemoryTable();
 
             /*
@@ -40,7 +46,12 @@ module TSOS {
 
         }
 
-
+        /*toAddress()
+         takes next two bytes
+         after an opode, turns them into a
+         decimal address for the memory array
+         and returns it
+         */
         public toAddress(): number{
             var index;
             _CPU.PC++;

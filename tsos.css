@@ -34,7 +34,7 @@ h3 {
   background-color:#DFDBC3;
   border: 2px solid red;
   cursor: default;
- 
+    
     
     
 }
@@ -42,9 +42,13 @@ h3 {
 #divConsole{
     /*overflow: scroll;*/
     
+    
 
     
     
+}
+#taHostLog{
+    /*margin-left: 50px !important;*/
 }
 
 #sbar {
