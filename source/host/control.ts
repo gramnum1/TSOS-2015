@@ -34,10 +34,10 @@ module TSOS {
             _Canvas = <HTMLCanvasElement>document.getElementById('display');
             _Bar=<HTMLTextAreaElement>document.getElementById('sbar');  //Status Bar HTML TextArea
             _Program=<HTMLTextAreaElement>document.getElementById('taProgramInput');  //User Program Input TextArea
-            _MemTable=<HTMLTableElement>document.getElementById('mTable');
-            _CPUTable=<HTMLTableElement>document.getElementById('cpuTable');
-            _PCBTable=<HTMLTableElement>document.getElementById('pcbTable');
-            _Light=<HTMLSpanElement>document.getElementById('light');
+            _MemTable=<HTMLTableElement>document.getElementById('mTable');    //Memory Table
+            _CPUTable=<HTMLTableElement>document.getElementById('cpuTable');  //CPU Table
+            _PCBTable=<HTMLTableElement>document.getElementById('pcbTable');  //PCBTable
+            _Light=<HTMLSpanElement>document.getElementById('light');         //Ligt to show whether cpu is executing or not
 
 
             this.initMemoryTable();
@@ -79,7 +79,7 @@ module TSOS {
             var now: number = new Date().getTime();
 
             // Build the log string.
-            var str: string = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " })"  + "\n";
+            var str: string = "clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " "  + "\n";
 
             // Update the log console.
             var taLog = <HTMLInputElement> document.getElementById("taHostLog");
@@ -107,10 +107,10 @@ module TSOS {
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
             _CPU = new Cpu();  // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init();       //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
-            _Mem= new Memory();
+            _Mem= new Memory(); //initialize memory
             _Mem.init();
-            _MemMan=new MemoryManager();
-            this.initCPUTable();
+            _MemMan=new MemoryManager();  //initialize memory manager
+            this.initCPUTable();          //initialize CPU Table
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
@@ -140,12 +140,14 @@ module TSOS {
             if(_StepMode==false){
                 _StepMode=true;
                 btnStep.disabled=false;
+                btnStep.style.display="inline";
 
 
 
             }else{
                 _StepMode=false;
                 btnStep.disabled=true;
+                btnStep.style.display="none";
 
 
             }

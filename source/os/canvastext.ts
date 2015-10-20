@@ -158,6 +158,9 @@ module TSOS {
 
 
             for (var i = 0; i < len; i++) {
+
+
+                var c = CanvasTextFunctions.letter(str.charAt(i));
                 //line wrap
                 if(x>490){
                     x=0+c.width*mag;
@@ -165,7 +168,6 @@ module TSOS {
                     _StdOut.advanceLine();
 
                 }
-                var c = CanvasTextFunctions.letter(str.charAt(i));
                 if (!c) {
                     continue;
                 }
@@ -190,7 +192,7 @@ module TSOS {
                 ctx.stroke();
 
                 x += c.width*mag;
-               // _Kernel.krnTrace("linewrap: x= "+x+" y= "+y);
+                _Kernel.krnTrace("linewrap: x= "+x+" y= "+y);
 
 
             }

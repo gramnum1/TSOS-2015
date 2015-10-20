@@ -65,63 +65,77 @@ var TSOS;
             var char;
             instruction = _Mem.coreM[this.PC];
             switch (instruction) {
+                //End
                 case "00":
+                case "0":
                     this.op = "00";
                     this.isExecuting = false;
                     //this.PC=0;
                     this.loadOffPCB();
+                    if (_StepMode) {
+                        _Step = false;
+                    }
                     break;
+                //load acc with const
                 case "A9":
                     this.op = "A9";
                     this.PC++;
                     this.Acc = parseInt(_Mem.coreM[this.PC], 16);
                     this.PC++;
                     break;
+                //Load X constant
                 case "A2":
                     this.op = "A2";
                     this.PC++;
                     this.Xreg = parseInt(_Mem.coreM[this.PC], 16);
                     this.PC++;
                     break;
+                //load Y Constant
                 case "A0":
                     this.op = "A0";
                     this.PC++;
                     this.Yreg = parseInt(_Mem.coreM[this.PC], 16);
                     this.PC++;
                     break;
+                //load Acc from memory
                 case "AD":
                     this.op = "AD";
                     i = _MemMan.toAddress();
                     this.Acc = parseInt(_Mem.coreM[i], 16);
                     this.PC++;
                     break;
+                //store Acc to memory
                 case "8D":
                     this.op = "8d";
                     i = _MemMan.toAddress();
                     _Mem.coreM[i] = this.Acc.toString(16);
                     this.PC++;
                     break;
+                //Add to Acc from memory with carry
                 case "6D":
                     this.op = "6d";
                     i = _MemMan.toAddress();
                     a = this.getConstantNumber(_Mem.coreM[i]);
-                    b = this.getConstantNumber(this.Acc.toString(16));
+                    b = this.Acc;
                     c = a + b;
-                    this.Acc = parseInt(c.toString(), 16);
+                    this.Acc = c;
                     this.PC++;
                     break;
+                //load X from memory
                 case "AE":
                     this.op = "AE";
                     i = _MemMan.toAddress();
                     this.Xreg = parseInt(_Mem.coreM[i], 16);
                     this.PC++;
                     break;
+                //load Y from memory
                 case "AC":
                     this.op = "AC";
                     i = _MemMan.toAddress();
                     this.Yreg = parseInt(_Mem.coreM[i], 16);
                     this.PC++;
                     break;
+                //increment byte
                 case "EE":
                     this.op = "EE";
                     i = _MemMan.toAddress();
@@ -130,29 +144,35 @@ var TSOS;
                     _Mem.coreM[i] = a.toString(16);
                     this.PC++;
                     break;
+                //No op
                 case "EA":
                     this.op = "EA";
                     this.PC++;
                     break;
+                //BNE
                 case "EC":
                     this.op = "EC";
                     i = _MemMan.toAddress();
                     a = this.getConstantNumber(_Mem.coreM[i]);
-                    b = this.getConstantNumber(this.Xreg.toString());
+                    b = this.Xreg;
                     if (a == b) {
-                        this.Zflag = 0;
+                        this.Zflag = 1;
                     }
                     else {
-                        this.Zflag = 1;
+                        this.Zflag = 0;
                     }
                     this.PC++;
                     break;
                 case "D0":
                     this.op = "D0";
-                    this.PC++;
-                    i = parseInt(_Mem.coreM[this.PC], 16);
-                    if (this.Zflag == 1) {
-                        this.PC = 255 - i;
+                    ++this.PC;
+                    var branch = this.PC + this.getConstantNumber(_Mem.coreM[this.PC]);
+                    //_StdOut.putText(branch.toString()+" ");
+                    if (this.Zflag == 0) {
+                        this.PC = branch + 1;
+                        if (this.PC > 255) {
+                            this.PC -= 256;
+                        }
                     }
                     else {
                         this.PC++;
@@ -160,11 +180,11 @@ var TSOS;
                     break;
                 case "FF":
                     this.op = "FF";
-                    if (this.Xreg == 01) {
-                        _StdOut.putText("Number is " + this.Yreg);
+                    if (this.Xreg == 1) {
+                        _StdOut.putText(this.Yreg.toString());
                         this.PC++;
                     }
-                    else if (this.Xreg == 02) {
+                    else if (this.Xreg == 2) {
                         i = this.Yreg;
                         while (_Mem.coreM[i] != 00) {
                             char = String.fromCharCode(parseInt(_Mem.coreM[i], 16));

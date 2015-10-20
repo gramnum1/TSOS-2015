@@ -423,24 +423,27 @@ module TSOS {
         //shellLoad()  takes value of user program input and if its valid prints program is good, if invalid outputs program is invalid
         public shellLoad(args){
             var program=_Program.value;
-            _Kernel.krnTrace(program);
+            if(program!=""){
+            program=program.replace(/\s+/g, '').toUpperCase();
+            //_StdOut.putText(program);
             var toMemory="";
-            var pass=false;
+            var pass=true;
             var i=0;
             var index=0;
-            var correct=["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F", " "];
+
 
             var pcb;
 
             for(var i = 0; i < program.length; i++){
-                if(correct.indexOf(program.charAt(i))>-1 && program!=""){
-                    pass=true;
+                if(program.charAt(i).match(/[0-9A-F]/g)==null){
+                    pass=false;
+
                 }
             }
             if(pass){
                 _StdOut.putText("Program is good");
                 _StdOut.advanceLine();
-                program=program.replace(/\s+/g, '');
+
                 _MemMan.loadProgram(program);
 
 
@@ -449,7 +452,11 @@ module TSOS {
         }else {
                 _StdOut.putText("program is invalid");
 
-            }}
+            }}else{
+
+            _StdOut.putText("User Program Input is empty");
+            }
+        }
 
         public shellError(args){
             _Kernel.krnTrapError("a random error");

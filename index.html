@@ -40,7 +40,7 @@
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
    <!-- Uncomment this line below to enable GLaDOS testing -->
-   <!--<script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script>-->
+   <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script>
     <!--Bootstrap JS -->
     <script type="text/javascript" src="js/jquery-1.11.3.js"></script>
     <script type="text/javascript" src="js/bootstrap.js"></script>
@@ -52,13 +52,13 @@
 
 <body onload="onDocumentLoad()">
 
-<div id="divMain" style="width:100%;">
-
+    
+<div class="titleBar">
    <div id="divButtonBar" style="margin:4px;">
       <input type="button"
              id = "btnStartOS"
              name="brnStartOS"
-             class="btn btn-success"
+             class="btn btn-default"
              value="Start"
              tabindex="0"
              onclick="TSOS.Control.hostBtnStartOS_click(this);">
@@ -66,7 +66,7 @@
       <input type="button"
              id = "btnHaltOS"
              name="brnHaltOS"
-             class="btn btn-danger"
+             class="btn btn-default"
              disabled="disabled"
              value="Halt"
              tabindex="1"
@@ -75,13 +75,19 @@
       <input type="button"
              id = "btnReset"
              name="brnReset"
-             class="btn btn-warning"
+             class="btn btn-default"
              disabled="disabled"
              value="Reset"
              tabindex="2"
              onclick="TSOS.Control.hostBtnReset_click(this);">
-   </div>
-
+   
+       <input  name="stepMode" type="checkbox" data-on-color="success" data-off-color="danger"data-inverse="true" data-label-text="Step Mode" data-size="large"  onchange="TSOS.Control.singleStepToggle(this)" checked />
+       <button class="btn btn-primary" id="step" onclick="TSOS.Control.step(this)" disabled style="display: none;">
+           <span class="glyphicon glyphicon-play"></span></button>
+    </div>
+    
+    </div>
+    <script>$("[name='stepMode']").bootstrapSwitch();</script>
    <div class="row">
        <div class="col-md-4">
            <textarea id="sbar" rows="4" cols="50">
@@ -145,7 +151,7 @@
         
 </div>
         <div class="row">
-            <label for="cpu"><span id="light" class="glyphicon glyphicon-flash"></span>CPU  Step Mode:<input name="stepMode" type="checkbox" onchange="TSOS.Control.singleStepToggle(this)" checked /><button class="btn btn-primary" id="step" onclick="TSOS.Control.step(this)" disabled>Step</button></label>
+            <label for="cpu"><span id="light" class="glyphicon glyphicon-flash"></span>CPU</label>
             <div id="CPUTable">
             
             <table name="cpu" id="cpuTable" class="table table-condensed table-bordered">
@@ -195,7 +201,7 @@
             </table>
         </div>
         </div>
-        <script>$("[name='stepMode']").bootstrapSwitch();</script>
+        
        </div>
     </div> 
 <p class="footerText" style="clear:both;">

@@ -32,10 +32,10 @@ var TSOS;
             _Canvas = document.getElementById('display');
             _Bar = document.getElementById('sbar'); //Status Bar HTML TextArea
             _Program = document.getElementById('taProgramInput'); //User Program Input TextArea
-            _MemTable = document.getElementById('mTable');
-            _CPUTable = document.getElementById('cpuTable');
-            _PCBTable = document.getElementById('pcbTable');
-            _Light = document.getElementById('light');
+            _MemTable = document.getElementById('mTable'); //Memory Table
+            _CPUTable = document.getElementById('cpuTable'); //CPU Table
+            _PCBTable = document.getElementById('pcbTable'); //PCBTable
+            _Light = document.getElementById('light'); //Ligt to show whether cpu is executing or not
             this.initMemoryTable();
             //Create the date string and put it in _Bar
             var theDate = new Date();
@@ -68,7 +68,7 @@ var TSOS;
             // Note the REAL clock in milliseconds since January 1, 1970.
             var now = new Date().getTime();
             // Build the log string.
-            var str = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now + " })" + "\n";
+            var str = "clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now + " " + "\n";
             // Update the log console.
             var taLog = document.getElementById("taHostLog");
             taLog.value = str + taLog.value;
@@ -89,10 +89,10 @@ var TSOS;
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
             _CPU = new TSOS.Cpu(); // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init(); //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
-            _Mem = new TSOS.Memory();
+            _Mem = new TSOS.Memory(); //initialize memory
             _Mem.init();
-            _MemMan = new TSOS.MemoryManager();
-            this.initCPUTable();
+            _MemMan = new TSOS.MemoryManager(); //initialize memory manager
+            this.initCPUTable(); //initialize CPU Table
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
@@ -120,10 +120,12 @@ var TSOS;
             if (_StepMode == false) {
                 _StepMode = true;
                 btnStep.disabled = false;
+                btnStep.style.display = "inline";
             }
             else {
                 _StepMode = false;
                 btnStep.disabled = true;
+                btnStep.style.display = "none";
             }
         };
         Control.step = function (btn) {
@@ -143,8 +145,8 @@ var TSOS;
                 for (var j = 0; j < 9; ++j) {
                     var cell = row.insertCell(j);
                     if (j == 0) {
-                        var lable = (i * 8).toString(16).toLocaleUpperCase();
-                        cell.innerHTML = "0x" + lable;
+                        var label = (i * 8).toString(16).toLocaleUpperCase();
+                        cell.innerHTML = "0x" + label;
                     }
                     else {
                         cell.innerHTML = "00";
