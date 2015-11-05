@@ -2,7 +2,13 @@
 var TSOS;
 (function (TSOS) {
     var MemoryManager = (function () {
-        function MemoryManager() {
+        function MemoryManager(block, bases, limits) {
+            if (block === void 0) { block = 0; }
+            if (bases === void 0) { bases = [0, 256, 512]; }
+            if (limits === void 0) { limits = [256, 512, 768]; }
+            this.block = block;
+            this.bases = bases;
+            this.limits = limits;
         }
         MemoryManager.prototype.clearMem = function () {
             for (var i = 0; i < MAX_MEM; i++) {
@@ -16,31 +22,39 @@ var TSOS;
          */
         MemoryManager.prototype.loadProgram = function (program) {
             var toMemory;
-            var index = 0;
-            for (var i = 0; i < program.length; i++) {
-                //pull bytes out of string two char at a time
-                toMemory = program.slice(i, i + 2);
-                //throw byte into memory
-                _Mem.coreM[index] = toMemory;
-                _Kernel.krnTrace("Index: " + index + " value: " + _Mem.coreM[index].toString());
-                i++;
-                index++;
+            var index = this.bases[this.block];
+            if (this.block < 3 && program.length < 256) {
+                for (var i = 0; i < program.length; i++) {
+                    //pull bytes out of string two char at a time
+                    toMemory = program.slice(i, i + 2);
+                    //throw byte into memory
+                    _Mem.coreM[index] = toMemory;
+                    _Kernel.krnTrace("Index: " + index + " value: " + _Mem.coreM[index].toString());
+                    i++;
+                    index++;
+                }
+                //create new PCB
+                var newBase = this.bases[this.block];
+                var newLimit = this.limits[this.block];
+                _PCB = new TSOS.PCB();
+                _PCB.init(newBase, newLimit);
+                _StdOut.putText("pid= " + _PCB.pid + " base=" + _PCB.base + " Limit=" + _PCB.limit);
+                _OsShell.pid++;
+                //update memory Table
+                TSOS.Control.updateMemoryTable();
+                this.block++;
             }
-            //create new PCB
-            _PCB = new TSOS.PCB();
-            _PCB.init();
-            _StdOut.putText("new process, pid= " + _PCB.pid);
-            _OsShell.pid++;
-            //update memory Table
-            TSOS.Control.updateMemoryTable();
-            /*
-
-             toMemory=program.charAt(i)+program.charAt(i+1);
-             _CPU.memory[_CPU.memory.length]=toMemory;
-             _Kernel.krnTrace(toMemory);
-             }
-             */
+            else {
+                _StdOut.putText("error loading into memory");
+            }
         };
+        /*
+
+         toMemory=program.charAt(i)+program.charAt(i+1);
+         _CPU.memory[_CPU.memory.length]=toMemory;
+         _Kernel.krnTrace(toMemory);
+         }
+         */
         /*toAddress()
          takes next two bytes
          after an opode, turns them into a

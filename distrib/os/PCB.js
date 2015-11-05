@@ -25,7 +25,7 @@ var TSOS;
             this.base = base;
             this.limit = limit;
         }
-        PCB.prototype.init = function () {
+        PCB.prototype.init = function (newBase, newLimit) {
             this.pid = _OsShell.pid;
             this.state = "new";
             this.PC = 0;
@@ -33,6 +33,8 @@ var TSOS;
             this.Xreg = 0;
             this.Yreg = 0;
             this.Zflag = 0;
+            this.base = newBase;
+            this.limit = newLimit;
         };
         return PCB;
     })();
