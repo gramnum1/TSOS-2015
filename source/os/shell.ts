@@ -130,6 +130,11 @@ module TSOS {
             sc=new ShellCommand(this.shellRun, "run", "runs program");
             this.commandList[this.commandList.length]=sc;
 
+            //clearmem
+            sc=new ShellCommand(this.shellClearMem, "clearmem", "clears memory");
+            this.commandList[this.commandList.length]=sc;
+
+
 
 
 
@@ -475,6 +480,11 @@ module TSOS {
             }else{
                 _StdOut.putText("not a valid pid");
             }
+
+        }
+
+        public shellClearMem(args){
+            _MemMan.clearMem();
 
         }
 

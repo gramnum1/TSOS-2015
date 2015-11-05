@@ -74,12 +74,13 @@ module TSOS {
         public static hostLog(msg: string, source: string = "?"): void {
             // Note the OS CLOCK.
             var clock: number = _OSclock;
+            
 
             // Note the REAL clock in milliseconds since January 1, 1970.
             var now: number = new Date().getTime();
 
             // Build the log string.
-            var str: string = "clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " "  + "\n";
+            var str: string = "clock:"+clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " "  + "\n";
 
             // Update the log console.
             var taLog = <HTMLInputElement> document.getElementById("taHostLog");
@@ -191,7 +192,7 @@ module TSOS {
          */
         public static initMemoryTable():void{
             //create new rows
-            for(var i=0; i<256/8; ++i){
+            for(var i=0; i<MAX_MEM/8; ++i){
                 var row=_MemTable.insertRow(i);
                 //create cells in these new rows
                 for(var j=0; j<9; ++j){
@@ -220,7 +221,7 @@ module TSOS {
             var rowIndex;
             var colIndex;
             //grab existing row
-            for(var i=0; i<256/8; ++i){
+            for(var i=0; i<MAX_MEM/8; ++i){
                 rowIndex=i;
                 //grab existing cell
                 for(var j=0; j<9; ++j){

@@ -156,7 +156,7 @@ var TSOS;
          */
         Control.initMemoryTable = function () {
             //create new rows
-            for (var i = 0; i < 256 / 8; ++i) {
+            for (var i = 0; i < MAX_MEM / 8; ++i) {
                 var row = _MemTable.insertRow(i);
                 //create cells in these new rows
                 for (var j = 0; j < 9; ++j) {
@@ -182,7 +182,7 @@ var TSOS;
             var rowIndex;
             var colIndex;
             //grab existing row
-            for (var i = 0; i < 256 / 8; ++i) {
+            for (var i = 0; i < MAX_MEM / 8; ++i) {
                 rowIndex = i;
                 //grab existing cell
                 for (var j = 0; j < 9; ++j) {

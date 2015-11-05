@@ -4,6 +4,12 @@ var TSOS;
     var MemoryManager = (function () {
         function MemoryManager() {
         }
+        MemoryManager.prototype.clearMem = function () {
+            for (var i = 0; i < MAX_MEM; i++) {
+                _Mem.coreM[i] = "00";
+            }
+            TSOS.Control.updateMemoryTable();
+        };
         /*loadProgram(program)
           loads a program into memory and  creates a PCB
           and assigns it a PID
