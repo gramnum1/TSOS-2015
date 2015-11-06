@@ -42,5 +42,10 @@ module TSOS {
             }
             return retVal;
         }
+
+        public getObj(index){
+            var element=this.q[index];
+            return element;
+        }
     }
 }

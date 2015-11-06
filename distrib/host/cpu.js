@@ -16,7 +16,7 @@
 var TSOS;
 (function (TSOS) {
     var Cpu = (function () {
-        function Cpu(PC, Acc, Xreg, Yreg, Zflag, op, isExecuting) {
+        function Cpu(PC, Acc, Xreg, Yreg, Zflag, op, isExecuting, currPCB) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (Xreg === void 0) { Xreg = 0; }
@@ -24,6 +24,7 @@ var TSOS;
             if (Zflag === void 0) { Zflag = 0; }
             if (op === void 0) { op = ""; }
             if (isExecuting === void 0) { isExecuting = false; }
+            if (currPCB === void 0) { currPCB = null; }
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;
@@ -31,6 +32,7 @@ var TSOS;
             this.Zflag = Zflag;
             this.op = op;
             this.isExecuting = isExecuting;
+            this.currPCB = currPCB;
         }
         Cpu.prototype.init = function () {
             this.PC = 0;
@@ -39,9 +41,18 @@ var TSOS;
             this.Yreg = 0;
             this.Zflag = 0;
             this.isExecuting = false;
+            this.currPCB = null;
         };
         Cpu.prototype.cycle = function () {
             if (this.isExecuting) {
+                if (this.currPCB == null) {
+                    this.currPCB = _CPUSCHED.init();
+                    this.PC = this.currPCB.base;
+                    this.Acc = 0;
+                    this.Xreg = 0;
+                    this.Yreg = 0;
+                    this.Zflag = 0;
+                }
                 //check if single step mode is on
                 if (_StepMode == false) {
                     _Kernel.krnTrace('CPU cycle');
@@ -58,6 +69,7 @@ var TSOS;
                 TSOS.Control.initCPUTable(); //update CPUTable
                 TSOS.Control.updateMemoryTable(); //Update memory Table
                 TSOS.Control.checkExe(); //manage CPU dashboard light
+                TSOS.Control.updateReadyTable();
             }
         };
         Cpu.prototype.execute = function () {
@@ -68,149 +80,160 @@ var TSOS;
             var c;
             var char;
             instruction = _Mem.coreM[this.PC];
-            switch (instruction) {
-                //End
-                case "00":
-                case "0":
-                    this.op = "00";
-                    this.isExecuting = false;
-                    //this.PC=0;
-                    this.loadOffPCB();
-                    if (_StepMode) {
-                        _Step = false;
-                    }
-                    break;
-                //load acc with const
-                case "A9":
-                    this.op = "A9";
-                    this.PC++;
-                    this.Acc = parseInt(_Mem.coreM[this.PC], 16);
-                    this.PC++;
-                    break;
-                //Load X constant
-                case "A2":
-                    this.op = "A2";
-                    this.PC++;
-                    this.Xreg = parseInt(_Mem.coreM[this.PC], 16);
-                    this.PC++;
-                    break;
-                //load Y Constant
-                case "A0":
-                    this.op = "A0";
-                    this.PC++;
-                    this.Yreg = parseInt(_Mem.coreM[this.PC], 16);
-                    this.PC++;
-                    break;
-                //load Acc from memory
-                case "AD":
-                    this.op = "AD";
-                    i = _MemMan.toAddress();
-                    this.Acc = parseInt(_Mem.coreM[i], 16);
-                    this.PC++;
-                    break;
-                //store Acc to memory
-                case "8D":
-                    this.op = "8d";
-                    i = _MemMan.toAddress();
-                    _Mem.coreM[i] = this.Acc.toString(16);
-                    this.PC++;
-                    break;
-                //Add to Acc from memory with carry
-                case "6D":
-                    this.op = "6d";
-                    i = _MemMan.toAddress();
-                    a = this.getConstantNumber(_Mem.coreM[i]);
-                    b = this.Acc;
-                    c = a + b;
-                    this.Acc = c;
-                    this.PC++;
-                    break;
-                //load X from memory
-                case "AE":
-                    this.op = "AE";
-                    i = _MemMan.toAddress();
-                    this.Xreg = parseInt(_Mem.coreM[i], 16);
-                    this.PC++;
-                    break;
-                //load Y from memory
-                case "AC":
-                    this.op = "AC";
-                    i = _MemMan.toAddress();
-                    this.Yreg = parseInt(_Mem.coreM[i], 16);
-                    this.PC++;
-                    break;
-                //increment byte
-                case "EE":
-                    this.op = "EE";
-                    i = _MemMan.toAddress();
-                    a = parseInt(_Mem.coreM[i], 16);
-                    a = a + 1;
-                    _Mem.coreM[i] = a.toString(16);
-                    this.PC++;
-                    break;
-                //No op
-                case "EA":
-                    this.op = "EA";
-                    this.PC++;
-                    break;
-                /*if mem addr=xreg, zflag=1
-                  if mem addr!=xreg, zflag=0
-                 */
-                case "EC":
-                    this.op = "EC";
-                    i = _MemMan.toAddress();
-                    a = this.getConstantNumber(_Mem.coreM[i]);
-                    b = this.Xreg;
-                    if (a == b) {
-                        this.Zflag = 1;
-                    }
-                    else {
-                        this.Zflag = 0;
-                    }
-                    this.PC++;
-                    break;
-                //BNE
-                case "D0":
-                    this.op = "D0";
-                    ++this.PC;
-                    //jump amount=where yuou are + number after D0
-                    var branch = this.PC + this.getConstantNumber(_Mem.coreM[this.PC]);
-                    if (this.Zflag == 0) {
-                        this.PC = branch + 1;
-                        //if branch is too large deal with it.
-                        if (this.PC > 255) {
-                            this.PC -= 256;
+            if (_CPUSCHED.counter < _CPUSCHED.quantum) {
+                switch (instruction) {
+                    //End
+                    case "00":
+                    case "0":
+                        this.op = "00";
+                        if (_ReadyQ.isEmpty() == false) {
+                            _CPUSCHED.replace();
                         }
-                    }
-                    else {
+                        else {
+                            this.isExecuting = false;
+                            //this.PC=0;
+                            //this.loadOffPCB();
+                            if (_StepMode) {
+                                _Step = false;
+                            }
+                        }
+                        break;
+                    //load acc with const
+                    case "A9":
+                        this.op = "A9";
                         this.PC++;
-                    }
-                    break;
-                //syscall
-                case "FF":
-                    this.op = "FF";
-                    //print int
-                    if (this.Xreg == 1) {
-                        _StdOut.putText(this.Yreg.toString());
+                        this.Acc = parseInt(_Mem.coreM[this.PC], 16);
                         this.PC++;
-                    }
-                    else if (this.Xreg == 2) {
-                        i = this.Yreg;
-                        while (_Mem.coreM[i] != 00) {
-                            char = String.fromCharCode(parseInt(_Mem.coreM[i], 16));
-                            _StdOut.putText(char);
-                            i++;
+                        break;
+                    //Load X constant
+                    case "A2":
+                        this.op = "A2";
+                        this.PC++;
+                        this.Xreg = parseInt(_Mem.coreM[this.PC], 16);
+                        this.PC++;
+                        break;
+                    //load Y Constant
+                    case "A0":
+                        this.op = "A0";
+                        this.PC++;
+                        this.Yreg = parseInt(_Mem.coreM[this.PC], 16);
+                        this.PC++;
+                        break;
+                    //load Acc from memory
+                    case "AD":
+                        this.op = "AD";
+                        i = _MemMan.toAddress();
+                        this.Acc = parseInt(_Mem.coreM[i], 16);
+                        this.PC++;
+                        break;
+                    //store Acc to memory
+                    case "8D":
+                        this.op = "8d";
+                        i = _MemMan.toAddress();
+                        _Mem.coreM[i] = this.Acc.toString(16);
+                        this.PC++;
+                        break;
+                    //Add to Acc from memory with carry
+                    case "6D":
+                        this.op = "6d";
+                        i = _MemMan.toAddress();
+                        a = this.getConstantNumber(_Mem.coreM[i]);
+                        b = this.Acc;
+                        c = a + b;
+                        this.Acc = c;
+                        this.PC++;
+                        break;
+                    //load X from memory
+                    case "AE":
+                        this.op = "AE";
+                        i = _MemMan.toAddress();
+                        this.Xreg = parseInt(_Mem.coreM[i], 16);
+                        this.PC++;
+                        break;
+                    //load Y from memory
+                    case "AC":
+                        this.op = "AC";
+                        i = _MemMan.toAddress();
+                        this.Yreg = parseInt(_Mem.coreM[i], 16);
+                        this.PC++;
+                        break;
+                    //increment byte
+                    case "EE":
+                        this.op = "EE";
+                        i = _MemMan.toAddress();
+                        a = parseInt(_Mem.coreM[i], 16);
+                        a = a + 1;
+                        _Mem.coreM[i] = a.toString(16);
+                        this.PC++;
+                        break;
+                    //No op
+                    case "EA":
+                        this.op = "EA";
+                        this.PC++;
+                        break;
+                    /*if mem addr=xreg, zflag=1
+                     if mem addr!=xreg, zflag=0
+                     */
+                    case "EC":
+                        this.op = "EC";
+                        i = _MemMan.toAddress();
+                        a = this.getConstantNumber(_Mem.coreM[i]);
+                        b = this.Xreg;
+                        if (a == b) {
+                            this.Zflag = 1;
+                        }
+                        else {
+                            this.Zflag = 0;
                         }
                         this.PC++;
-                    }
-                    else {
-                        _StdOut.putText("Value in Xreg must be 1 or 0");
+                        break;
+                    //BNE
+                    case "D0":
+                        this.op = "D0";
+                        ++this.PC;
+                        //jump amount=where yuou are + number after D0
+                        var branch = this.PC + this.getConstantNumber(_Mem.coreM[this.PC]);
+                        if (this.Zflag == 0) {
+                            this.PC = branch + 1;
+                            //if branch is too large deal with it.
+                            if (this.PC > 255) {
+                                this.PC -= 256;
+                            }
+                        }
+                        else {
+                            this.PC++;
+                        }
+                        break;
+                    //syscall
+                    case "FF":
+                        this.op = "FF";
+                        //print int
+                        if (this.Xreg == 1) {
+                            _StdOut.putText(this.Yreg.toString());
+                            this.PC++;
+                        }
+                        else if (this.Xreg == 2) {
+                            i = this.Yreg;
+                            while (_Mem.coreM[i] != 00) {
+                                char = String.fromCharCode(parseInt(_Mem.coreM[i], 16));
+                                _StdOut.putText(char);
+                                i++;
+                            }
+                            this.PC++;
+                        }
+                        else {
+                            _StdOut.putText("Value in Xreg must be 1 or 0");
+                            this.isExecuting = false;
+                        }
+                        break;
+                    default:
                         this.isExecuting = false;
-                    }
-                    break;
-                default:
-                    this.isExecuting = false;
-                    _StdOut.putText("Error no match found: " + _Mem.coreM[this.PC]);
+                        _StdOut.putText("Error no match found: " + _Mem.coreM[this.PC]);
+                }
+                _CPUSCHED.counter++;
+            }
+            else {
+                this.loadOffPCB();
             }
         };
         /*getConstantNumber(num)
@@ -229,13 +252,13 @@ var TSOS;
         PCBTable
          */
         Cpu.prototype.loadOffPCB = function () {
-            _PCB.state = "terminated";
-            _PCB.PC = this.PC;
-            _PCB.Acc = this.Acc;
-            _PCB.Xreg = this.Xreg;
-            _PCB.Yreg = this.Yreg;
-            _PCB.Zflag = this.Zflag;
-            TSOS.Control.updatePCBTable();
+            this.currPCB.state = "waiting";
+            this.currPCB.PC = this.PC;
+            this.currPCB.Acc = this.Acc;
+            this.currPCB.Xreg = this.Xreg;
+            this.currPCB.Yreg = this.Yreg;
+            this.currPCB.Zflag = this.Zflag;
+            _CPUSCHED.change();
         };
         return Cpu;
     })();

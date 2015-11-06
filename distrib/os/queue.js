@@ -39,6 +39,10 @@ var TSOS;
             }
             return retVal;
         };
+        Queue.prototype.getObj = function (index) {
+            var element = this.q[index];
+            return element;
+        };
         return Queue;
     })();
     TSOS.Queue = Queue;

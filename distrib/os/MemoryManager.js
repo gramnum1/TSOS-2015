@@ -38,11 +38,17 @@ var TSOS;
                 var newLimit = this.limits[this.block];
                 _PCB = new TSOS.PCB();
                 _PCB.init(newBase, newLimit);
-                _StdOut.putText("pid= " + _PCB.pid + " base=" + _PCB.base + " Limit=" + _PCB.limit);
+                Resident_List[Resident_List.length] = _PCB;
+                _StdOut.putText("pid= " + Resident_List[this.block].pid + " base=" + Resident_List[this.block].base + " Limit=" + Resident_List[this.block].limit);
                 _OsShell.pid++;
+                // _ReadyQ.enqueue(Resident_List[this.block]);
+                numPCBs++;
                 //update memory Table
                 TSOS.Control.updateMemoryTable();
                 this.block++;
+                for (var i = 0; i < Resident_List.length; i++) {
+                    _Kernel.krnTrace("RL " + i + " " + Resident_List[i].pid);
+                }
             }
             else {
                 _StdOut.putText("error loading into memory");
@@ -69,7 +75,14 @@ var TSOS;
             var a = _Mem.coreM[_CPU.PC];
             var address = a.concat(b);
             index = parseInt(address, 16);
-            return index;
+            if (index >= _CPU.currPCB.base && index < _CPU.currPCB.limit) {
+                return index;
+            }
+            else {
+                _StdOut("Memory allocation " + index + " out of bounds. Base= " + _CPU.currPCB.base + " Limit= " + _CPU.currPCB.limit);
+                _StdOut.advanceLine();
+                _CPUSCHED.replace();
+            }
         };
         return MemoryManager;
     })();

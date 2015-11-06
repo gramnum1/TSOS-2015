@@ -79,6 +79,15 @@ var TSOS;
             //clearmem
             sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem", "clears memory");
             this.commandList[this.commandList.length] = sc;
+            //ps
+            sc = new TSOS.ShellCommand(this.shellPS, "ps", "display active processes");
+            this.commandList[this.commandList.length] = sc;
+            //runall
+            sc = new TSOS.ShellCommand(this.shellRunAll, "runall", "run all programs");
+            this.commandList[this.commandList.length] = sc;
+            //quantum
+            sc = new TSOS.ShellCommand(this.shellQuantum, "quantum", "<int> - sets the quantum");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -388,16 +397,48 @@ var TSOS;
         resets PC back to 0
          */
         Shell.prototype.shellRun = function (args) {
-            if (args == _PCB.pid) {
-                _CPU.isExecuting = true;
-                _CPU.PC = 0;
+            var found = false;
+            for (var i = 0; i < Resident_List.length; i++) {
+                if (args == Resident_List[i].pid) {
+                    found = true;
+                    _ReadyQ.enqueue(Resident_List[i]);
+                    _CPU.isExecuting = true;
+                }
             }
-            else {
-                _StdOut.putText("not a valid pid");
+            if (!found) {
+                _StdOut.putText("not a valid pid " + args);
             }
         };
         Shell.prototype.shellClearMem = function (args) {
             _MemMan.clearMem();
+        };
+        Shell.prototype.shellPS = function (args) {
+            for (var i = 0; i < Resident_List.length; i++) {
+                _StdOut.putText("Process " + i + " pid=" + Resident_List[i].pid);
+                _StdOut.advanceLine();
+            }
+        };
+        Shell.prototype.shellRunAll = function (args) {
+            for (var i = 0; i < Resident_List.length; i++) {
+                _Kernel.krnTrace("Process " + i + " pid=" + Resident_List[i].pid);
+                Resident_List[i].state = "ready";
+                _ReadyQ.enqueue(Resident_List[i]);
+            }
+            TSOS.Control.addToReadyTable();
+            _CPU.isExecuting = true;
+        };
+        Shell.prototype.shellQuantum = function (args) {
+            var q;
+            if (isNaN(args) || (q = parseInt(args)) <= 0) {
+                _StdOut.putText("Please set the quantum to an INT > 0");
+                _StdOut.advanceLine();
+            }
+            else {
+                //q=parseInt(args);
+                _CPUSCHED.quantum = q;
+                _StdOut.putText("Quantum set to " + q);
+                _StdOut.advanceLine();
+            }
         };
         return Shell;
     })();

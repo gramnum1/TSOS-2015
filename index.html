@@ -22,6 +22,7 @@
 
    <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
     <script type="text/javascript" src="distrib/os/MemoryManager.js"></script>
+     <script type="text/javascript" src="distrib/os/cpuScheduler.js"></script>
     <script type="text/javascript" src="distrib/os/interrupt.js"></script>
    <script type="text/javascript" src="distrib/os/canvastext.js"></script>
    <script type="text/javascript" src="distrib/os/console.js"></script>
@@ -176,7 +177,14 @@
             </div>
         </div>
         <div class="row">
-        <label for="pcb">PCB</label>
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#pcb" aria-controls="pcb" role="tab" data-toggle="tab">PCB</a></li>
+            <li role="presentation" ><a href="#readyQ" aria-controls="resQ" role="tab" data-toggle="tab">Ready Queue</a></li>
+            </ul>
+            <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="pcb">  
+            
+            
             <div id="PCBTable">
             
         <table name="pcb" id="pcbTable" class="table table-condensed table-bordered">
@@ -200,6 +208,29 @@
             </tr>
             </table>
         </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="readyQ">
+                <div id=ReadyQ>
+                    <table id="readyQTable" class="table table-condensed table-bordered">
+            <tr>
+            <th>PID</th>
+            <th>State</th>
+            
+            <th>Base</th>
+                <th>Limit</th>
+                <th>PC</th>
+            </tr>
+            <!--<tr>
+            <td></td>
+            <td></td>
+            
+                <td></td>
+                <td></td>
+            </tr>-->
+            </table>
+                    
+                </div>
+            </div>
         </div>
         
        </div>

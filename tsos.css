@@ -94,3 +94,8 @@ h3 {
     border: 2px, solid, black;
     background-color: white;
 }
+
+.nav-tabs, .tab-content{
+    background-color: white !important;
+}
+    

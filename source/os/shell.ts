@@ -134,6 +134,18 @@ module TSOS {
             sc=new ShellCommand(this.shellClearMem, "clearmem", "clears memory");
             this.commandList[this.commandList.length]=sc;
 
+            //ps
+            sc=new ShellCommand(this.shellPS, "ps", "display active processes");
+            this.commandList[this.commandList.length]=sc;
+
+            //runall
+            sc=new ShellCommand(this.shellRunAll, "runall", "run all programs");
+            this.commandList[this.commandList.length]=sc;
+
+            //quantum
+            sc=new ShellCommand(this.shellQuantum, "quantum", "<int> - sets the quantum");
+            this.commandList[this.commandList.length]=sc;
+
 
 
 
@@ -474,12 +486,19 @@ module TSOS {
         resets PC back to 0
          */
         public shellRun(args){
-            if(args==_PCB.pid) {
-                _CPU.isExecuting = true;
-                _CPU.PC = 0;
-            }else{
-                _StdOut.putText("not a valid pid");
+            var found=false;
+            for(var i=0; i< Resident_List.length; i++) {
+                if (args == Resident_List[i].pid) {
+                    found=true;
+
+
+                    _ReadyQ.enqueue(Resident_List[i]);
+                    _CPU.isExecuting = true;
+                }
+            }if(!found) {
+                _StdOut.putText("not a valid pid "+ args);
             }
+
 
         }
 
@@ -488,5 +507,43 @@ module TSOS {
 
         }
 
+        public shellPS(args){
+            for(var i=0; i<Resident_List.length; i++) {
+                _StdOut.putText("Process " +i+" pid="+Resident_List[i].pid);
+                _StdOut.advanceLine();
+            }
+        }
 
-}}
+        public shellRunAll(args){
+            for(var i=0; i<Resident_List.length; i++) {
+                _Kernel.krnTrace("Process " +i+" pid="+Resident_List[i].pid);
+                Resident_List[i].state="ready";
+                _ReadyQ.enqueue(Resident_List[i]);
+
+
+
+            }
+            Control.addToReadyTable();
+            _CPU.isExecuting = true;
+
+        }
+
+        public shellQuantum(args){
+            var q;
+            if(isNaN(args) || ( q=parseInt(args))<=0 ){
+                _StdOut.putText("Please set the quantum to an INT > 0");
+                _StdOut.advanceLine();
+                
+            }else{
+                 //q=parseInt(args);
+
+                    _CPUSCHED.quantum=q;
+                    _StdOut.putText("Quantum set to "+q);
+                    _StdOut.advanceLine();
+
+                }
+            }
+        }
+
+
+}

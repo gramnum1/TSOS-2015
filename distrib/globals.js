@@ -10,7 +10,7 @@
 //
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
-var APP_NAME = "Charles Harrison TSOS"; // 'cause Bob and I were at a loss for a better name.
+var APP_NAME = "tSOS!"; // 'cause Bob and I were at a loss for a better name.
 var APP_VERSION = "0.25"; // What did you expect?
 var CPU_CLOCK_INTERVAL = 100; // This is in ms (milliseconds) so 1000 = 1 second.
 var TIMER_IRQ = 0; // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
@@ -23,6 +23,8 @@ var MAX_MEM = 768;
 //
 var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 var _PCB;
+var Resident_List = [];
+var _CPUSCHED;
 var _Mem;
 var _MemMan;
 var _OSclock = 0; // Page 23.
@@ -33,6 +35,7 @@ var _Program; //initialized in Control.hostInit().
 var _MemTable;
 var _CPUTable;
 var _PCBTable;
+var _ReadyTable;
 var _Light;
 var _DrawingContext; // = _Canvas.getContext("2d");  // Assigned here for type safety, but re-initialized in Control.hostInit() for OCD and logic.
 var _DefaultFontFamily = "sans"; // Ignored, I think. The was just a place-holder in 2008, but the HTML canvas may have use for it.
@@ -46,6 +49,8 @@ var _Kernel;
 var _KernelInterruptQueue; // Initializing this to null (which I would normally do) would then require us to specify the 'any' type, as below.
 var _KernelInputQueue = null; // Is this better? I don't like uninitialized variables. But I also don't like using the type specifier 'any'
 var _KernelBuffers = null; // when clearly 'any' is not what we want. There is likely a better way, but what is it?
+var _ReadyQ = null;
+var numPCBs = 0;
 // Standard input and output
 var _StdIn; // Same "to null or not to null" issue as above.
 var _StdOut;

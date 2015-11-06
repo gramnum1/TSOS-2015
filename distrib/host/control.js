@@ -35,6 +35,7 @@ var TSOS;
             _MemTable = document.getElementById('mTable'); //Memory Table
             _CPUTable = document.getElementById('cpuTable'); //CPU Table
             _PCBTable = document.getElementById('pcbTable'); //PCBTable
+            _ReadyTable = document.getElementById('readyQTable');
             _Light = document.getElementById('light'); //Ligt to show whether cpu is executing or not
             this.initMemoryTable();
             //Create the date string and put it in _Bar
@@ -97,6 +98,7 @@ var TSOS;
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new TSOS.Kernel();
+            _Mode = 1;
             _Kernel.krnBootstrap(); // _GLaDOS.afterStartup() will get called in there, if configured.
         };
         Control.hostBtnHaltOS_click = function (btn) {
@@ -214,6 +216,36 @@ var TSOS;
             _PCBTable.rows[1].cells[4].innerHTML = _PCB.Xreg;
             _PCBTable.rows[1].cells[5].innerHTML = _PCB.Yreg;
             _PCBTable.rows[1].cells[6].innerHTML = _PCB.Zflag;
+        };
+        Control.addToReadyTable = function () {
+            //var rownum=numPCBs;
+            var currPCB;
+            _StdOut.putText(_ReadyQ.getSize().toString());
+            for (var i = 0; i < _ReadyQ.getSize(); i++) {
+                currPCB = _ReadyQ.getObj(i);
+                var row = _ReadyTable.insertRow(i + 1);
+                var rownum = i + 1;
+                for (var j = 0; j < 5; j++) {
+                    var cell = row.insertCell(j);
+                }
+                _ReadyTable.rows[rownum].cells[0].innerHTML = currPCB.pid;
+                _ReadyTable.rows[rownum].cells[1].innerHTML = currPCB.state;
+                _ReadyTable.rows[rownum].cells[2].innerHTML = currPCB.base;
+                _ReadyTable.rows[rownum].cells[3].innerHTML = currPCB.limit;
+                _ReadyTable.rows[rownum].cells[4].innerHTML = currPCB.PC;
+            }
+        };
+        Control.updateReadyTable = function () {
+            var currPCB;
+            for (var i = 0; i < _ReadyQ.getSize(); i++) {
+                currPCB = _ReadyQ.getObj(i);
+                var rownum = i + 1;
+                _ReadyTable.rows[rownum].cells[0].innerHTML = currPCB.pid;
+                _ReadyTable.rows[rownum].cells[1].innerHTML = currPCB.state;
+                _ReadyTable.rows[rownum].cells[2].innerHTML = currPCB.base;
+                _ReadyTable.rows[rownum].cells[3].innerHTML = currPCB.limit;
+                _ReadyTable.rows[rownum].cells[4].innerHTML = currPCB.PC;
+            }
         };
         /*checkExe()
         if CPU is executing light is green

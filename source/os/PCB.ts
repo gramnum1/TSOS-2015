@@ -24,13 +24,14 @@ module TSOS {
         public init(newBase, newLimit): void {
             this.pid=_OsShell.pid;
             this.state="new";
-            this.PC = 0;
+
             this.Acc = 0;
             this.Xreg = 0;
             this.Yreg = 0;
             this.Zflag = 0;
             this.base=newBase;
             this.limit=newLimit;
+            this.PC = this.base;
 
         }
 
