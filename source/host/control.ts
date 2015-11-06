@@ -252,36 +252,40 @@ module TSOS {
         updates the PCBTable after process terminates
          */
         public static updatePCBTable(): void{
-            _PCBTable.rows[1].cells[0].innerHTML=_PCB.pid;
-            _PCBTable.rows[1].cells[1].innerHTML=_PCB.state;
-            _PCBTable.rows[1].cells[2].innerHTML=_PCB.PC;
-            _PCBTable.rows[1].cells[3].innerHTML=_PCB.Acc;
-            _PCBTable.rows[1].cells[4].innerHTML=_PCB.Xreg;
-            _PCBTable.rows[1].cells[5].innerHTML=_PCB.Yreg;
-            _PCBTable.rows[1].cells[6].innerHTML=_PCB.Zflag;
+            _PCBTable.rows[1].cells[0].innerHTML=_CPU.currPCB.pid;
+            _PCBTable.rows[1].cells[1].innerHTML=_CPU.currPCB.state;
+            _PCBTable.rows[1].cells[2].innerHTML=_CPU.currPCB.PC;
+            _PCBTable.rows[1].cells[3].innerHTML=_CPU.currPCB.Acc;
+            _PCBTable.rows[1].cells[4].innerHTML=_CPU.currPCB.Xreg;
+            _PCBTable.rows[1].cells[5].innerHTML=_CPU.currPCB.Yreg;
+            _PCBTable.rows[1].cells[6].innerHTML=_CPU.currPCB.Zflag;
 
         }
 
 
-        public static addToReadyTable(): void{
+        /*public static addToReadyTable(): void{
             //var rownum=numPCBs;
+
             var currPCB;
-            _StdOut.putText(_ReadyQ.getSize().toString());
+            _Kernel.krnTrace("ReadyQ size= "+_ReadyQ.getSize());
+            var head=_ReadyTable.insertRow(0);
+            for (var j = 0; j < 5; j++) {
+             head.insertCell(j);
+
+
+            }
+
+
 
                 for(var i =0; i<_ReadyQ.getSize(); i++) {
                     currPCB = _ReadyQ.getObj(i);
                     var row = _ReadyTable.insertRow(i+1);
-                    var rownum=i+1;
+
                     for (var j = 0; j < 5; j++) {
                         var cell = row.insertCell(j);
 
                     }
-                    _ReadyTable.rows[rownum].cells[0].innerHTML = currPCB.pid;
-                    _ReadyTable.rows[rownum].cells[1].innerHTML = currPCB.state;
 
-                    _ReadyTable.rows[rownum].cells[2].innerHTML = currPCB.base;
-                    _ReadyTable.rows[rownum].cells[3].innerHTML = currPCB.limit;
-                    _ReadyTable.rows[rownum].cells[4].innerHTML = currPCB.PC;
 
 
                 }
@@ -291,22 +295,38 @@ module TSOS {
 
 
 
-            }
+            }*/
         public static updateReadyTable():void{
+
             var currPCB;
-            for(var i =0; i<_ReadyQ.getSize(); i++) {
-                currPCB = _ReadyQ.getObj(i);
+           while(_ReadyTable.rows.length!=1){
+               _ReadyTable.deleteRow(1);
+           }
 
-                var rownum=i+1;
+            for(var i =1; i<=_ReadyQ.getSize(); ++i) {
+                currPCB = _ReadyQ.getObj(i-1);
+                var row=_ReadyTable.insertRow(i);
+                for(var j=0; j<5; ++j){
+                    var cell= row.insertCell(j);
 
-                _ReadyTable.rows[rownum].cells[0].innerHTML = currPCB.pid;
-                _ReadyTable.rows[rownum].cells[1].innerHTML = currPCB.state;
-                _ReadyTable.rows[rownum].cells[2].innerHTML = currPCB.base;
-                _ReadyTable.rows[rownum].cells[3].innerHTML = currPCB.limit;
-                _ReadyTable.rows[rownum].cells[4].innerHTML = currPCB.PC;
+                }
+
+
+
+                _ReadyTable.rows[i].cells[0].innerHTML = currPCB.pid;
+                _ReadyTable.rows[i].cells[1].innerHTML = currPCB.state;
+                _ReadyTable.rows[i].cells[2].innerHTML = currPCB.base;
+                _ReadyTable.rows[i].cells[3].innerHTML = currPCB.limit;
+                _ReadyTable.rows[i].cells[4].innerHTML = currPCB.PC;
 
             }
 
+        }
+        private static clearReadyTable():void{
+            for(var i =0; i<_ReadyTable.rows.length; i++){
+                _ReadyTable.deleteRow(i);
+
+            }
         }
 
         /*checkExe()

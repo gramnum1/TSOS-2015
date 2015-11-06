@@ -19,6 +19,7 @@ module TSOS {
             _Mem.coreM[i]="00";
             }
             Control.updateMemoryTable();
+            this.block=0;
         }
 
         /*loadProgram(program)
@@ -96,7 +97,7 @@ module TSOS {
             }else{
                 _StdOut("Memory allocation "+ index+ " out of bounds. Base= "+ _CPU.currPCB.base+" Limit= "+_CPU.currPCB.limit);
                 _StdOut.advanceLine();
-                _CPUSCHED.replace();
+                _OsShell.shellKill(_CPU.currPCB.pid);
 
 
             }

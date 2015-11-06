@@ -15,6 +15,7 @@ var TSOS;
                 _Mem.coreM[i] = "00";
             }
             TSOS.Control.updateMemoryTable();
+            this.block = 0;
         };
         /*loadProgram(program)
           loads a program into memory and  creates a PCB
@@ -81,7 +82,7 @@ var TSOS;
             else {
                 _StdOut("Memory allocation " + index + " out of bounds. Base= " + _CPU.currPCB.base + " Limit= " + _CPU.currPCB.limit);
                 _StdOut.advanceLine();
-                _CPUSCHED.replace();
+                _OsShell.shellKill(_CPU.currPCB.pid);
             }
         };
         return MemoryManager;

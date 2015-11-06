@@ -466,6 +466,8 @@ module TSOS {
                 _StdOut.advanceLine();
 
                 _MemMan.loadProgram(program);
+                var wind = new Audio("wind.mp3");
+                wind.play();
 
 
 
@@ -535,7 +537,7 @@ module TSOS {
 
 
             }
-            Control.addToReadyTable();
+
             _CPU.isExecuting = true;
 
         }
@@ -566,7 +568,7 @@ module TSOS {
 
                 }else{
                     if(pid==_CPU.currPCB.pid){
-                        
+
                         if(_ReadyQ.isEmpty()==false) {
                             _CPUSCHED.replace();
                         }else{
@@ -593,6 +595,10 @@ module TSOS {
                     if(!found){
                         _StdOut.putText("No matching pid found.");
                         _StdOut.advanceLine();
+
+                    }else{
+                        var audio = new Audio("processKilled.mp3");
+                        audio.play();
 
                     }
 

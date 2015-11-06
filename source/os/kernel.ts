@@ -86,6 +86,8 @@ module TSOS {
                that it has to look for interrupts and process them if it finds any.                           */
 
             // Check for an interrupt, are any. Page 560
+
+            Control.updateReadyTable();
             if (_KernelInterruptQueue.getSize() > 0) {
                 // Process the first interrupt on the interrupt queue.
                 // TODO: Implement a priority queue based on the IRQ number/id to enforce interrupt priority.

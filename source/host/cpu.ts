@@ -19,6 +19,8 @@ module TSOS {
 
     export class Cpu {
 
+
+
         constructor(public PC:number = 0,
                     public Acc:number = 0,
                     public Xreg:number = 0,
@@ -26,7 +28,10 @@ module TSOS {
                     public Zflag:number = 0,
                     public op: string="",
                     public isExecuting:boolean = false,
-                    public currPCB:any = null) {
+                    public currPCB:any = null,
+                    private run = new Audio("executing.mp3"),
+                    private done= new Audio("ding.mp3"))
+                     {
 
         }
 
@@ -38,9 +43,12 @@ module TSOS {
             this.Zflag = 0;
             this.isExecuting = false;
             this.currPCB= null;
+
         }
 
         public cycle():void {
+
+
 
 
             if (this.isExecuting) {
@@ -51,6 +59,10 @@ module TSOS {
                     this.Xreg = 0;
                     this.Yreg = 0;
                     this.Zflag = 0;
+                    this.run.repeat=true;
+                    this.run.play();
+                    Control.updatePCBTable();
+
 
 
 
@@ -73,7 +85,9 @@ module TSOS {
                 Control.initCPUTable(); //update CPUTable
                 Control.updateMemoryTable(); //Update memory Table
                 Control.checkExe();          //manage CPU dashboard light
-                Control.updateReadyTable();
+
+
+
 
 
 
@@ -95,9 +109,19 @@ module TSOS {
                     case "0":
                         this.op = "00";
                         if(_ReadyQ.isEmpty()==false){
+                            this.currPCB.state="Terminated";
+                            this.currPCB.PC=this.PC;
+                            this.currPCB.Acc=this.Acc;
+                            this.currPCB.Xreg=this.Xreg;
+                            this.currPCB.Yreg=this.Yreg;
+                            this.currPCB.Zflag=this.Zflag;
+                            Control.updatePCBTable();
                             _CPUSCHED.replace();
+                            this.done.play();
                         }else {
                             this.terminate();
+                            this.done.play();
+
                         }
                         break;
                     //load acc with const
@@ -285,7 +309,22 @@ module TSOS {
             if (_StepMode) {
                 _Step = false;
             }
+            this.currPCB.state="Terminated";
+            this.currPCB.PC=this.PC;
+            this.currPCB.Acc=this.Acc;
+            this.currPCB.Xreg=this.Xreg;
+            this.currPCB.Yreg=this.Yreg;
+            this.currPCB.Zflag=this.Zflag;
             Control.checkExe();
+            Control.updatePCBTable();
+            this.run.repeat=false;
+            this.run.pause();
+
+            this.currPCB=null;
+
+
+
+
 
         }
 

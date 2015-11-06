@@ -379,6 +379,8 @@ var TSOS;
                     _StdOut.putText("Program is good");
                     _StdOut.advanceLine();
                     _MemMan.loadProgram(program);
+                    var wind = new Audio("wind.mp3");
+                    wind.play();
                 }
                 else {
                     _StdOut.putText("program is invalid");
@@ -433,7 +435,6 @@ var TSOS;
                 Resident_List[i].state = "ready";
                 _ReadyQ.enqueue(Resident_List[i]);
             }
-            TSOS.Control.addToReadyTable();
             _CPU.isExecuting = true;
         };
         Shell.prototype.shellQuantum = function (args) {
@@ -483,6 +484,10 @@ var TSOS;
                     if (!found) {
                         _StdOut.putText("No matching pid found.");
                         _StdOut.advanceLine();
+                    }
+                    else {
+                        var audio = new Audio("processKilled.mp3");
+                        audio.play();
                     }
                 }
             }

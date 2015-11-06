@@ -16,7 +16,7 @@
 var TSOS;
 (function (TSOS) {
     var Cpu = (function () {
-        function Cpu(PC, Acc, Xreg, Yreg, Zflag, op, isExecuting, currPCB) {
+        function Cpu(PC, Acc, Xreg, Yreg, Zflag, op, isExecuting, currPCB, run, done) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (Xreg === void 0) { Xreg = 0; }
@@ -25,6 +25,8 @@ var TSOS;
             if (op === void 0) { op = ""; }
             if (isExecuting === void 0) { isExecuting = false; }
             if (currPCB === void 0) { currPCB = null; }
+            if (run === void 0) { run = new Audio("executing.mp3"); }
+            if (done === void 0) { done = new Audio("ding.mp3"); }
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;
@@ -33,6 +35,8 @@ var TSOS;
             this.op = op;
             this.isExecuting = isExecuting;
             this.currPCB = currPCB;
+            this.run = run;
+            this.done = done;
         }
         Cpu.prototype.init = function () {
             this.PC = 0;
@@ -52,6 +56,9 @@ var TSOS;
                     this.Xreg = 0;
                     this.Yreg = 0;
                     this.Zflag = 0;
+                    this.run.repeat = true;
+                    this.run.play();
+                    TSOS.Control.updatePCBTable();
                 }
                 //check if single step mode is on
                 if (_StepMode == false) {
@@ -69,7 +76,6 @@ var TSOS;
                 TSOS.Control.initCPUTable(); //update CPUTable
                 TSOS.Control.updateMemoryTable(); //Update memory Table
                 TSOS.Control.checkExe(); //manage CPU dashboard light
-                TSOS.Control.updateReadyTable();
             }
         };
         Cpu.prototype.execute = function () {
@@ -87,10 +93,19 @@ var TSOS;
                     case "0":
                         this.op = "00";
                         if (_ReadyQ.isEmpty() == false) {
+                            this.currPCB.state = "Terminated";
+                            this.currPCB.PC = this.PC;
+                            this.currPCB.Acc = this.Acc;
+                            this.currPCB.Xreg = this.Xreg;
+                            this.currPCB.Yreg = this.Yreg;
+                            this.currPCB.Zflag = this.Zflag;
+                            TSOS.Control.updatePCBTable();
                             _CPUSCHED.replace();
+                            this.done.play();
                         }
                         else {
                             this.terminate();
+                            this.done.play();
                         }
                         break;
                     //load acc with const
@@ -262,7 +277,17 @@ var TSOS;
             if (_StepMode) {
                 _Step = false;
             }
+            this.currPCB.state = "Terminated";
+            this.currPCB.PC = this.PC;
+            this.currPCB.Acc = this.Acc;
+            this.currPCB.Xreg = this.Xreg;
+            this.currPCB.Yreg = this.Yreg;
+            this.currPCB.Zflag = this.Zflag;
             TSOS.Control.checkExe();
+            TSOS.Control.updatePCBTable();
+            this.run.repeat = false;
+            this.run.pause();
+            this.currPCB = null;
         };
         return Cpu;
     })();

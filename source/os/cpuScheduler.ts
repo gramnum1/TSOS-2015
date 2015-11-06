@@ -14,7 +14,9 @@ module TSOS {
             var first=_ReadyQ.dequeue();
             first.state="running";
             _Kernel.krnTrace("DEQUEUE PID= " + first.pid+" PC= "+first.PC);
-            Control.updateReadyTable();
+
+
+
             _Mode=1;
 
             return first;
@@ -47,11 +49,16 @@ module TSOS {
                 _CPU.Zflag = off.Zflag;
                 _CPU.isExecuting = true;
                 _CPU.currPCB = off;
-                Control.updateReadyTable();
+                Control.updatePCBTable();
+
+
+
 
 
             }
             this.counter=0;
+
+
 
 
 
@@ -61,6 +68,7 @@ module TSOS {
             var off = _ReadyQ.dequeue();
             _Kernel.krnTrace("DEQUEUE PID= " + off.pid);
             //_StdOut.advanceLine();
+            off.state="running"
 
 
 
@@ -73,6 +81,10 @@ module TSOS {
             _CPU.isExecuting = true;
             _CPU.currPCB = off;
             this.counter=0;
+            Control.updatePCBTable();
+
+
+
         }
 
 
