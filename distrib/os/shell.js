@@ -88,8 +88,9 @@ var TSOS;
             //quantum
             sc = new TSOS.ShellCommand(this.shellQuantum, "quantum", "<int> - sets the quantum");
             this.commandList[this.commandList.length] = sc;
-            // ps  - list the running processes and their IDs
-            // kill <id> - kills the specified process id.
+            //kill
+            sc = new TSOS.ShellCommand(this.shellKill, "kill", "<int> - kills an active process");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -413,8 +414,16 @@ var TSOS;
             _MemMan.clearMem();
         };
         Shell.prototype.shellPS = function (args) {
-            for (var i = 0; i < Resident_List.length; i++) {
-                _StdOut.putText("Process " + i + " pid=" + Resident_List[i].pid);
+            if (_CPU.isExecuting) {
+                _StdOut.putText("Running Process pid=" + _CPU.currPCB.pid);
+                _StdOut.advanceLine();
+                for (var i = 0; i < _ReadyQ.getSize(); i++) {
+                    _StdOut.putText("Waiting Process pid=" + _ReadyQ.getObj(i).pid);
+                    _StdOut.advanceLine();
+                }
+            }
+            else {
+                _StdOut.putText("No Active Processes");
                 _StdOut.advanceLine();
             }
         };
@@ -438,6 +447,44 @@ var TSOS;
                 _CPUSCHED.quantum = q;
                 _StdOut.putText("Quantum set to " + q);
                 _StdOut.advanceLine();
+            }
+        };
+        Shell.prototype.shellKill = function (args) {
+            var pid;
+            var found = false;
+            if (_CPU.isExecuting) {
+                if (isNaN(args) || (pid = parseInt(args)) < 0) {
+                    _StdOut.putText("Please enter a valid pid");
+                    _StdOut.advanceLine();
+                }
+                else {
+                    if (pid == _CPU.currPCB.pid) {
+                        if (_ReadyQ.isEmpty() == false) {
+                            _CPUSCHED.replace();
+                        }
+                        else {
+                            _CPU.terminate();
+                        }
+                        found = true;
+                        _StdOut.putText("Process " + pid + " killed.");
+                        _StdOut.advanceLine();
+                    }
+                    else {
+                        for (var i = 0; i < _ReadyQ.getSize(); i++) {
+                            if (pid == _ReadyQ.getObj(i).pid) {
+                                _ReadyQ.remove(pid);
+                                _StdOut.putText("Process " + pid + " killed.");
+                                _StdOut.advanceLine();
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!found) {
+                        _StdOut.putText("No matching pid found.");
+                        _StdOut.advanceLine();
+                    }
+                }
             }
         };
         return Shell;

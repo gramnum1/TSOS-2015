@@ -97,13 +97,7 @@ module TSOS {
                         if(_ReadyQ.isEmpty()==false){
                             _CPUSCHED.replace();
                         }else {
-
-                            this.isExecuting = false;
-                            //this.PC=0;
-                            //this.loadOffPCB();
-                            if (_StepMode) {
-                                _Step = false;
-                            }
+                            this.terminate();
                         }
                         break;
                     //load acc with const
@@ -282,6 +276,16 @@ module TSOS {
 
             _CPUSCHED.change();
 
+
+        }
+        public terminate():void{
+            this.isExecuting = false;
+            //this.PC=0;
+            //this.loadOffPCB();
+            if (_StepMode) {
+                _Step = false;
+            }
+            Control.checkExe();
 
         }
 

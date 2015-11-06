@@ -47,5 +47,22 @@ module TSOS {
             var element=this.q[index];
             return element;
         }
+
+        public remove(pid){
+            for (var i=0; i<this.getSize(); i++){
+                if(this.q[i].pid==pid){
+                    this.swap(this.q,0, i);
+                    this.dequeue();
+                }
+            }
+
+        }
+        private swap(array, A, B ){
+            var temp=array[B];
+            array[B]=array[A];
+            array[A]=temp;
+
+
+        }
     }
 }

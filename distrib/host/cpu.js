@@ -90,12 +90,7 @@ var TSOS;
                             _CPUSCHED.replace();
                         }
                         else {
-                            this.isExecuting = false;
-                            //this.PC=0;
-                            //this.loadOffPCB();
-                            if (_StepMode) {
-                                _Step = false;
-                            }
+                            this.terminate();
                         }
                         break;
                     //load acc with const
@@ -259,6 +254,15 @@ var TSOS;
             this.currPCB.Yreg = this.Yreg;
             this.currPCB.Zflag = this.Zflag;
             _CPUSCHED.change();
+        };
+        Cpu.prototype.terminate = function () {
+            this.isExecuting = false;
+            //this.PC=0;
+            //this.loadOffPCB();
+            if (_StepMode) {
+                _Step = false;
+            }
+            TSOS.Control.checkExe();
         };
         return Cpu;
     })();

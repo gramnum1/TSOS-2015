@@ -12,7 +12,7 @@ var TSOS;
             _Mode = 0;
             var first = _ReadyQ.dequeue();
             first.state = "running";
-            _Kernel.krnTrace("DEQUEUE PID= " + off.pid + " PC= " + first.PC);
+            _Kernel.krnTrace("DEQUEUE PID= " + first.pid + " PC= " + first.PC);
             TSOS.Control.updateReadyTable();
             _Mode = 1;
             return first;
