@@ -50,15 +50,18 @@ var TSOS;
         Cpu.prototype.cycle = function () {
             if (this.isExecuting) {
                 if (this.currPCB == null) {
-                    this.currPCB = _CPUSCHED.init();
-                    this.PC = this.currPCB.base;
-                    this.Acc = 0;
-                    this.Xreg = 0;
-                    this.Yreg = 0;
-                    this.Zflag = 0;
-                    this.run.repeat = true;
-                    this.run.play();
-                    TSOS.Control.updatePCBTable();
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPUSCHED_INIT_IRQ));
+                    if (this.currPCB != null) {
+                        this.PC = this.currPCB.base;
+                        this.Acc = 0;
+                        this.Xreg = 0;
+                        this.Yreg = 0;
+                        this.Zflag = 0;
+                        this.run.repeat = true;
+                        this.run.currentTime = 0;
+                        this.run.play();
+                        TSOS.Control.updatePCBTable();
+                    }
                 }
                 //check if single step mode is on
                 if (_StepMode == false) {
@@ -100,7 +103,8 @@ var TSOS;
                             this.currPCB.Yreg = this.Yreg;
                             this.currPCB.Zflag = this.Zflag;
                             TSOS.Control.updatePCBTable();
-                            _CPUSCHED.replace();
+                            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPUSCHED_REPLACE_IRQ, 0));
+                            // _CPUSCHED.replace();
                             this.done.play();
                         }
                         else {
@@ -206,7 +210,7 @@ var TSOS;
                         if (this.Zflag == 0) {
                             this.PC = branch + 1;
                             //if branch is too large deal with it.
-                            if (this.PC > 255) {
+                            if (this.PC > 255 + this.currPCB.base) {
                                 this.PC -= 256;
                             }
                         }
@@ -223,7 +227,7 @@ var TSOS;
                             this.PC++;
                         }
                         else if (this.Xreg == 2) {
-                            i = this.Yreg;
+                            i = this.Yreg + this.currPCB.base;
                             while (_Mem.coreM[i] != 00) {
                                 char = String.fromCharCode(parseInt(_Mem.coreM[i], 16));
                                 _StdOut.putText(char);
@@ -268,7 +272,7 @@ var TSOS;
             this.currPCB.Xreg = this.Xreg;
             this.currPCB.Yreg = this.Yreg;
             this.currPCB.Zflag = this.Zflag;
-            _CPUSCHED.change();
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPUSCHED_CHANGE_IRQ, 0));
         };
         Cpu.prototype.terminate = function () {
             this.isExecuting = false;
@@ -287,7 +291,7 @@ var TSOS;
             TSOS.Control.updatePCBTable();
             this.run.repeat = false;
             this.run.pause();
-            this.currPCB = null;
+            this.init();
         };
         return Cpu;
     })();

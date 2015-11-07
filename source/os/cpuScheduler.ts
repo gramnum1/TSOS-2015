@@ -9,17 +9,19 @@ module TSOS {
 
         ){}
 
-        public init(): any{
-            _Mode=0;
-            var first=_ReadyQ.dequeue();
+        public init(): void{
+
+            var first=_ReadyQ.dequeue();_Kernel.krnTrace(" INIT PROCESS "+first.pid+ " Base: "+first.base);
             first.state="running";
-            _Kernel.krnTrace("DEQUEUE PID= " + first.pid+" PC= "+first.PC);
+            _CPU.currPCB = first;
 
 
 
-            _Mode=1;
 
-            return first;
+
+
+
+
 
         }
 
@@ -33,11 +35,11 @@ module TSOS {
                 off.state="running";
                 _ReadyQ.enqueue(on);
                 //_StdOut.advanceLine();
-                _Kernel.krnTrace("ENQUEUE PID= " + on.pid+ " PC= "+on.PC);
+                _Kernel.krnTrace("cpuched ENQUEUE PID= " + on.pid+ " PC= "+on.PC);
                 //_StdOut.advanceLine();
 
 
-                _Kernel.krnTrace("DEQUEUE PID= " + off.pid+" PC= "+off.PC);
+                _Kernel.krnTrace("cpusched DEQUEUE PID= " + off.pid+" PC= "+off.PC);
 
 
 
@@ -66,9 +68,9 @@ module TSOS {
         }
         public replace(): void{
             var off = _ReadyQ.dequeue();
-            _Kernel.krnTrace("DEQUEUE PID= " + off.pid);
+            //_Kernel.krnTrace("DEQUEUE PID= " + off.pid);
             //_StdOut.advanceLine();
-            off.state="running"
+            off.state="running";
 
 
 

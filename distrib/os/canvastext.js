@@ -78,7 +78,6 @@ var TSOS;
                 }
                 ctx.stroke();
                 x += c.width * mag;
-                _Kernel.krnTrace("linewrap: x= " + x + " y= " + y);
             }
             ctx.restore();
             return total;

@@ -23,6 +23,12 @@ const TIMER_IRQ: number = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (inte
                               // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 const KEYBOARD_IRQ: number = 1;
 
+const CPUSCHED_INIT_IRQ: number=2;
+
+const CPUSCHED_CHANGE_IRQ: number=3;
+
+const CPUSCHED_REPLACE_IRQ: number=4;
+
 const MAX_MEM: number=768;
 
 

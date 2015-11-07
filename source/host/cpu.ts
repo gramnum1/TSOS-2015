@@ -53,15 +53,18 @@ module TSOS {
 
             if (this.isExecuting) {
                 if(this.currPCB==null){
-                    this.currPCB=_CPUSCHED.init();
-                    this.PC = this.currPCB.base;
-                    this.Acc = 0;
-                    this.Xreg = 0;
-                    this.Yreg = 0;
-                    this.Zflag = 0;
-                    this.run.repeat=true;
-                    this.run.play();
-                    Control.updatePCBTable();
+                    _KernelInterruptQueue.enqueue( new Interrupt(CPUSCHED_INIT_IRQ));
+                   if(this.currPCB!=null) {
+                       this.PC = this.currPCB.base;
+                       this.Acc = 0;
+                       this.Xreg = 0;
+                       this.Yreg = 0;
+                       this.Zflag = 0;
+                       this.run.repeat = true;
+                       this.run.currentTime = 0;
+                       this.run.play();
+                       Control.updatePCBTable();
+                   }
 
 
 
@@ -116,7 +119,8 @@ module TSOS {
                             this.currPCB.Yreg=this.Yreg;
                             this.currPCB.Zflag=this.Zflag;
                             Control.updatePCBTable();
-                            _CPUSCHED.replace();
+                            _KernelInterruptQueue.enqueue(new Interrupt(CPUSCHED_REPLACE_IRQ,0));
+                           // _CPUSCHED.replace();
                             this.done.play();
                         }else {
                             this.terminate();
@@ -224,7 +228,7 @@ module TSOS {
                         if (this.Zflag == 0) {
                             this.PC = branch + 1;
                             //if branch is too large deal with it.
-                            if (this.PC > 255) {
+                            if (this.PC > 255 + this.currPCB.base) {
                                 this.PC -= 256;
                             }
 
@@ -242,7 +246,7 @@ module TSOS {
                             this.PC++;
                             //print string
                         } else if (this.Xreg == 2) {
-                            i = this.Yreg;
+                            i = this.Yreg+this.currPCB.base;
                             while (_Mem.coreM[i] != 00) {
 
                                 char = String.fromCharCode(parseInt(_Mem.coreM[i], 16));
@@ -298,7 +302,7 @@ module TSOS {
             this.currPCB.Yreg=this.Yreg;
             this.currPCB.Zflag=this.Zflag;
 
-            _CPUSCHED.change();
+            _KernelInterruptQueue.enqueue(new Interrupt(CPUSCHED_CHANGE_IRQ, 0));
 
 
         }
@@ -320,7 +324,8 @@ module TSOS {
             this.run.repeat=false;
             this.run.pause();
 
-            this.currPCB=null;
+
+            this.init();
 
 
 

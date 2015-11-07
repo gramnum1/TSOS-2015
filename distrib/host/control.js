@@ -123,15 +123,21 @@ var TSOS;
          */
         Control.singleStepToggle = function (tog) {
             var btnStep = document.getElementById('step');
+            var t = new Audio("switch.mp3");
+            t.play();
+            var on = new Audio("sson.mp3");
+            var off = new Audio("ssoff.mp3");
             if (_StepMode == false) {
                 _StepMode = true;
                 btnStep.disabled = false;
                 btnStep.style.display = "inline";
+                on.play();
             }
             else {
                 _StepMode = false;
                 btnStep.disabled = true;
                 btnStep.style.display = "none";
+                off.play();
             }
         };
         /*step(btn)

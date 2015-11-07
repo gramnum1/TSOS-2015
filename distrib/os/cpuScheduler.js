@@ -9,12 +9,10 @@ var TSOS;
             this.counter = counter;
         }
         cpuScheduler.prototype.init = function () {
-            _Mode = 0;
             var first = _ReadyQ.dequeue();
+            _Kernel.krnTrace(" INIT PROCESS " + first.pid + " Base: " + first.base);
             first.state = "running";
-            _Kernel.krnTrace("DEQUEUE PID= " + first.pid + " PC= " + first.PC);
-            _Mode = 1;
-            return first;
+            _CPU.currPCB = first;
         };
         cpuScheduler.prototype.change = function () {
             if (_ReadyQ.getSize() > 0) {
@@ -24,9 +22,9 @@ var TSOS;
                 off.state = "running";
                 _ReadyQ.enqueue(on);
                 //_StdOut.advanceLine();
-                _Kernel.krnTrace("ENQUEUE PID= " + on.pid + " PC= " + on.PC);
+                _Kernel.krnTrace("cpuched ENQUEUE PID= " + on.pid + " PC= " + on.PC);
                 //_StdOut.advanceLine();
-                _Kernel.krnTrace("DEQUEUE PID= " + off.pid + " PC= " + off.PC);
+                _Kernel.krnTrace("cpusched DEQUEUE PID= " + off.pid + " PC= " + off.PC);
                 _CPU.PC = off.PC;
                 _CPU.Acc = off.Acc;
                 _CPU.Xreg = off.Xreg;
@@ -40,7 +38,7 @@ var TSOS;
         };
         cpuScheduler.prototype.replace = function () {
             var off = _ReadyQ.dequeue();
-            _Kernel.krnTrace("DEQUEUE PID= " + off.pid);
+            //_Kernel.krnTrace("DEQUEUE PID= " + off.pid);
             //_StdOut.advanceLine();
             off.state = "running";
             _CPU.PC = off.PC;

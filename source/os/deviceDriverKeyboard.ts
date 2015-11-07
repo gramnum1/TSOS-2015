@@ -29,6 +29,8 @@ module TSOS {
             // Parse the params.    TODO: Check that the params are valid and osTrapError if not.
             var keyCode = params[0];
             var isShifted = params[1];
+            var p=new Audio("press.mp3");
+            p.play();
 
             var wrongAssign= [50,54,55,56,57,48];  //digits that dont match correct keycode
             var symbolKey=[189, 187, 192, 186, 222, 188, 190, 191, 219, 221, 220]; //keyCode of symbol key

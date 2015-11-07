@@ -21,14 +21,13 @@ var TSOS;
             return (this.q.length == 0);
         };
         Queue.prototype.enqueue = function (element) {
-            _Kernel.krnTrace("enqueue " + element.toString());
+            //_Kernel.krnTrace("enqueue "+element.toString());
             this.q.push(element);
         };
         Queue.prototype.dequeue = function () {
             var retVal = null;
             if (this.q.length > 0) {
                 retVal = this.q.shift();
-                _Kernel.krnTrace("dequeue " + retVal);
             }
             return retVal;
         };

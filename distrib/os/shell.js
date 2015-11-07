@@ -404,6 +404,8 @@ var TSOS;
             for (var i = 0; i < Resident_List.length; i++) {
                 if (args == Resident_List[i].pid) {
                     found = true;
+                    Resident_List[i].state = "ready";
+                    Resident_List[i].PC = Resident_List[i].base;
                     _ReadyQ.enqueue(Resident_List[i]);
                     _CPU.isExecuting = true;
                 }

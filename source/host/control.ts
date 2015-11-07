@@ -42,6 +42,8 @@ module TSOS {
             _Light=<HTMLSpanElement>document.getElementById('light');         //Ligt to show whether cpu is executing or not
 
 
+
+
             this.initMemoryTable();
             //Create the date string and put it in _Bar
             var theDate = new Date();
@@ -148,10 +150,17 @@ module TSOS {
          */
         public static singleStepToggle(tog): void{
             var btnStep=document.getElementById('step');
+            var t=new Audio("switch.mp3");
+            t.play();
+            var on=new Audio("sson.mp3");
+            var off=new Audio ("ssoff.mp3");
+
+
             if(_StepMode==false){
                 _StepMode=true;
                 btnStep.disabled=false;
                 btnStep.style.display="inline";
+                on.play();
 
 
 
@@ -159,9 +168,12 @@ module TSOS {
                 _StepMode=false;
                 btnStep.disabled=true;
                 btnStep.style.display="none";
+                off.play();
 
 
             }
+
+
         }
 
 

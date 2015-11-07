@@ -29,7 +29,7 @@ module TSOS {
         public loadProgram(program: string):void {
             var toMemory;
             var index=this.bases[this.block];
-            if(this.block<3 && program.length<256) {
+            if(this.block<3 ) {
                 for (var i =0; i < program.length; i++) {
 
                     //pull bytes out of string two char at a time
@@ -60,7 +60,7 @@ module TSOS {
 
                 this.block++;
                 for(var i=0; i<Resident_List.length; i++) {
-                    _Kernel.krnTrace("RL " +i+" "+Resident_List[i].pid);
+                    _Kernel.krnTrace("RL " +Resident_List[i].pid);
                 }
             }else {
                 _StdOut.putText("error loading into memory");
@@ -91,11 +91,11 @@ module TSOS {
             _CPU.PC++;
             var a=_Mem.coreM[_CPU.PC];
             var address=a.concat(b);
-            index=parseInt(address,16);
+            index=_CPU.currPCB.base +parseInt(address,16);
             if(index >=_CPU.currPCB.base && index< _CPU.currPCB.limit){
                 return index
             }else{
-                _StdOut("Memory allocation "+ index+ " out of bounds. Base= "+ _CPU.currPCB.base+" Limit= "+_CPU.currPCB.limit);
+                _StdOut.putText("Memory allocation "+ index+ " out of bounds. Base= "+ _CPU.currPCB.base+" Limit= "+_CPU.currPCB.limit);
                 _StdOut.advanceLine();
                 _OsShell.shellKill(_CPU.currPCB.pid);
 
