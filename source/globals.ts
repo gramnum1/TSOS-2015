@@ -11,9 +11,9 @@
 //
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
-const APP_NAME: string    = "tSOS!";   // 'cause Bob and I were at a loss for a better name.
+const APP_NAME: string    = "IRON B[OS]S";   // 'cause Bob and I were at a loss for a better name.
 
-const APP_VERSION: string = "0.25";   // What did you expect?
+const APP_VERSION: string = "0.3";   // What did you expect?
 
 
 
@@ -63,6 +63,8 @@ var _Trace: boolean = true;  // Default the OS trace to be on.
 var _StepMode: boolean=false;
 var _Step: boolean=false;
 
+var HUM: any=new Audio("hum.mp3");
+
 // The OS Kernel and its queues.
 var _Kernel: TSOS.Kernel;
 var _KernelInterruptQueue;          // Initializing this to null (which I would normally do) would then require us to specify the 'any' type, as below.
@@ -73,6 +75,7 @@ var numPCBs: number=0;
 // Standard input and output
 var _StdIn;    // Same "to null or not to null" issue as above.
 var _StdOut;
+var MEMERR: boolean=false;
 
 // UI
 var _Console: TSOS.Console;

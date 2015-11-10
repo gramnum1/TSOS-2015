@@ -37,6 +37,11 @@ var TSOS;
             _PCBTable = document.getElementById('pcbTable'); //PCBTable
             _ReadyTable = document.getElementById('readyQTable');
             _Light = document.getElementById('light'); //Ligt to show whether cpu is executing or not
+            HUM.addEventListener('ended', function () {
+                this.currentTime = 0;
+                this.play();
+            }, false);
+            HUM.volume = .2;
             this.initMemoryTable();
             //Create the date string and put it in _Bar
             var theDate = new Date();
@@ -79,6 +84,9 @@ var TSOS;
         // Host Events
         //
         Control.hostBtnStartOS_click = function (btn) {
+            HUM.play();
+            var start = new Audio("start.mp3");
+            start.play();
             _Light.style.color = "red";
             // Disable the (passed-in) start button...
             btn.disabled = true;

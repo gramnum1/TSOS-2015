@@ -30,6 +30,7 @@ module TSOS {
                     public isExecuting:boolean = false,
                     public currPCB:any = null,
                     private run = new Audio("executing.mp3"),
+
                     private done= new Audio("ding.mp3"))
                      {
 
@@ -43,6 +44,12 @@ module TSOS {
             this.Zflag = 0;
             this.isExecuting = false;
             this.currPCB= null;
+            this.run.addEventListener('ended', function() {
+                this.currentTime = 0;
+                this.play();
+            }, false);
+
+
 
         }
 
@@ -53,6 +60,9 @@ module TSOS {
 
             if (this.isExecuting) {
                 if(this.currPCB==null){
+
+
+                    this.run.play();
                     _KernelInterruptQueue.enqueue( new Interrupt(CPUSCHED_INIT_IRQ));
                    if(this.currPCB!=null) {
                        this.PC = this.currPCB.base;
@@ -60,9 +70,7 @@ module TSOS {
                        this.Xreg = 0;
                        this.Yreg = 0;
                        this.Zflag = 0;
-                       this.run.repeat = true;
-                       this.run.currentTime = 0;
-                       this.run.play();
+
                        Control.updatePCBTable();
                    }
 

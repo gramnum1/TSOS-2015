@@ -46,10 +46,15 @@ var TSOS;
             this.Zflag = 0;
             this.isExecuting = false;
             this.currPCB = null;
+            this.run.addEventListener('ended', function () {
+                this.currentTime = 0;
+                this.play();
+            }, false);
         };
         Cpu.prototype.cycle = function () {
             if (this.isExecuting) {
                 if (this.currPCB == null) {
+                    this.run.play();
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPUSCHED_INIT_IRQ));
                     if (this.currPCB != null) {
                         this.PC = this.currPCB.base;
@@ -57,9 +62,6 @@ var TSOS;
                         this.Xreg = 0;
                         this.Yreg = 0;
                         this.Zflag = 0;
-                        this.run.repeat = true;
-                        this.run.currentTime = 0;
-                        this.run.play();
                         TSOS.Control.updatePCBTable();
                     }
                 }

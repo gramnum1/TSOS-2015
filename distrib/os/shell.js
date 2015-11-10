@@ -463,7 +463,13 @@ var TSOS;
                 else {
                     if (pid == _CPU.currPCB.pid) {
                         if (_ReadyQ.isEmpty() == false) {
-                            _CPUSCHED.replace();
+                            if (!MEMERR) {
+                                _CPUSCHED.replace();
+                            }
+                            else {
+                                _CPUSCHED.remove();
+                                MEMERR = false;
+                            }
                         }
                         else {
                             _CPU.terminate();

@@ -10,8 +10,8 @@
 //
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
-var APP_NAME = "tSOS!"; // 'cause Bob and I were at a loss for a better name.
-var APP_VERSION = "0.25"; // What did you expect?
+var APP_NAME = "IRON B[OS]S"; // 'cause Bob and I were at a loss for a better name.
+var APP_VERSION = "0.3"; // What did you expect?
 var CPU_CLOCK_INTERVAL = 100; // This is in ms (milliseconds) so 1000 = 1 second.
 var TIMER_IRQ = 0; // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
 // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
@@ -47,6 +47,7 @@ var _FontHeightMargin = 4; // Additional space added to font size when advancing
 var _Trace = true; // Default the OS trace to be on.
 var _StepMode = false;
 var _Step = false;
+var HUM = new Audio("hum.mp3");
 // The OS Kernel and its queues.
 var _Kernel;
 var _KernelInterruptQueue; // Initializing this to null (which I would normally do) would then require us to specify the 'any' type, as below.
@@ -57,6 +58,7 @@ var numPCBs = 0;
 // Standard input and output
 var _StdIn; // Same "to null or not to null" issue as above.
 var _StdOut;
+var MEMERR = false;
 // UI
 var _Console;
 var _OsShell;

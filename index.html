@@ -55,7 +55,7 @@
 
     
 <div class="titleBar">
-   <div id="divButtonBar" style="margin:4px;">
+   <div id="divButtonBar" >
       <input type="button"
              id = "btnStartOS"
              name="brnStartOS"
@@ -85,7 +85,9 @@
        <input  name="stepMode" type="checkbox" data-on-color="success" data-off-color="danger"data-inverse="true" data-label-text="Step" data-size="large"  onchange="TSOS.Control.singleStepToggle(this)" checked />
        <button class="btn btn-primary" id="step" onclick="TSOS.Control.step(this)" disabled style="display: none;">
            <span class="glyphicon glyphicon-play"></span></button>
+    <img class="logo" src="distrib/images/ironboss.png"/>
     </div>
+    
     
     </div>
     <script>$("[name='stepMode']").bootstrapSwitch();</script>
@@ -171,7 +173,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                </tr>    
+                </tr>  
             </table>
             
             </div>

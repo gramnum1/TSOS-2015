@@ -8,7 +8,7 @@ module TSOS {
         constructor(
             public block:number=0,
             public bases=[0,256, 512],
-            public limits=[256, 512, 768 ]
+            public limits=[255, 511, 767 ]
 
         ){}
 
@@ -92,12 +92,14 @@ module TSOS {
             var a=_Mem.coreM[_CPU.PC];
             var address=a.concat(b);
             index=_CPU.currPCB.base +parseInt(address,16);
-            if(index >=_CPU.currPCB.base && index< _CPU.currPCB.limit){
+            if(index >=_CPU.currPCB.base && index<= _CPU.currPCB.limit){
                 return index
             }else{
                 _StdOut.putText("Memory allocation "+ index+ " out of bounds. Base= "+ _CPU.currPCB.base+" Limit= "+_CPU.currPCB.limit);
                 _StdOut.advanceLine();
+                MEMERR=true;
                 _OsShell.shellKill(_CPU.currPCB.pid);
+
 
 
             }

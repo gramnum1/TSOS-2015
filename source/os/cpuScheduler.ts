@@ -88,6 +88,28 @@ module TSOS {
 
 
         }
+        public remove(): void{
+            var off = _ReadyQ.dequeue();
+            //_Kernel.krnTrace("DEQUEUE PID= " + off.pid);
+            //_StdOut.advanceLine();
+            off.state="running";
+
+
+
+
+            _CPU.PC = off.PC-1;
+            _CPU.Acc = off.Acc;
+            _CPU.Xreg = off.Xreg;
+            _CPU.Yreg = off.Yreg;
+            _CPU.Zflag = off.Zflag;
+            _CPU.isExecuting = true;
+            _CPU.currPCB = off;
+            this.counter=0;
+            Control.updatePCBTable();
+
+
+
+        }
 
 
 

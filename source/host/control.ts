@@ -28,6 +28,8 @@ module TSOS {
     export class Control {
 
 
+
+
         public static hostInit(): void {
             // This is called from index.html's onLoad event via the onDocumentLoad function pointer.
 
@@ -40,7 +42,11 @@ module TSOS {
             _PCBTable=<HTMLTableElement>document.getElementById('pcbTable');  //PCBTable
             _ReadyTable=<HTMLTableElement>document.getElementById('readyQTable');
             _Light=<HTMLSpanElement>document.getElementById('light');         //Ligt to show whether cpu is executing or not
-
+            HUM.addEventListener('ended', function() {
+                this.currentTime = 0;
+                this.play();
+            }, false);
+            HUM.volume=.2;
 
 
 
@@ -98,6 +104,10 @@ module TSOS {
         // Host Events
         //
         public static hostBtnStartOS_click(btn): void {
+            HUM.play();
+
+            var start=new Audio("start.mp3");
+            start.play();
             _Light.style.color="red";
             // Disable the (passed-in) start button...
             btn.disabled = true;
@@ -191,6 +201,7 @@ module TSOS {
         CPUTable
          */
         public static initCPUTable():void{
+
             _CPUTable.rows[1].cells[0].innerHTML=_CPU.PC;
             _CPUTable.rows[1].cells[1].innerHTML=_CPU.op;
             _CPUTable.rows[1].cells[2].innerHTML=_CPU.Acc;
@@ -264,13 +275,15 @@ module TSOS {
         updates the PCBTable after process terminates
          */
         public static updatePCBTable(): void{
-            _PCBTable.rows[1].cells[0].innerHTML=_CPU.currPCB.pid;
-            _PCBTable.rows[1].cells[1].innerHTML=_CPU.currPCB.state;
-            _PCBTable.rows[1].cells[2].innerHTML=_CPU.currPCB.PC;
-            _PCBTable.rows[1].cells[3].innerHTML=_CPU.currPCB.Acc;
-            _PCBTable.rows[1].cells[4].innerHTML=_CPU.currPCB.Xreg;
-            _PCBTable.rows[1].cells[5].innerHTML=_CPU.currPCB.Yreg;
-            _PCBTable.rows[1].cells[6].innerHTML=_CPU.currPCB.Zflag;
+
+
+            _PCBTable.rows[1].cells[0].innerHTML = _CPU.currPCB.pid;
+            _PCBTable.rows[1].cells[1].innerHTML = _CPU.currPCB.state;
+            _PCBTable.rows[1].cells[2].innerHTML = _CPU.currPCB.PC;
+            _PCBTable.rows[1].cells[3].innerHTML = _CPU.currPCB.Acc;
+            _PCBTable.rows[1].cells[4].innerHTML = _CPU.currPCB.Xreg;
+            _PCBTable.rows[1].cells[5].innerHTML = _CPU.currPCB.Yreg;
+            _PCBTable.rows[1].cells[6].innerHTML = _CPU.currPCB.Zflag;
 
         }
 

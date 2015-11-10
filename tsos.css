@@ -98,4 +98,15 @@ h3 {
 .nav-tabs, .tab-content{
     background-color: white !important;
 }
+.logo{
+    height: 50px;
+    width:auto;
+}
+.titleBar{
+    background-color: black !important;
     
+    
+}
+#divButtonBar{
+    margin-bottom: 4px;
+}
