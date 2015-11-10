@@ -16,6 +16,9 @@ var TSOS;
             }
             TSOS.Control.updateMemoryTable();
             this.block = 0;
+            _StdOut.putText("Resident List size= " + Resident_List.getSize());
+            _OsShell.pid = 0;
+            _PCB = null;
         };
         /*loadProgram(program)
           loads a program into memory and  creates a PCB
@@ -24,7 +27,7 @@ var TSOS;
         MemoryManager.prototype.loadProgram = function (program) {
             var toMemory;
             var index = this.bases[this.block];
-            if (this.block < 3) {
+            if (this.block < 3 && program.length / 2 <= 256) {
                 for (var i = 0; i < program.length; i++) {
                     //pull bytes out of string two char at a time
                     toMemory = program.slice(i, i + 2);
@@ -39,16 +42,16 @@ var TSOS;
                 var newLimit = this.limits[this.block];
                 _PCB = new TSOS.PCB();
                 _PCB.init(newBase, newLimit);
-                Resident_List[Resident_List.length] = _PCB;
-                _StdOut.putText("pid= " + Resident_List[this.block].pid + " base=" + Resident_List[this.block].base + " Limit=" + Resident_List[this.block].limit);
+                Resident_List.enqueue(_PCB);
+                _StdOut.putText("pid= " + _PCB.pid + " base=" + _PCB.base + " Limit=" + _PCB.limit);
                 _OsShell.pid++;
+                _PCB = null;
                 // _ReadyQ.enqueue(Resident_List[this.block]);
-                numPCBs++;
                 //update memory Table
                 TSOS.Control.updateMemoryTable();
                 this.block++;
-                for (var i = 0; i < Resident_List.length; i++) {
-                    _Kernel.krnTrace("RL " + Resident_List[i].pid);
+                for (var i = 0; i < Resident_List.getSize(); i++) {
+                    _Kernel.krnTrace("RL " + Resident_List.getObj(i).pid);
                 }
             }
             else {
@@ -82,7 +85,6 @@ var TSOS;
             else {
                 _StdOut.putText("Memory allocation " + index + " out of bounds. Base= " + _CPU.currPCB.base + " Limit= " + _CPU.currPCB.limit);
                 _StdOut.advanceLine();
-                MEMERR = true;
                 _OsShell.shellKill(_CPU.currPCB.pid);
             }
         };

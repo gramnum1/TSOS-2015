@@ -493,16 +493,18 @@ module TSOS {
          */
         public shellRun(args){
             var found=false;
-            for(var i=0; i< Resident_List.length; i++) {
-                if (args == Resident_List[i].pid) {
+            var nQ;
+            for(var i=0; i< Resident_List.getSize(); i++) {
+                if (args == Resident_List.getObj(i).pid) {
                     found=true;
+                    nQ=Resident_List.remove(Resident_List.getObj(i).pid);
 
-                    Resident_List[i].state="ready";
-                    Resident_List[i].PC=Resident_List[i].base;
+                    nQ.state="ready";
+                    nQ.PC=nQ.base;
 
 
 
-                    _ReadyQ.enqueue(Resident_List[i]);
+                    _ReadyQ.enqueue(nQ);
                     _CPU.isExecuting = true;
                 }
             }if(!found) {
@@ -512,11 +514,21 @@ module TSOS {
 
         }
 
+        /*shellClearMem(args)
+        calls clearMem() in memory manager
+        clears memory, resident list, and
+        resets load resources
+         */
         public shellClearMem(args){
             _MemMan.clearMem();
 
         }
 
+        /*shellPS(args)
+        displays list of
+        running and waiting
+        processes
+         */
         public shellPS(args){
             if(_CPU.isExecuting) {
                 _StdOut.putText("Running Process pid=" + _CPU.currPCB.pid);
@@ -532,11 +544,18 @@ module TSOS {
             }
         }
 
+        /*shellRunAll(args)
+        runs all programs currently in the
+        Resident_List
+         */
         public shellRunAll(args){
-            for(var i=0; i<Resident_List.length; i++) {
-                _Kernel.krnTrace("Process " +i+" pid="+Resident_List[i].pid);
-                Resident_List[i].state="ready";
-                _ReadyQ.enqueue(Resident_List[i]);
+            var nQ;
+            while(Resident_List.isEmpty()==false) {
+                _Kernel.krnTrace("Process pid="+Resident_List.getObj(0).pid);
+                nQ=Resident_List.dequeue();
+                nQ.state="ready";
+
+                _ReadyQ.enqueue(nQ);
 
 
 
@@ -546,6 +565,11 @@ module TSOS {
 
         }
 
+        /*shellQuantum(args)
+        allows user to change
+        the quantum value
+        for round robin
+         */
         public shellQuantum(args){
             var q;
             if(isNaN(args) || ( q=parseInt(args))<=0 ){
@@ -561,25 +585,27 @@ module TSOS {
 
                 }
             }
-
+        /*shellKill(args)
+        kills a running or
+         waiting process
+         */
         public shellKill(args){
             var pid;
             var found=false;
             if(_CPU.isExecuting) {
+                // if args invalid
                 if (isNaN(args) || ( pid = parseInt(args)) < 0) {
                     _StdOut.putText("Please enter a valid pid");
                     _StdOut.advanceLine();
 
                 }else{
+                    // if process to kill is running
                     if(pid==_CPU.currPCB.pid){
 
                         if(_ReadyQ.isEmpty()==false) {
-                            if(!MEMERR){
-                                _CPUSCHED.replace();
-                            }else{
-                                _CPUSCHED.remove();
-                            MEMERR=false;
-                            }
+
+                                _KernelInterruptQueue.enqueue(new Interrupt(CPUSCHED_REPLACE_IRQ,0));
+
 
                         }else{
                             _CPU.terminate();
@@ -608,6 +634,7 @@ module TSOS {
                         _StdOut.advanceLine();
 
                     }else{
+                        //play sound
                         var audio = new Audio("processKilled.mp3");
                         audio.play();
 

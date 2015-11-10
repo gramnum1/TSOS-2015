@@ -20,6 +20,9 @@ module TSOS {
             }
             Control.updateMemoryTable();
             this.block=0;
+            _StdOut.putText("Resident List size= "+Resident_List.getSize());
+            _OsShell.pid=0;
+            _PCB=null;
         }
 
         /*loadProgram(program)
@@ -29,7 +32,7 @@ module TSOS {
         public loadProgram(program: string):void {
             var toMemory;
             var index=this.bases[this.block];
-            if(this.block<3 ) {
+            if(this.block<3 && program.length/2 <=256) {
                 for (var i =0; i < program.length; i++) {
 
                     //pull bytes out of string two char at a time
@@ -49,18 +52,20 @@ module TSOS {
                 var newLimit = this.limits[this.block];
                  _PCB = new PCB();
                 _PCB.init(newBase, newLimit);
-                Resident_List[Resident_List.length]=_PCB;
-                _StdOut.putText("pid= " + Resident_List[this.block].pid + " base="+Resident_List[this.block].base+ " Limit="+Resident_List[this.block].limit);
+                Resident_List.enqueue(_PCB);
+
+                _StdOut.putText("pid= " + _PCB.pid + " base="+_PCB.base+ " Limit="+_PCB.limit);
                 _OsShell.pid++;
+                _PCB=null;
                // _ReadyQ.enqueue(Resident_List[this.block]);
-                numPCBs++;
+
 
                 //update memory Table
                 Control.updateMemoryTable();
 
                 this.block++;
-                for(var i=0; i<Resident_List.length; i++) {
-                    _Kernel.krnTrace("RL " +Resident_List[i].pid);
+                for(var i=0; i<Resident_List.getSize(); i++) {
+                    _Kernel.krnTrace("RL " +Resident_List.getObj(i).pid);
                 }
             }else {
                 _StdOut.putText("error loading into memory");
@@ -97,7 +102,7 @@ module TSOS {
             }else{
                 _StdOut.putText("Memory allocation "+ index+ " out of bounds. Base= "+ _CPU.currPCB.base+" Limit= "+_CPU.currPCB.limit);
                 _StdOut.advanceLine();
-                MEMERR=true;
+
                 _OsShell.shellKill(_CPU.currPCB.pid);
 
 

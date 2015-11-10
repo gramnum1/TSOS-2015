@@ -44,6 +44,7 @@ module TSOS {
             this.Zflag = 0;
             this.isExecuting = false;
             this.currPCB= null;
+            //enables executing sound to loop
             this.run.addEventListener('ended', function() {
                 this.currentTime = 0;
                 this.play();
@@ -59,6 +60,7 @@ module TSOS {
 
 
             if (this.isExecuting) {
+                //check to see if _CPUSCHED needs to init
                 if(this.currPCB==null){
 
 
@@ -127,8 +129,9 @@ module TSOS {
                             this.currPCB.Yreg=this.Yreg;
                             this.currPCB.Zflag=this.Zflag;
                             Control.updatePCBTable();
+                            //interrupt for replacement
                             _KernelInterruptQueue.enqueue(new Interrupt(CPUSCHED_REPLACE_IRQ,0));
-                           // _CPUSCHED.replace();
+
                             this.done.play();
                         }else {
                             this.terminate();
@@ -278,7 +281,7 @@ module TSOS {
 
                 }
                 _CPUSCHED.counter++;
-               // _StdOut.putText("COUNTER: "+_CPUSCHED.counter);
+
             }else{this.loadOffPCB();}
 
         }
@@ -309,7 +312,7 @@ module TSOS {
             this.currPCB.Xreg=this.Xreg;
             this.currPCB.Yreg=this.Yreg;
             this.currPCB.Zflag=this.Zflag;
-
+            //interrupt for change
             _KernelInterruptQueue.enqueue(new Interrupt(CPUSCHED_CHANGE_IRQ, 0));
 
 
@@ -329,11 +332,14 @@ module TSOS {
             this.currPCB.Zflag=this.Zflag;
             Control.checkExe();
             Control.updatePCBTable();
+            //stop executing noise
             this.run.repeat=false;
             this.run.pause();
 
-
+            //reset cpu
             this.init();
+            _StdOut.advanceLine();
+            _OsShell.putPrompt();
 
 
 

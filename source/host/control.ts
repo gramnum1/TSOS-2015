@@ -288,47 +288,22 @@ module TSOS {
         }
 
 
-        /*public static addToReadyTable(): void{
-            //var rownum=numPCBs;
-
-            var currPCB;
-            _Kernel.krnTrace("ReadyQ size= "+_ReadyQ.getSize());
-            var head=_ReadyTable.insertRow(0);
-            for (var j = 0; j < 5; j++) {
-             head.insertCell(j);
-
-
-            }
-
-
-
-                for(var i =0; i<_ReadyQ.getSize(); i++) {
-                    currPCB = _ReadyQ.getObj(i);
-                    var row = _ReadyTable.insertRow(i+1);
-
-                    for (var j = 0; j < 5; j++) {
-                        var cell = row.insertCell(j);
-
-                    }
-
-
-
-                }
-
-
-
-
-
-
-            }*/
+       /*updateReadyTable()
+       dynamically updates the Ready Table with
+       the current contents of the ReadyQ
+       durring runtime
+        */
         public static updateReadyTable():void{
 
             var currPCB;
-           while(_ReadyTable.rows.length!=1){
+           //clear the ready table
+            while(_ReadyTable.rows.length!=1){
                _ReadyTable.deleteRow(1);
            }
 
+            //for every object in the readyq inseert a row with 5 cells
             for(var i =1; i<=_ReadyQ.getSize(); ++i) {
+                //set currPCB to an item in ready q
                 currPCB = _ReadyQ.getObj(i-1);
                 var row=_ReadyTable.insertRow(i);
                 for(var j=0; j<5; ++j){
@@ -337,7 +312,7 @@ module TSOS {
                 }
 
 
-
+                //fill cells with data
                 _ReadyTable.rows[i].cells[0].innerHTML = currPCB.pid;
                 _ReadyTable.rows[i].cells[1].innerHTML = currPCB.state;
                 _ReadyTable.rows[i].cells[2].innerHTML = currPCB.base;
@@ -347,12 +322,7 @@ module TSOS {
             }
 
         }
-        private static clearReadyTable():void{
-            for(var i =0; i<_ReadyTable.rows.length; i++){
-                _ReadyTable.deleteRow(i);
 
-            }
-        }
 
         /*checkExe()
         if CPU is executing light is green

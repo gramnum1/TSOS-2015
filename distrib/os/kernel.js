@@ -26,6 +26,7 @@ var TSOS;
             _KernelBuffers = new Array(); // Buffers... for the kernel.
             _KernelInputQueue = new TSOS.Queue(); // Where device input lands before being processed out somewhere.
             _ReadyQ = new TSOS.Queue();
+            Resident_List = new TSOS.Queue();
             _CPUSCHED = new TSOS.cpuScheduler();
             // Initialize the console.
             _Console = new TSOS.Console(); // The command line interface / console I/O device.
@@ -115,6 +116,7 @@ var TSOS;
                     _krnKeyboardDriver.isr(params); // Kernel mode device driver
                     _StdIn.handleInput();
                     break;
+                //interrupt for CPUCHED INIT
                 case CPUSCHED_INIT_IRQ:
                     _Mode = 0;
                     var first = _ReadyQ.getObj(0);
@@ -122,6 +124,7 @@ var TSOS;
                     _CPUSCHED.init();
                     _Mode = 1;
                     break;
+                //interrupt for CPUSCHED change
                 case CPUSCHED_CHANGE_IRQ:
                     _Mode = 0;
                     this.krnTrace("ENQUEUE PID= " + _CPU.currPCB.pid + " PC= " + _CPU.currPCB.PC);
@@ -131,6 +134,7 @@ var TSOS;
                     _CPUSCHED.change();
                     _Mode = 1;
                     break;
+                //interrupt for CPUSCHED replace
                 case CPUSCHED_REPLACE_IRQ:
                     _Mode = 0;
                     this.krnTrace("DEQUEUE PID= " + _ReadyQ.getObj(0).pid);

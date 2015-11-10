@@ -26,7 +26,7 @@ var MAX_MEM = 768;
 //
 var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 var _PCB;
-var Resident_List = [];
+var Resident_List = null;
 var _CPUSCHED;
 var _Mem;
 var _MemMan;
@@ -54,11 +54,10 @@ var _KernelInterruptQueue; // Initializing this to null (which I would normally 
 var _KernelInputQueue = null; // Is this better? I don't like uninitialized variables. But I also don't like using the type specifier 'any'
 var _KernelBuffers = null; // when clearly 'any' is not what we want. There is likely a better way, but what is it?
 var _ReadyQ = null;
-var numPCBs = 0;
 // Standard input and output
 var _StdIn; // Same "to null or not to null" issue as above.
 var _StdOut;
-var MEMERR = false;
+;
 // UI
 var _Console;
 var _OsShell;

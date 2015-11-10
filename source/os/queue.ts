@@ -49,12 +49,14 @@ module TSOS {
         }
 
         public remove(pid){
+            var element;
             for (var i=0; i<this.getSize(); i++){
                 if(this.q[i].pid==pid){
                     this.swap(this.q,0, i);
-                    this.dequeue();
+                    element=this.dequeue();
                 }
             }
+            return element;
 
         }
         private swap(array, A, B ){

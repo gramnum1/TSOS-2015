@@ -8,12 +8,24 @@ var TSOS;
             this.quantum = quantum;
             this.counter = counter;
         }
+        /*init()
+        inits round robin scheduler
+        by throwing first item in ReadyQ
+        into the CPU
+         */
         cpuScheduler.prototype.init = function () {
             var first = _ReadyQ.dequeue();
-            _Kernel.krnTrace(" INIT PROCESS " + first.pid + " Base: " + first.base);
             first.state = "running";
             _CPU.currPCB = first;
         };
+        /*change()
+        takes running process off of cpu
+        enqueues it to ready q
+        dequeues of of ready q
+        places dequeued pcb onto
+        cpu
+
+         */
         cpuScheduler.prototype.change = function () {
             if (_ReadyQ.getSize() > 0) {
                 var on = _CPU.currPCB;
@@ -36,27 +48,18 @@ var TSOS;
             }
             this.counter = 0;
         };
+        /*replace()
+        used when executing process finishes
+        simply dequeues off of
+        ready q and places
+        pcb on CPU
+         */
         cpuScheduler.prototype.replace = function () {
             var off = _ReadyQ.dequeue();
             //_Kernel.krnTrace("DEQUEUE PID= " + off.pid);
             //_StdOut.advanceLine();
             off.state = "running";
             _CPU.PC = off.PC;
-            _CPU.Acc = off.Acc;
-            _CPU.Xreg = off.Xreg;
-            _CPU.Yreg = off.Yreg;
-            _CPU.Zflag = off.Zflag;
-            _CPU.isExecuting = true;
-            _CPU.currPCB = off;
-            this.counter = 0;
-            TSOS.Control.updatePCBTable();
-        };
-        cpuScheduler.prototype.remove = function () {
-            var off = _ReadyQ.dequeue();
-            //_Kernel.krnTrace("DEQUEUE PID= " + off.pid);
-            //_StdOut.advanceLine();
-            off.state = "running";
-            _CPU.PC = off.PC - 1;
             _CPU.Acc = off.Acc;
             _CPU.Xreg = off.Xreg;
             _CPU.Yreg = off.Yreg;

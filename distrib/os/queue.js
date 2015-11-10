@@ -43,12 +43,14 @@ var TSOS;
             return element;
         };
         Queue.prototype.remove = function (pid) {
+            var element;
             for (var i = 0; i < this.getSize(); i++) {
                 if (this.q[i].pid == pid) {
                     this.swap(this.q, 0, i);
-                    this.dequeue();
+                    element = this.dequeue();
                 }
             }
+            return element;
         };
         Queue.prototype.swap = function (array, A, B) {
             var temp = array[B];

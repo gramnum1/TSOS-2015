@@ -85,7 +85,9 @@ h3 {
     border: 2px, solid, black;
     
     background-color: white;
-    margin-bottom: 15px
+    margin-bottom: 15px;
+    
+    
     
 }
 #PCBTable{
@@ -110,3 +112,9 @@ h3 {
 #divButtonBar{
     margin-bottom: 4px;
 }
+#cog{
+    position: absolute;
+    left: 100px;
+    
+    height: 42px;
+    width:auto;
