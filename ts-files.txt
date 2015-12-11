@@ -9,6 +9,7 @@ C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\console.ts
 C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\cpuScheduler.ts
 C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\deviceDriver.ts
 C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\deviceDriverKeyboard.ts
+C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\filesystemDeviceDriver.ts
 C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\interrupt.ts
 C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\kernel.ts
 C:\Users\gramnum1\Documents\GitHub\TSOS-2015\source\os\MemoryManager.ts

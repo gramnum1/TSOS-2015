@@ -91,6 +91,9 @@ var TSOS;
             //kill
             sc = new TSOS.ShellCommand(this.shellKill, "kill", "<int> - kills an active process");
             this.commandList[this.commandList.length] = sc;
+            //create <filename>
+            sc = new TSOS.ShellCommand(this.shellCreateFile, "create", "<string> - creates filename");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -522,6 +525,17 @@ var TSOS;
                         audio.play();
                     }
                 }
+            }
+        };
+        Shell.prototype.shellCreateFile = function (args) {
+            var filename = args;
+            if (_krnFSDD.createFile(filename)) {
+                _StdOut.putText("File " + filename + " Created Succesfully");
+                _StdOut.advanceLine();
+            }
+            else {
+                _StdOut.putText("File " + filename + " Not Created");
+                _StdOut.advanceLine();
             }
         };
         return Shell;

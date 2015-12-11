@@ -33,6 +33,8 @@
    <script type="text/javascript" src="distrib/os/shellCommand.js"></script>
    <script type="text/javascript" src="distrib/os/userCommand.js"></script>
     <script type="text/javascript" src="distrib/os/PCB.js"></script>
+     <script type="text/javascript" src="distrib/os/filesystemDeviceDriver.js"></script>
+    
     
    <script type="text/javascript" src="distrib/os/kernel.js"></script>
    
@@ -143,12 +145,44 @@
         </div>
         
         <div class="row">
-            <label for="mem">Memory</label>
+            <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#MainMem" aria-controls="MainMem" role="tab" data-toggle="tab">Memory</a></li>
+            <li role="presentation" ><a href="#diskTab" aria-controls="diskTab" role="tab" data-toggle="tab">Disk</a></li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="MainMem"> 
+                <label for="mem">Memory</label>
             <div name= "mem" id="MemoryTable">
              <table id="mTable" class="table table-condensed table-bordered">
                  <tbody>
                  </tbody>
                 </table>
+            </div>
+                </div>
+                
+                
+                
+                <div role="tabpanel" class="tab-pane" id="diskTab">
+                    <label for="d">Disk</label>
+            <div name= "d" id="diskContainer" >
+             <table id="diskTable" class="table table-condensed table-bordered">
+                 <tbody>
+                     <tr>
+                    
+                    <th>T:S:B</th>
+                         <th>META</th>
+                    <th>Data</th>     
+                     
+                     </tr>
+                 </tbody>
+                </table>
+            </div>
+                
+                
+                
+                </div>
+                
+                
             </div>
                  
         

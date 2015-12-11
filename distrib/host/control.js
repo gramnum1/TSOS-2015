@@ -36,6 +36,7 @@ var TSOS;
             _CPUTable = document.getElementById('cpuTable'); //CPU Table
             _PCBTable = document.getElementById('pcbTable'); //PCBTable
             _ReadyTable = document.getElementById('readyQTable');
+            _DiskTable = document.getElementById("diskTable");
             _Light = document.getElementById('light'); //Ligt to show whether cpu is executing or not
             HUM.addEventListener('ended', function () {
                 this.currentTime = 0;
@@ -108,6 +109,8 @@ var TSOS;
             _Kernel = new TSOS.Kernel();
             _Mode = 1;
             _Kernel.krnBootstrap(); // _GLaDOS.afterStartup() will get called in there, if configured.
+            _Kernel.krnTrace("Tracks: " + _krnFSDD.tracks);
+            this.initDiskTable();
         };
         Control.hostBtnHaltOS_click = function (btn) {
             Control.hostLog("Emergency halt", "host");
@@ -185,6 +188,42 @@ var TSOS;
                     }
                     else {
                         cell.innerHTML = "00";
+                    }
+                }
+            }
+        };
+        Control.initDiskTable = function () {
+            var i = 1;
+            for (var t = 0; t < _krnFSDD.tracks; t++) {
+                for (var s = 0; s < _krnFSDD.sections; s++) {
+                    for (var b = 0; b < _krnFSDD.blocks; b++) {
+                        var tsb = t + ":" + s + ":" + b;
+                        var meta = sessionStorage.getItem(t + "" + s + "" + b).substr(0, 4);
+                        var data = sessionStorage.getItem(t + "" + s + "" + b).substr(4);
+                        var row = _DiskTable.insertRow(i);
+                        for (var j = 0; j < 3; j++) {
+                            var cell = row.insertCell(j);
+                        }
+                        _DiskTable.rows[i].cells[0].innerHTML = tsb;
+                        _DiskTable.rows[i].cells[1].innerHTML = meta;
+                        _DiskTable.rows[i].cells[2].innerHTML = data;
+                        i++;
+                    }
+                }
+            }
+        };
+        Control.updateDiskTable = function () {
+            var i = 1;
+            for (var t = 0; t < _krnFSDD.tracks; t++) {
+                for (var s = 0; s < _krnFSDD.sections; s++) {
+                    for (var b = 0; b < _krnFSDD.blocks; b++) {
+                        var tsb = t + ":" + s + ":" + b;
+                        var meta = sessionStorage.getItem(t + "" + s + "" + b).substr(0, 4);
+                        var data = sessionStorage.getItem(t + "" + s + "" + b).substr(4);
+                        _DiskTable.rows[i].cells[0].innerHTML = tsb;
+                        _DiskTable.rows[i].cells[1].innerHTML = meta;
+                        _DiskTable.rows[i].cells[2].innerHTML = data;
+                        i++;
                     }
                 }
             }

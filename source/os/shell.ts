@@ -149,6 +149,10 @@ module TSOS {
             //kill
             sc=new ShellCommand(this.shellKill, "kill", "<int> - kills an active process");
             this.commandList[this.commandList.length]=sc;
+            //create <filename>
+            sc=new ShellCommand(this.shellCreateFile, "create", "<string> - creates filename");
+            this.commandList[this.commandList.length]=sc;
+
 
 
 
@@ -642,6 +646,17 @@ module TSOS {
 
                 }
 
+            }
+
+        }
+        public shellCreateFile(args){
+            var filename=args;
+            if(_krnFSDD.createFile(filename)){
+                _StdOut.putText("File "+filename+" Created Succesfully");
+                _StdOut.advanceLine();
+            }else{
+                _StdOut.putText("File "+filename+" Not Created");
+                _StdOut.advanceLine();
             }
 
         }

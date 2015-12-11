@@ -39,6 +39,10 @@ var TSOS;
             _krnKeyboardDriver = new TSOS.DeviceDriverKeyboard(); // Construct it.
             _krnKeyboardDriver.driverEntry(); // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
+            this.krnTrace("Loading fsDD");
+            _krnFSDD = new TSOS.FSDD();
+            _krnFSDD.driverEntry();
+            this.krnTrace(_krnFSDD.status);
             //
             // ... more?
             //

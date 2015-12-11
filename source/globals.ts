@@ -29,6 +29,8 @@ const CPUSCHED_CHANGE_IRQ: number=3;
 
 const CPUSCHED_REPLACE_IRQ: number=4;
 
+const DISK_IRQ: number=5;
+
 
 const MAX_MEM: number=768;
 
@@ -54,6 +56,7 @@ var _MemTable: HTMLTableElement;
 var _CPUTable: HTMLTableElement;
 var _PCBTable: HTMLTableElement;
 var _ReadyTable: HTMLTableElement;
+var _DiskTable: HTMLTableElement;
 var _Light: HTMLSpanElement;
 var _DrawingContext: any; // = _Canvas.getContext("2d");  // Assigned here for type safety, but re-initialized in Control.hostInit() for OCD and logic.
 var _DefaultFontFamily: string = "sans";        // Ignored, I think. The was just a place-holder in 2008, but the HTML canvas may have use for it.

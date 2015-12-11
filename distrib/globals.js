@@ -19,6 +19,7 @@ var KEYBOARD_IRQ = 1;
 var CPUSCHED_INIT_IRQ = 2;
 var CPUSCHED_CHANGE_IRQ = 3;
 var CPUSCHED_REPLACE_IRQ = 4;
+var DISK_IRQ = 5;
 var MAX_MEM = 768;
 //
 // Global Variables
@@ -39,6 +40,7 @@ var _MemTable;
 var _CPUTable;
 var _PCBTable;
 var _ReadyTable;
+var _DiskTable;
 var _Light;
 var _DrawingContext; // = _Canvas.getContext("2d");  // Assigned here for type safety, but re-initialized in Control.hostInit() for OCD and logic.
 var _DefaultFontFamily = "sans"; // Ignored, I think. The was just a place-holder in 2008, but the HTML canvas may have use for it.
