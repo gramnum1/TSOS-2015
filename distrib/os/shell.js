@@ -546,26 +546,29 @@ var TSOS;
         };
         Shell.prototype.shellReadFile = function (args) {
             var filename = args;
-            _krnFSDD.readFile(filename);
+            var read = _krnFSDD.readFile(filename);
+            _StdOut.putText("File: " + filename);
+            _StdOut.advanceLine();
+            _StdOut.putText(read);
         };
         Shell.prototype.shellWriteFile = function (args) {
             var i = 0;
             var input = args.toString();
             //args=args.toString().replace(/,/g, " ");
-            _Kernel.krnTrace("input: " + args);
+            // _Kernel.krnTrace("input: "+args);
             var filename = "";
             var data = "";
             while (i < args.length || args.toString().charAt(i) != String.fromCharCode(44)) {
                 filename += args.toString().charAt(i);
-                _Kernel.krnTrace(filename);
+                //_Kernel.krnTrace(filename);
                 i++;
             }
-            _Kernel.krnTrace("i: " + i);
+            //_Kernel.krnTrace("i: "+i);
             var j = i + 2;
             while (j < args.length || args.toString().charAt(j) != String.fromCharCode(34)) {
-                _Kernel.krnTrace("j: " + j);
+                // _Kernel.krnTrace("j: "+j);
                 data += args.toString().charAt(j);
-                _Kernel.krnTrace(data);
+                //_Kernel.krnTrace(data);
                 j++;
             }
             filename = filename.trim();

@@ -45,7 +45,7 @@ var TSOS;
                     if (meta.charAt(0) == "0") {
                         var dirLink = this.getFreeSpace();
                         if (dirLink != "na") {
-                            sessionStorage.setItem("0" + s + "" + b, dirLink.concat(filename));
+                            sessionStorage.setItem("0" + s + "" + b, "1" + dirLink.concat(filename));
                         }
                         TSOS.Control.updateDiskTable();
                         return true;
@@ -57,50 +57,64 @@ var TSOS;
         FSDD.prototype.readFile = function (filename) {
             var temp;
             var MBR;
-            var read;
+            var read = "";
+            var pointer = 0;
+            var limit = 0;
+            var nextRead;
             for (var s = 0; s < this.sections; s++) {
                 for (var b = 0; b < this.blocks; b++) {
                     temp = this.getData(0, s, b);
                     if (temp == filename) {
                         MBR = this.getMBR(0, s, b);
                         _Kernel.krnTrace("MBR: " + MBR);
-                        read = sessionStorage.getItem(MBR).substr(4);
-                        _StdOut.putText("File: " + filename);
-                        _StdOut.advanceLine();
-                        _StdOut.putText(read);
-                        return;
+                        do {
+                            _Kernel.krnTrace("in do");
+                            read += sessionStorage.getItem(MBR).substr(4);
+                            _Kernel.krnTrace("Read: " + read);
+                            nextRead = sessionStorage.getItem(MBR).substr(1, 3);
+                            _Kernel.krnTrace("nextRead: " + nextRead);
+                            MBR = nextRead;
+                        } while (MBR != "000");
+                        _Kernel.krnTrace("after do");
+                        return read;
                     }
                 }
             }
             _StdOut.putText("File " + filename + " not found");
         };
         FSDD.prototype.write = function (filename, data) {
-            var numBlocks = 1;
-            if (data.length > 60) {
-                numBlocks = data.length / 60;
-                _Kernel.krnTrace("Num Blocks: " + numBlocks);
-            }
+            var numBlocks = Math.ceil(data.length / 60);
+            _Kernel.krnTrace("Num Blocks: " + numBlocks);
             var temp;
             var MBR;
-            var read;
+            var pointer = 0;
+            var write = "";
+            var nextBlock;
+            var limit = 0;
             for (var s = 0; s < this.sections; s++) {
                 for (var b = 0; b < this.blocks; b++) {
                     temp = this.getData(0, s, b);
                     if (temp == filename) {
-                        if (numBlocks == 1) {
-                            MBR = this.getMBR(0, s, b);
-                            _Kernel.krnTrace("MBR: " + MBR);
-                            var meta = this.getMeta(parseInt(MBR.charAt(0)), parseInt(MBR.charAt(1)), parseInt(MBR.charAt(2)));
-                            sessionStorage.setItem(MBR, meta.concat(data));
-                            TSOS.Control.updateDiskTable();
-                            return true;
+                        MBR = this.getMBR(0, s, b);
+                        for (var i = 0; i < numBlocks; i++) {
+                            nextBlock = "000";
+                            if (i != numBlocks - 1) {
+                                nextBlock = this.getFreeSpace();
+                            }
+                            while (pointer < data.length && limit < 60) {
+                                write += data.charAt(pointer);
+                                pointer++;
+                                limit++;
+                            }
+                            _Kernel.krnTrace(write);
+                            _Kernel.krnTrace(pointer.toString());
+                            sessionStorage.setItem(MBR, "1" + nextBlock.concat(write));
+                            write = "";
+                            limit = 0;
+                            MBR = nextBlock;
                         }
-                        else {
-                            MBR = this.getMBR(0, s, b);
-                            var dirLink = this.getFreeSpace();
-                            sessionStorage.setItem(MBR, meta.concat(dirLink.concat(data.substr(0, 60))));
-                            return true;
-                        }
+                        TSOS.Control.updateDiskTable();
+                        return true;
                     }
                 }
             }
@@ -126,7 +140,7 @@ var TSOS;
                         var meta = this.getMeta(t, s, b);
                         if (meta.charAt(0) == "0") {
                             sessionStorage.setItem(t + "" + s + "" + b, "1" + MBR.concat(this.emptyData));
-                            return "1" + t + "" + s + "" + b;
+                            return t + "" + s + "" + b;
                         }
                     }
                 }
