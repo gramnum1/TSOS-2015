@@ -77,6 +77,78 @@ module TSOS {
 
 
         }
+
+        public readFile(filename): void{
+            var temp;
+            var MBR;
+            var read;
+            for(var s=0; s<this.sections; s++){
+                for(var b=0; b<this.blocks; b++){
+                    temp=this.getData(0,s,b);
+                    if(temp==filename){
+                      MBR=this.getMBR(0,s,b);
+                      _Kernel.krnTrace("MBR: "+MBR);
+                      read=sessionStorage.getItem(MBR).substr(4);
+                      _StdOut.putText("File: "+filename);
+                      _StdOut.advanceLine();
+                      _StdOut.putText(read);
+                      return;
+
+
+                    }
+                }
+
+                }
+            _StdOut.putText("File "+filename+" not found");
+
+        }
+
+        public write(filename, data): boolean {
+            var numBlocks=1;
+            if(data.length>60){
+                numBlocks=data.length/60;
+                _Kernel.krnTrace("Num Blocks: "+numBlocks);
+            }
+            var temp;
+            var MBR;
+            var read;
+            for (var s = 0; s < this.sections; s++) {
+                for (var b = 0; b < this.blocks; b++) {
+                    temp = this.getData(0, s, b);
+                    if (temp == filename) {
+                        if(numBlocks==1) {
+                            MBR = this.getMBR(0, s, b);
+                            _Kernel.krnTrace("MBR: " + MBR);
+                            var meta = this.getMeta(parseInt(MBR.charAt(0)), parseInt(MBR.charAt(1)), parseInt(MBR.charAt(2)));
+                            sessionStorage.setItem(MBR, meta.concat(data));
+                            Control.updateDiskTable();
+                            return true;
+                        }else{
+                            MBR = this.getMBR(0, s, b);
+                            var dirLink=this.getFreeSpace();
+
+
+                            sessionStorage.setItem(MBR, meta.concat(dirLink.concat(data.substr(0,60))));
+                           return true;
+                        }
+                    }
+
+                }
+            }
+            return false;
+        }
+
+
+
+        public getMBR(t,s,b): String{
+            var mbr=sessionStorage.getItem(t+""+s+""+b).substr(1,3);
+            return mbr;
+
+        }
+        public getData(t,s,b): String{
+            var data=sessionStorage.getItem(t + "" + s + "" + b).substr(4);
+            return data;
+        }
         public getMeta(t,s,b): String{
             var meta=sessionStorage.getItem(t+""+s+""+b).substr(0,4);
             return meta;

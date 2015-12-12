@@ -94,6 +94,12 @@ var TSOS;
             //create <filename>
             sc = new TSOS.ShellCommand(this.shellCreateFile, "create", "<string> - creates filename");
             this.commandList[this.commandList.length] = sc;
+            //read <filename>
+            sc = new TSOS.ShellCommand(this.shellReadFile, "read", "<string> - reads filename");
+            this.commandList[this.commandList.length] = sc;
+            //write <filename> "data"
+            sc = new TSOS.ShellCommand(this.shellWriteFile, "write", "<String> \"data\" - writes data into filename");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -535,6 +541,41 @@ var TSOS;
             }
             else {
                 _StdOut.putText("File " + filename + " Not Created");
+                _StdOut.advanceLine();
+            }
+        };
+        Shell.prototype.shellReadFile = function (args) {
+            var filename = args;
+            _krnFSDD.readFile(filename);
+        };
+        Shell.prototype.shellWriteFile = function (args) {
+            var i = 0;
+            var input = args.toString();
+            //args=args.toString().replace(/,/g, " ");
+            _Kernel.krnTrace("input: " + args);
+            var filename = "";
+            var data = "";
+            while (i < args.length || args.toString().charAt(i) != String.fromCharCode(44)) {
+                filename += args.toString().charAt(i);
+                _Kernel.krnTrace(filename);
+                i++;
+            }
+            _Kernel.krnTrace("i: " + i);
+            var j = i + 2;
+            while (j < args.length || args.toString().charAt(j) != String.fromCharCode(34)) {
+                _Kernel.krnTrace("j: " + j);
+                data += args.toString().charAt(j);
+                _Kernel.krnTrace(data);
+                j++;
+            }
+            filename = filename.trim();
+            _StdOut.putText("filename= " + filename + " data= " + data);
+            if (_krnFSDD.write(filename, data)) {
+                _StdOut.putText("file " + filename + " written successfully");
+                _StdOut.advanceLine();
+            }
+            else {
+                _StdOut.putText("error writing to file " + filename);
                 _StdOut.advanceLine();
             }
         };
