@@ -100,6 +100,15 @@ var TSOS;
             //write <filename> "data"
             sc = new TSOS.ShellCommand(this.shellWriteFile, "write", "<String> \"data\" - writes data into filename");
             this.commandList[this.commandList.length] = sc;
+            //delete <filename>
+            sc = new TSOS.ShellCommand(this.shellDeleteFile, "delete", "<String>  - deletes filename");
+            this.commandList[this.commandList.length] = sc;
+            //ls
+            sc = new TSOS.ShellCommand(this.shellLS, "ls", "lists files in file system");
+            this.commandList[this.commandList.length] = sc;
+            //format
+            sc = new TSOS.ShellCommand(this.shellFormat, "format", "formats the disk");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -581,6 +590,26 @@ var TSOS;
                 _StdOut.putText("error writing to file " + filename);
                 _StdOut.advanceLine();
             }
+        };
+        Shell.prototype.shellDeleteFile = function (args) {
+            var filename = args;
+            if (_krnFSDD.delete(filename)) {
+                _StdOut.putText("File " + filename + " deleted successfully");
+                _StdOut.advanceLine();
+            }
+            else {
+                _StdOut.putText("Error Deleting File " + filename);
+                _StdOut.advanceLine();
+            }
+        };
+        Shell.prototype.shellLS = function (args) {
+            _krnFSDD.list();
+        };
+        Shell.prototype.shellFormat = function (args) {
+            _krnFSDD.init();
+            TSOS.Control.updateDiskTable();
+            _StdOut.putText("Disk Formatted Successfully");
+            _StdOut.advanceLine();
         };
         return Shell;
     })();

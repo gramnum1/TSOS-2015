@@ -158,6 +158,18 @@ module TSOS {
             //write <filename> "data"
             sc=new ShellCommand(this.shellWriteFile, "write", "<String> \"data\" - writes data into filename");
             this.commandList[this.commandList.length]=sc;
+            //delete <filename>
+            sc=new ShellCommand(this.shellDeleteFile, "delete", "<String>  - deletes filename");
+            this.commandList[this.commandList.length]=sc;
+            //ls
+            sc=new ShellCommand(this.shellLS, "ls", "lists files in file system");
+            this.commandList[this.commandList.length]=sc;
+            //format
+            sc=new ShellCommand(this.shellFormat, "format", "formats the disk");
+            this.commandList[this.commandList.length]=sc;
+
+
+
 
 
 
@@ -714,6 +726,26 @@ module TSOS {
             }
 
 }
+        public shellDeleteFile(args){
+            var filename=args;
+            if(_krnFSDD.delete(filename)){
+                _StdOut.putText("File "+filename+" deleted successfully");
+                _StdOut.advanceLine();
+            }else{
+                _StdOut.putText("Error Deleting File "+filename);
+                _StdOut.advanceLine();
+
+            }
+        }
+        public shellLS(args){
+            _krnFSDD.list();
+        }
+        public shellFormat(args){
+            _krnFSDD.init();
+            Control.updateDiskTable();
+            _StdOut.putText("Disk Formatted Successfully");
+            _StdOut.advanceLine();
+        }
 
 
 }}

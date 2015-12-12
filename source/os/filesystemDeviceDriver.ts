@@ -176,6 +176,46 @@ module TSOS {
 
             return false;
         }
+        public delete(filename): boolean{
+            var temp;
+            var MBR;
+            var nextBlock;
+            for(var s=0; s<this.sections; s++){
+                for(var b=0; b<this.blocks; b++){
+                    temp = this.getData(0, s, b);
+                    if(temp==filename){
+                        MBR = this.getMBR(0, s, b);
+                        sessionStorage.setItem("0"+s+""+b, "0000"+this.emptyData);
+                        do{
+                            nextBlock=sessionStorage.getItem(MBR).substr(1,3);
+                            _Kernel.krnTrace("nextblock: "+nextBlock);
+                            sessionStorage.setItem(MBR, "0000"+this.emptyData );
+                            MBR=nextBlock;
+                        }while(MBR!="000");
+                        Control.updateDiskTable();
+                        return true;
+
+
+                    }
+
+                }
+            }
+            return false;
+
+        }
+        public list():void{
+            var filename;
+            for(var s=0; s<this.sections; s++){
+                for(var b=0; b<this.blocks; b++){
+                    filename=this.getData(0,s,b);
+                    if(filename!=this.emptyData){
+                        _StdOut.putText(" "+filename);
+                        _StdOut.advanceLine();
+                    }
+                }
+            }
+            _StdOut.advanceLine();
+        }
 
 
 
