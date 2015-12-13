@@ -66,8 +66,10 @@ module TSOS {
 
                     this.run.play();
                     _KernelInterruptQueue.enqueue( new Interrupt(CPUSCHED_INIT_IRQ));
+
                    if(this.currPCB!=null) {
                        this.PC = this.currPCB.base;
+
                        this.Acc = 0;
                        this.Xreg = 0;
                        this.Yreg = 0;
@@ -85,6 +87,7 @@ module TSOS {
                 if(_StepMode==false){
                     _Kernel.krnTrace('CPU cycle');
                     this.execute();
+                    _Kernel.krnTrace("PCB "+this.currPCB.pid+" b,l,pc "+this.currPCB.base+", "+this.currPCB.limit+", "+this.currPCB.PC);
                 }
                 /*If step mode is on and
                  *Step button has been pressed
@@ -92,6 +95,7 @@ module TSOS {
                 if(_StepMode==true && _Step==true){
                     _Kernel.krnTrace('CPU cycle');
                     this.execute();
+                    _Kernel.krnTrace("PCB "+this.currPCB.pid+" b,l,pc "+this.currPCB.base+", "+this.currPCB.limit+", "+this.currPCB.PC);
                     _Step=false;
                 }
 
@@ -108,6 +112,7 @@ module TSOS {
 
         }
         public execute(){
+
             var instruction;
             var i;
             var a;
@@ -338,6 +343,11 @@ module TSOS {
 
             //reset cpu
             this.init();
+
+            _Kernel.krnTrace("CPU>Terminate RESIDENT LiST");
+            for(var i=0; i<Resident_List.getSize(); i++) {
+                _Kernel.krnTrace("pid:" +Resident_List.getObj(i).pid+" location: "+Resident_List.getObj(i).location);
+            }
             _StdOut.advanceLine();
             _OsShell.putPrompt();
 

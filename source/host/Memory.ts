@@ -12,6 +12,9 @@ module TSOS {
             this.coreM=[MAX_MEM];
             this.coreBase=0;
             this.coreLimit=768;
+            for(var i=0; i<768; i++){
+                this.coreM[i]="00";
+            }
 
         }
 

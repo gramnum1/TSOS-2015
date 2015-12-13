@@ -41,7 +41,7 @@ var TSOS;
                 var newBase = this.bases[this.block];
                 var newLimit = this.limits[this.block];
                 _PCB = new TSOS.PCB();
-                _PCB.init(newBase, newLimit);
+                _PCB.init(newBase, newLimit, 0);
                 Resident_List.enqueue(_PCB);
                 _StdOut.putText("pid= " + _PCB.pid + " base=" + _PCB.base + " Limit=" + _PCB.limit);
                 _OsShell.pid++;
@@ -53,6 +53,21 @@ var TSOS;
                 for (var i = 0; i < Resident_List.getSize(); i++) {
                     _Kernel.krnTrace("RL " + Resident_List.getObj(i).pid);
                 }
+            }
+            else if (program.length / 2 <= 256) {
+                newBase = 0;
+                newLimit = 0;
+                _PCB = new TSOS.PCB();
+                _PCB.init(newBase, newLimit, 1);
+                Resident_List.enqueue(_PCB);
+                var filename = _PCB.pid;
+                _krnFSDD.createFile(filename);
+                _krnFSDD.write(filename, program);
+                _StdOut.putText("PCB LOCATION: " + _PCB.location);
+                _StdOut.advanceLine();
+                _StdOut.putText("pid= " + _PCB.pid + " base=" + _PCB.base + " Limit=" + _PCB.limit);
+                _OsShell.pid++;
+                _PCB = null;
             }
             else {
                 _StdOut.putText("error loading into memory");
@@ -86,6 +101,46 @@ var TSOS;
                 _StdOut.putText("Memory allocation " + index + " out of bounds. Base= " + _CPU.currPCB.base + " Limit= " + _CPU.currPCB.limit);
                 _StdOut.advanceLine();
                 _OsShell.shellKill(_CPU.currPCB.pid);
+            }
+        };
+        MemoryManager.prototype.exchange = function (fspcb, mempcb) {
+            _Kernel.krnTrace("MEMMAN>EX IN EXCH pid in= " + fspcb.pid + " pid out= " + mempcb.pid);
+            _Kernel.krnTrace("MEMMAN>EX mempcb [base,limit] [" + mempcb.base + "," + mempcb.limit + "]");
+            var start = mempcb.base;
+            var end = mempcb.limit;
+            var out = "";
+            var into = _krnFSDD.readFile(fspcb.pid);
+            var toMemory;
+            var index = mempcb.base;
+            for (i = start; i < end; i++) {
+                out += _Mem.coreM[i];
+            }
+            _Kernel.krnTrace("MEMMAN>EX INTO: " + into);
+            _Kernel.krnTrace("MEMMAN>EX OUT: " + out);
+            _krnFSDD.writeReplace(fspcb.pid, out, mempcb);
+            for (var i = 0; i < into.length; i++) {
+                //pull bytes out of string two char at a time
+                toMemory = into.slice(i, i + 2);
+                //throw byte into memory
+                _Mem.coreM[index] = toMemory;
+                // _Kernel.krnTrace("Index: " + index + " value: " + _Mem.coreM[index].toString());
+                i++;
+                index++;
+            }
+        };
+        MemoryManager.prototype.retrieve = function (pcb) {
+            var program = _krnFSDD.readFile(pcb.pid);
+            var index = pcb.base;
+            var toMemory;
+            _krnFSDD.delete(pcb.pid);
+            for (var i = 0; i < program.length; i++) {
+                //pull bytes out of string two char at a time
+                toMemory = program.slice(i, i + 2);
+                //throw byte into memory
+                _Mem.coreM[index] = toMemory;
+                // _Kernel.krnTrace("Index: " + index + " value: " + _Mem.coreM[index].toString());
+                i++;
+                index++;
             }
         };
         return MemoryManager;

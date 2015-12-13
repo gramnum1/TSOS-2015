@@ -16,12 +16,13 @@ module TSOS {
                     public Yreg: number = 0,
                     public Zflag: number = 0,
                     public base:number=0,
-                    public limit: number=0)
+                    public limit: number=0,
+                    public location: number=0) //0 if memory 1 if disk
                     {
 
         }
 
-        public init(newBase, newLimit): void {
+        public init(newBase, newLimit, location): void {
             this.pid=_OsShell.pid;
             this.state="new";
 
@@ -31,6 +32,7 @@ module TSOS {
             this.Zflag = 0;
             this.base=newBase;
             this.limit=newLimit;
+            this.location=location;
             this.PC = this.base;
 
         }

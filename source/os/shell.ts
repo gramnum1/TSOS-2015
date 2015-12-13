@@ -515,24 +515,44 @@ module TSOS {
         resets PC back to 0
          */
         public shellRun(args){
+            _Kernel.krnTrace("Shell>run in run");
+
             var found=false;
             var nQ;
             for(var i=0; i< Resident_List.getSize(); i++) {
                 if (args == Resident_List.getObj(i).pid) {
+
                     found=true;
                     nQ=Resident_List.remove(Resident_List.getObj(i).pid);
+                    _Kernel.krnTrace("Shell>run process "+nQ.pid+" found");
 
                     nQ.state="ready";
+                    //_Kernel.krnTrace("Process location: "+nQ.location);
+
+                    if(nQ.location==1){
+                        _Kernel.krnTrace("Shell>run process "+nQ.pid+" in FS");
+                        _krnFSDD.runOne(nQ);
+                    }
                     nQ.PC=nQ.base;
 
+                    _Kernel.krnTrace("Shell>run loc["+nQ.location+"] b["+nQ.base+"] lim["+nQ.limit+"] pc["+nQ.PC+"]");
+                    _Kernel.krnTrace("Shell>run RESIDENT LiST");
+                    for(var i=0; i<Resident_List.getSize(); i++) {
+                        _Kernel.krnTrace("pid:" +Resident_List.getObj(i).pid+" location: "+Resident_List.getObj(i).location);
+                    }
 
 
+
+
+                    _Kernel.krnTrace("SHELL>run UPDATING MEMORY TABLE");
+                    Control.updateMemoryTable();
                     _ReadyQ.enqueue(nQ);
                     _CPU.isExecuting = true;
                 }
             }if(!found) {
                 _StdOut.putText("not a valid pid "+ args);
             }
+
 
 
         }

@@ -79,7 +79,7 @@ var _ReadyQ: any=null;
 // Standard input and output
 var _StdIn;    // Same "to null or not to null" issue as above.
 var _StdOut;
-;
+
 
 // UI
 var _Console: TSOS.Console;
@@ -90,6 +90,7 @@ var _SarcasticMode: boolean = false;
 
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
+var _krnFSDD;
 
 var _hardwareClockID: number = null;
 

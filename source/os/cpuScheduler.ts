@@ -19,6 +19,8 @@ module TSOS {
             var first=_ReadyQ.dequeue();
             first.state="running";
             _CPU.currPCB = first;
+            _CPU.PC=first.base;
+            _Kernel.krnTrace("SCHED>iNIT pcb "+first.pid+" b, l, pc "+first.base+" "+first.limit+" "+first.PC)
 
 
 

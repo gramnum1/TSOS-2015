@@ -5,7 +5,7 @@
 var TSOS;
 (function (TSOS) {
     var PCB = (function () {
-        function PCB(pid, state, PC, Acc, Xreg, Yreg, Zflag, base, limit) {
+        function PCB(pid, state, PC, Acc, Xreg, Yreg, Zflag, base, limit, location) {
             if (pid === void 0) { pid = 0; }
             if (state === void 0) { state = ""; }
             if (PC === void 0) { PC = 0; }
@@ -15,6 +15,7 @@ var TSOS;
             if (Zflag === void 0) { Zflag = 0; }
             if (base === void 0) { base = 0; }
             if (limit === void 0) { limit = 0; }
+            if (location === void 0) { location = 0; }
             this.pid = pid;
             this.state = state;
             this.PC = PC;
@@ -24,8 +25,9 @@ var TSOS;
             this.Zflag = Zflag;
             this.base = base;
             this.limit = limit;
+            this.location = location;
         }
-        PCB.prototype.init = function (newBase, newLimit) {
+        PCB.prototype.init = function (newBase, newLimit, location) {
             this.pid = _OsShell.pid;
             this.state = "new";
             this.Acc = 0;
@@ -34,6 +36,7 @@ var TSOS;
             this.Zflag = 0;
             this.base = newBase;
             this.limit = newLimit;
+            this.location = location;
             this.PC = this.base;
         };
         return PCB;
