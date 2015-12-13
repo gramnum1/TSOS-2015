@@ -167,6 +167,12 @@ module TSOS {
             //format
             sc=new ShellCommand(this.shellFormat, "format", "formats the disk");
             this.commandList[this.commandList.length]=sc;
+            //setschedule
+            sc=new ShellCommand(this.shellSetSchedule, "setschedule", "<string>-rr, fcfs, or sets the scheduling algorith");
+            this.commandList[this.commandList.length]=sc;
+            //getschedule
+            sc=new ShellCommand(this.shellGetSchedule, "getschedule", "displays current scheduling algorithm");
+            this.commandList[this.commandList.length]=sc;
 
 
 
@@ -467,6 +473,17 @@ module TSOS {
         //shellLoad()  takes value of user program input and if its valid prints program is good, if invalid outputs program is invalid
         public shellLoad(args){
             var program=_Program.value;
+            var priority;
+            if(args=="") {
+                priority = 10;
+                _Kernel.krnTrace("args nan");
+            }else if((priority=parseInt(args))<=0){
+                _StdOut.putText("Please enter a positive number");
+                return;
+
+            }
+
+
             if(program!=""){
             program=program.replace(/\s+/g, '').toUpperCase();
             //_StdOut.putText(program);
@@ -488,7 +505,7 @@ module TSOS {
                 _StdOut.putText("Program is good");
                 _StdOut.advanceLine();
 
-                _MemMan.loadProgram(program);
+                _MemMan.loadProgram(program, priority);
                 var wind = new Audio("wind.mp3");
                 wind.play();
 
@@ -593,6 +610,12 @@ module TSOS {
          */
         public shellRunAll(args){
             var nQ;
+            if(_CPUSCHED.algorithm=="priority"){
+                Resident_List.quicksort(0,Resident_List.getSize()-1);
+                for(var i=0; i<Resident_List.getSize(); i++) {
+                    _Kernel.krnTrace("RL " +Resident_List.getObj(i).pid+" Prior: "+Resident_List.getObj(i).priority);
+                }
+            }
             while(Resident_List.isEmpty()==false) {
                 _Kernel.krnTrace("Process pid="+Resident_List.getObj(0).pid);
                 nQ=Resident_List.dequeue();
@@ -690,24 +713,16 @@ module TSOS {
         }
         public shellCreateFile(args){
             var filename=args;
-            if(_krnFSDD.createFile(filename)){
-                _StdOut.putText("File "+filename+" Created Succesfully");
-                _StdOut.advanceLine();
-            }else{
-                _StdOut.putText("File "+filename+" Not Created");
-                _StdOut.advanceLine();
-            }
+            _Kernel.krnTrace("Creating File "+filename);
+
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(DISK_IRQ, [0 , filename]));
 
         }
 
-        public shellReadFile(args){
-            var filename=args;
-            var read=_krnFSDD.readFile(filename);
-            _StdOut.putText("File: "+filename);
-            _StdOut.advanceLine();
-            _StdOut.putText(read);
-
-            }
+        public shellReadFile(args) {
+            var filename = args;
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(DISK_IRQ, [1, filename]));
+        }
 
         public shellWriteFile(args){
 
@@ -765,6 +780,21 @@ module TSOS {
             Control.updateDiskTable();
             _StdOut.putText("Disk Formatted Successfully");
             _StdOut.advanceLine();
+        }
+
+        public shellSetSchedule(args){
+            var sched=args;
+
+            _Kernel.krnTrace(sched);
+            if(sched!="rr"&&sched!="fcfs"&&sched!="priority"){
+                _StdOut.putText("Please enter a valid scheduling algorithm [RR,FCFS,PRIORITY");
+            }else{
+                _CPUSCHED.algorithm=sched;
+                _StdOut.putText("Scheduler now running "+_CPUSCHED.algorithm);
+            }
+        }
+        public shellGetSchedule(args){
+            _StdOut.putText("Scheduler set for "+_CPUSCHED.algorithm);
         }
 
 

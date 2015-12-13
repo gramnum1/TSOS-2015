@@ -145,6 +145,11 @@ var TSOS;
                     _CPUSCHED.replace();
                     _Mode = 1;
                     break;
+                case DISK_IRQ:
+                    _Mode = 0;
+                    _krnFSDD.isr(params);
+                    _Mode = 1;
+                    break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }

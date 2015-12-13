@@ -66,5 +66,43 @@ module TSOS {
 
 
         }
+
+        public quicksort(left, right){
+            var index;
+            if(this.q.length>1) {
+                index = this.partition(left, right);
+                if (left < index - 1) {
+                    this.quicksort(left, index - 1);
+
+                }
+                if (index < right) {
+                    this.quicksort(index, right);
+
+                }
+            }
+            return this.q;
+            }
+
+        private partition(left,right){
+            var pivot=this.q[Math.floor((right+left)/2)].priority;
+            var i=left;
+            var j=right;
+            while(i<=j){
+                while(this.q[i].priority<pivot){
+                    i++;
+                }
+                while(this.q[j].priority>pivot){
+                    j--;
+                }
+                if(i<=j){
+                    this.swap(this.q, i,j);
+                    i++;
+                    j--;
+                }
+            }
+            return i;
+        }
+
     }
-}
+    }
+

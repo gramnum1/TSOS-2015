@@ -5,6 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 ///<reference path="../globals.ts" />
 ///<reference path="deviceDriver.ts" />
+///<reference path="../utils.ts" />
 var TSOS;
 (function (TSOS) {
     // Extends DeviceDriver
@@ -12,7 +13,7 @@ var TSOS;
         __extends(FSDD, _super);
         function FSDD() {
             // Override the base method pointers.
-            _super.call(this, this.krnfsDriverEntry);
+            _super.call(this, this.krnfsDriverEntry, this.diskUse);
             this.tracks = 4;
             this.sections = 8;
             this.blocks = 8;
@@ -39,13 +40,17 @@ var TSOS;
             }
         };
         FSDD.prototype.createFile = function (filename) {
+            filename = TSOS.Utils.stringToHex(filename);
+            _Kernel.krnTrace("File name: " + filename);
             for (var s = 0; s < this.sections; s++) {
                 for (var b = 0; b < this.blocks; b++) {
                     var meta = this.getMeta(0, s, b);
                     if (meta.charAt(0) == "0") {
                         var dirLink = this.getFreeSpace();
                         if (dirLink != "na") {
-                            sessionStorage.setItem("0" + s + "" + b, "1" + dirLink.concat(filename));
+                            var data = "1" + dirLink.concat(filename);
+                            data = this.fillerBlock(data);
+                            sessionStorage.setItem("0" + s + "" + b, data);
                         }
                         TSOS.Control.updateDiskTable();
                         return true;
@@ -54,7 +59,24 @@ var TSOS;
             }
             return false;
         };
+        FSDD.prototype.fillerBlock = function (data) {
+            _Kernel.krnTrace("data length: " + data.length);
+            var fill = "";
+            for (var i = 0; i < (124 - data.length); i++) {
+                fill += "0";
+            }
+            return data.concat(fill);
+        };
+        FSDD.prototype.fillerData = function (data) {
+            _Kernel.krnTrace("data length: " + data.length);
+            var fill = "";
+            for (var i = 0; i < (120 - data.length); i++) {
+                fill += "0";
+            }
+            return data.concat(fill);
+        };
         FSDD.prototype.readFile = function (filename) {
+            filename = this.fillerData(TSOS.Utils.stringToHex(filename));
             var temp;
             var MBR;
             var read = "";
@@ -75,6 +97,7 @@ var TSOS;
                             //_Kernel.krnTrace("nextRead: "+nextRead);
                             MBR = nextRead;
                         } while (MBR != "000");
+                        read = TSOS.Utils.hexToString(read);
                         _Kernel.krnTrace("FSDD>RF READ: " + read);
                         return read;
                     }
@@ -130,6 +153,8 @@ var TSOS;
             }
         };
         FSDD.prototype.write = function (filename, data) {
+            data = TSOS.Utils.stringToHex(data);
+            filename = this.fillerData(TSOS.Utils.stringToHex(filename));
             var numBlocks = Math.ceil(data.length / 60);
             _Kernel.krnTrace("Num Blocks: " + numBlocks);
             var temp;
@@ -155,7 +180,8 @@ var TSOS;
                             }
                             //_Kernel.krnTrace(write);
                             //_Kernel.krnTrace(pointer.toString());
-                            sessionStorage.setItem(MBR, "1" + nextBlock.concat(write));
+                            var DATA = this.fillerBlock("1" + nextBlock.concat(write));
+                            sessionStorage.setItem(MBR, DATA);
                             write = "";
                             limit = 0;
                             MBR = nextBlock;
@@ -168,6 +194,7 @@ var TSOS;
             return false;
         };
         FSDD.prototype.delete = function (filename) {
+            filename = this.fillerData(TSOS.Utils.stringToHex(filename));
             var temp;
             var MBR;
             var nextBlock;
@@ -196,6 +223,8 @@ var TSOS;
                 for (var b = 0; b < this.blocks; b++) {
                     filename = this.getData(0, s, b);
                     if (filename != this.emptyData) {
+                        filename = TSOS.Utils.hexToString(filename);
+                        _Kernel.krnTrace("file name: " + filename);
                         _StdOut.putText(" " + filename);
                         _StdOut.advanceLine();
                     }
@@ -208,7 +237,7 @@ var TSOS;
             if (Resident_List.getSize() > 0) {
                 var replacePCB = Resident_List.getObj(0);
                 _Kernel.krnTrace("FSDD>RUNONE Replace pid= " + replacePCB.pid);
-                _MemMan.exchange(filePCB, replacePCB);
+                this.exchange(filePCB, replacePCB);
                 filePCB.base = replacePCB.base;
                 filePCB.limit = replacePCB.limit;
                 filePCB.location = 0;
@@ -219,7 +248,7 @@ var TSOS;
                 filePCB.base = 0;
                 filePCB.limit = 255;
                 filePCB.location = 0;
-                _MemMan.retrieve(filePCB);
+                this.retrieve(filePCB);
             }
         };
         FSDD.prototype.getMBR = function (t, s, b) {
@@ -248,6 +277,70 @@ var TSOS;
                 }
             }
             return "na";
+        };
+        FSDD.prototype.exchange = function (fspcb, mempcb) {
+            _Kernel.krnTrace("MEMMAN>EX IN EXCH pid in= " + fspcb.pid + " pid out= " + mempcb.pid);
+            _Kernel.krnTrace("MEMMAN>EX mempcb [base,limit] [" + mempcb.base + "," + mempcb.limit + "]");
+            var start = mempcb.base;
+            var end = mempcb.limit;
+            var out = "";
+            var into = _krnFSDD.readFile(fspcb.pid);
+            var toMemory;
+            var index = mempcb.base;
+            for (i = start; i < end; i++) {
+                out += _Mem.coreM[i];
+            }
+            _Kernel.krnTrace("MEMMAN>EX INTO: " + into);
+            _Kernel.krnTrace("MEMMAN>EX OUT: " + out);
+            _krnFSDD.writeReplace(fspcb.pid, out, mempcb);
+            for (var i = 0; i < into.length; i++) {
+                //pull bytes out of string two char at a time
+                toMemory = into.slice(i, i + 2);
+                //throw byte into memory
+                _Mem.coreM[index] = toMemory;
+                // _Kernel.krnTrace("Index: " + index + " value: " + _Mem.coreM[index].toString());
+                i++;
+                index++;
+            }
+        };
+        FSDD.prototype.retrieve = function (pcb) {
+            var program = _krnFSDD.readFile(pcb.pid);
+            var index = pcb.base;
+            var toMemory;
+            _krnFSDD.delete(pcb.pid);
+            for (var i = 0; i < program.length; i++) {
+                //pull bytes out of string two char at a time
+                toMemory = program.slice(i, i + 2);
+                //throw byte into memory
+                _Mem.coreM[index] = toMemory;
+                // _Kernel.krnTrace("Index: " + index + " value: " + _Mem.coreM[index].toString());
+                i++;
+                index++;
+            }
+        };
+        FSDD.prototype.diskUse = function (params) {
+            var action = params[0];
+            var param1 = params[1];
+            var param2;
+            switch (action) {
+                case 0 /*create*/:
+                    _Kernel.krnTrace("FSDD>DU>CREATE filename: " + param1);
+                    if (_krnFSDD.createFile(param1)) {
+                        _StdOut.putText("File " + param1 + " Created Succesfully");
+                        _StdOut.advanceLine();
+                    }
+                    else {
+                        _StdOut.putText("File " + param1 + " Not Created");
+                        _StdOut.advanceLine();
+                    }
+                    break;
+                case 1:
+                    _Kernel.krnTrace("FSDD>DU>READ filename: " + param1);
+                    var read = _krnFSDD.readFile(param1);
+                    _StdOut.putText("File: " + param1);
+                    _StdOut.advanceLine();
+                    _StdOut.putText(read);
+            }
         };
         return FSDD;
     })(TSOS.DeviceDriver);

@@ -4,7 +4,8 @@ module TSOS {
     export class cpuScheduler {
         constructor(
             public quantum: number=6,
-            public counter: number=0
+            public counter: number=0,
+            public algorithm: string="rr"
 
 
         ){}
@@ -15,6 +16,9 @@ module TSOS {
         into the CPU
          */
         public init(): void{
+
+
+
 
             var first=_ReadyQ.dequeue();
             first.state="running";
@@ -48,6 +52,21 @@ module TSOS {
 
                 var off = _ReadyQ.dequeue();
                 off.state="running";
+                if(off.location==1){
+
+                    off.location=0;
+                    off.base=on.base;
+                    off.limit=on.limit;
+                    off.PC=off.base+off.PC;
+                    on.PC=on.PC-on.base;
+                    on.base=0;
+                    on.limit=0;
+
+
+
+                    on.location=1;
+                    _MemMan.exchange(off,on);
+                }
                 _ReadyQ.enqueue(on);
                 //_StdOut.advanceLine();
                 _Kernel.krnTrace("cpuched ENQUEUE PID= " + on.pid+ " PC= "+on.PC);
@@ -67,6 +86,7 @@ module TSOS {
                 _CPU.isExecuting = true;
                 _CPU.currPCB = off;
                 Control.updatePCBTable();
+                Control.updateDiskTable();
 
 
 
@@ -109,6 +129,8 @@ module TSOS {
 
 
         }
+
+
 
 
 

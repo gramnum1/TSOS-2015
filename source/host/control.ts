@@ -349,7 +349,7 @@ module TSOS {
        durring runtime
         */
         public static updateReadyTable():void{
-
+            var location;
             var currPCB;
            //clear the ready table
             while(_ReadyTable.rows.length!=1){
@@ -361,10 +361,14 @@ module TSOS {
                 //set currPCB to an item in ready q
                 currPCB = _ReadyQ.getObj(i-1);
                 var row=_ReadyTable.insertRow(i);
-                for(var j=0; j<5; ++j){
+                for(var j=0; j<6; ++j){
                     var cell= row.insertCell(j);
 
                 }
+                if(currPCB.location==0)
+                location="Memory";
+                if(currPCB.location==1)
+                location="Disk";
 
 
                 //fill cells with data
@@ -373,6 +377,9 @@ module TSOS {
                 _ReadyTable.rows[i].cells[2].innerHTML = currPCB.base;
                 _ReadyTable.rows[i].cells[3].innerHTML = currPCB.limit;
                 _ReadyTable.rows[i].cells[4].innerHTML = currPCB.PC;
+                _ReadyTable.rows[i].cells[5].innerHTML = location;
+
+
 
             }
 

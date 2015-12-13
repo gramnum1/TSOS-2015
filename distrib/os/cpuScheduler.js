@@ -2,11 +2,13 @@
 var TSOS;
 (function (TSOS) {
     var cpuScheduler = (function () {
-        function cpuScheduler(quantum, counter) {
+        function cpuScheduler(quantum, counter, algorithm) {
             if (quantum === void 0) { quantum = 6; }
             if (counter === void 0) { counter = 0; }
+            if (algorithm === void 0) { algorithm = "rr"; }
             this.quantum = quantum;
             this.counter = counter;
+            this.algorithm = algorithm;
         }
         /*init()
         inits round robin scheduler
@@ -34,6 +36,17 @@ var TSOS;
                 on.state = "waiting";
                 var off = _ReadyQ.dequeue();
                 off.state = "running";
+                if (off.location == 1) {
+                    off.location = 0;
+                    off.base = on.base;
+                    off.limit = on.limit;
+                    off.PC = off.base + off.PC;
+                    on.PC = on.PC - on.base;
+                    on.base = 0;
+                    on.limit = 0;
+                    on.location = 1;
+                    _MemMan.exchange(off, on);
+                }
                 _ReadyQ.enqueue(on);
                 //_StdOut.advanceLine();
                 _Kernel.krnTrace("cpuched ENQUEUE PID= " + on.pid + " PC= " + on.PC);
@@ -47,6 +60,7 @@ var TSOS;
                 _CPU.isExecuting = true;
                 _CPU.currPCB = off;
                 TSOS.Control.updatePCBTable();
+                TSOS.Control.updateDiskTable();
             }
             this.counter = 0;
         };

@@ -24,7 +24,7 @@ var TSOS;
           loads a program into memory and  creates a PCB
           and assigns it a PID
          */
-        MemoryManager.prototype.loadProgram = function (program) {
+        MemoryManager.prototype.loadProgram = function (program, priority) {
             var toMemory;
             var index = this.bases[this.block];
             if (this.block < 3 && program.length / 2 <= 256) {
@@ -33,7 +33,7 @@ var TSOS;
                     toMemory = program.slice(i, i + 2);
                     //throw byte into memory
                     _Mem.coreM[index] = toMemory;
-                    _Kernel.krnTrace("Index: " + index + " value: " + _Mem.coreM[index].toString());
+                    // _Kernel.krnTrace("Index: " + index + " value: " + _Mem.coreM[index].toString());
                     i++;
                     index++;
                 }
@@ -41,9 +41,9 @@ var TSOS;
                 var newBase = this.bases[this.block];
                 var newLimit = this.limits[this.block];
                 _PCB = new TSOS.PCB();
-                _PCB.init(newBase, newLimit, 0);
+                _PCB.init(newBase, newLimit, 0, priority);
                 Resident_List.enqueue(_PCB);
-                _StdOut.putText("pid= " + _PCB.pid + " base=" + _PCB.base + " Limit=" + _PCB.limit);
+                _StdOut.putText("pid= " + _PCB.pid + " base=" + _PCB.base + " Limit=" + _PCB.limit + " Priority=" + _PCB.priority);
                 _OsShell.pid++;
                 _PCB = null;
                 // _ReadyQ.enqueue(Resident_List[this.block]);
@@ -58,14 +58,14 @@ var TSOS;
                 newBase = 0;
                 newLimit = 0;
                 _PCB = new TSOS.PCB();
-                _PCB.init(newBase, newLimit, 1);
+                _PCB.init(newBase, newLimit, 1, priority);
                 Resident_List.enqueue(_PCB);
                 var filename = _PCB.pid;
                 _krnFSDD.createFile(filename);
                 _krnFSDD.write(filename, program);
                 _StdOut.putText("PCB LOCATION: " + _PCB.location);
                 _StdOut.advanceLine();
-                _StdOut.putText("pid= " + _PCB.pid + " base=" + _PCB.base + " Limit=" + _PCB.limit);
+                _StdOut.putText("pid= " + _PCB.pid + " base=" + _PCB.base + " Limit=" + _PCB.limit + " Priority=" + _PCB.priority);
                 _OsShell.pid++;
                 _PCB = null;
             }

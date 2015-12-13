@@ -44,6 +44,31 @@ var TSOS;
             }
             return retVal;
         };
+        Utils.decToHex = function (d) {
+            var hex = d.toString(16).toUpperCase();
+            return hex;
+        };
+        Utils.hexToDec = function (hex) {
+            var dec = parseInt(hex, 16);
+            return dec;
+        };
+        Utils.stringToHex = function (str) {
+            var hexString = "";
+            for (var i = 0; i < str.toString().length; i++) {
+                var temp = this.decToHex(str.toString().charCodeAt(i));
+                temp = new Array(2 - temp.length).join('0') + temp;
+                hexString += temp;
+            }
+            return hexString;
+        };
+        Utils.hexToString = function (hex) {
+            var str = "";
+            var array = hex.match(/.{1,2}/g);
+            for (var i = 0; i < array.length; i++) {
+                str += String.fromCharCode(this.hexToDec(array[i]));
+            }
+            return str;
+        };
         return Utils;
     })();
     TSOS.Utils = Utils;

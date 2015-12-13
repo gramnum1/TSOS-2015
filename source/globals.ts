@@ -32,6 +32,8 @@ const CPUSCHED_REPLACE_IRQ: number=4;
 const DISK_IRQ: number=5;
 
 
+
+
 const MAX_MEM: number=768;
 
 

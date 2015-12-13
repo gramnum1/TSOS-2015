@@ -43,5 +43,34 @@ module TSOS {
             }
             return retVal;
         }
+
+        public static decToHex(d: number): string{
+            var hex=d.toString(16).toUpperCase();
+            return hex;
+
+        }
+        public static hexToDec(hex: string):number{
+            var dec=parseInt(hex, 16);
+            return dec;
+        }
+        public static stringToHex(str: string): string{
+            var hexString="";
+
+            for(var i=0; i<str.toString().length;i++){
+                var temp=this.decToHex(str.toString().charCodeAt(i));
+              temp=new Array(2-temp.length).join('0')+temp;
+              hexString+=temp;
+
+            }
+            return hexString;
+        }
+        public static hexToString(hex: string):string{
+            var str="";
+            var array=hex.match(/.{1,2}/g);
+            for(var i=0; i<array.length;i++){
+                str+=String.fromCharCode(this.hexToDec(array[i]));
+            }
+            return str;
+        }
     }
 }

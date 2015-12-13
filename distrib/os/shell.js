@@ -109,6 +109,12 @@ var TSOS;
             //format
             sc = new TSOS.ShellCommand(this.shellFormat, "format", "formats the disk");
             this.commandList[this.commandList.length] = sc;
+            //setschedule
+            sc = new TSOS.ShellCommand(this.shellSetSchedule, "setschedule", "<string>-rr, fcfs, or sets the scheduling algorith");
+            this.commandList[this.commandList.length] = sc;
+            //getschedule
+            sc = new TSOS.ShellCommand(this.shellGetSchedule, "getschedule", "displays current scheduling algorithm");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -380,6 +386,15 @@ var TSOS;
         //shellLoad()  takes value of user program input and if its valid prints program is good, if invalid outputs program is invalid
         Shell.prototype.shellLoad = function (args) {
             var program = _Program.value;
+            var priority;
+            if (args == "") {
+                priority = 10;
+                _Kernel.krnTrace("args nan");
+            }
+            else if ((priority = parseInt(args)) <= 0) {
+                _StdOut.putText("Please enter a positive number");
+                return;
+            }
             if (program != "") {
                 program = program.replace(/\s+/g, '').toUpperCase();
                 //_StdOut.putText(program);
@@ -396,7 +411,7 @@ var TSOS;
                 if (pass) {
                     _StdOut.putText("Program is good");
                     _StdOut.advanceLine();
-                    _MemMan.loadProgram(program);
+                    _MemMan.loadProgram(program, priority);
                     var wind = new Audio("wind.mp3");
                     wind.play();
                 }
@@ -481,6 +496,12 @@ var TSOS;
          */
         Shell.prototype.shellRunAll = function (args) {
             var nQ;
+            if (_CPUSCHED.algorithm == "priority") {
+                Resident_List.quicksort(0, Resident_List.getSize() - 1);
+                for (var i = 0; i < Resident_List.getSize(); i++) {
+                    _Kernel.krnTrace("RL " + Resident_List.getObj(i).pid + " Prior: " + Resident_List.getObj(i).priority);
+                }
+            }
             while (Resident_List.isEmpty() == false) {
                 _Kernel.krnTrace("Process pid=" + Resident_List.getObj(0).pid);
                 nQ = Resident_List.dequeue();
@@ -558,21 +579,12 @@ var TSOS;
         };
         Shell.prototype.shellCreateFile = function (args) {
             var filename = args;
-            if (_krnFSDD.createFile(filename)) {
-                _StdOut.putText("File " + filename + " Created Succesfully");
-                _StdOut.advanceLine();
-            }
-            else {
-                _StdOut.putText("File " + filename + " Not Created");
-                _StdOut.advanceLine();
-            }
+            _Kernel.krnTrace("Creating File " + filename);
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(DISK_IRQ, [0, filename]));
         };
         Shell.prototype.shellReadFile = function (args) {
             var filename = args;
-            var read = _krnFSDD.readFile(filename);
-            _StdOut.putText("File: " + filename);
-            _StdOut.advanceLine();
-            _StdOut.putText(read);
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(DISK_IRQ, [1, filename]));
         };
         Shell.prototype.shellWriteFile = function (args) {
             var i = 0;
@@ -624,6 +636,20 @@ var TSOS;
             TSOS.Control.updateDiskTable();
             _StdOut.putText("Disk Formatted Successfully");
             _StdOut.advanceLine();
+        };
+        Shell.prototype.shellSetSchedule = function (args) {
+            var sched = args;
+            _Kernel.krnTrace(sched);
+            if (sched != "rr" && sched != "fcfs" && sched != "priority") {
+                _StdOut.putText("Please enter a valid scheduling algorithm [RR,FCFS,PRIORITY");
+            }
+            else {
+                _CPUSCHED.algorithm = sched;
+                _StdOut.putText("Scheduler now running " + _CPUSCHED.algorithm);
+            }
+        };
+        Shell.prototype.shellGetSchedule = function (args) {
+            _StdOut.putText("Scheduler set for " + _CPUSCHED.algorithm);
         };
         return Shell;
     })();

@@ -17,12 +17,13 @@ module TSOS {
                     public Zflag: number = 0,
                     public base:number=0,
                     public limit: number=0,
-                    public location: number=0) //0 if memory 1 if disk
+                    public location: number=0,
+                    public priority: number=0) //0 if memory 1 if disk
                     {
 
         }
 
-        public init(newBase, newLimit, location): void {
+        public init(newBase, newLimit, location, priority): void {
             this.pid=_OsShell.pid;
             this.state="new";
 
@@ -33,6 +34,7 @@ module TSOS {
             this.base=newBase;
             this.limit=newLimit;
             this.location=location;
+            this.priority=priority;
             this.PC = this.base;
 
         }

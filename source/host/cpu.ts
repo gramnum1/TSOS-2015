@@ -285,7 +285,7 @@ module TSOS {
                         _StdOut.putText("Error no match found: " + _Mem.coreM[this.PC]);
 
                 }
-                _CPUSCHED.counter++;
+                if(_CPUSCHED.algorithm=="rr"){_CPUSCHED.counter++;}
 
             }else{this.loadOffPCB();}
 
