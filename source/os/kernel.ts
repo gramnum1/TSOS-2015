@@ -170,6 +170,11 @@ module TSOS {
 
                     _Mode=1;
                     break;
+                case SWAP_IRQ:
+                    _Mode=0;
+                    _MemMan.exchange(_CPU.currPCB);
+                    _Mode=1;
+                    break;
 
 
 

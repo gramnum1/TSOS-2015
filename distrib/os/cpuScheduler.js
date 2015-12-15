@@ -32,35 +32,46 @@ var TSOS;
          */
         cpuScheduler.prototype.change = function () {
             if (_ReadyQ.getSize() > 0) {
-                var on = _CPU.currPCB;
-                on.state = "waiting";
-                var off = _ReadyQ.dequeue();
-                off.state = "running";
-                if (off.location == 1) {
-                    off.location = 0;
-                    off.base = on.base;
-                    off.limit = on.limit;
-                    off.PC = off.base + off.PC;
-                    on.PC = on.PC - on.base;
-                    on.base = 0;
-                    on.limit = 0;
-                    on.location = 1;
-                    _MemMan.exchange(off, on);
+                if (_ReadyQ.getObj(0).location == 1) {
+                    _Kernel.krnTrace("Swap from memory");
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SWAP_IRQ, 0));
                 }
-                _ReadyQ.enqueue(on);
-                //_StdOut.advanceLine();
-                _Kernel.krnTrace("cpuched ENQUEUE PID= " + on.pid + " PC= " + on.PC);
-                //_StdOut.advanceLine();
-                _Kernel.krnTrace("cpusched DEQUEUE PID= " + off.pid + " PC= " + off.PC);
-                _CPU.PC = off.PC;
-                _CPU.Acc = off.Acc;
-                _CPU.Xreg = off.Xreg;
-                _CPU.Yreg = off.Yreg;
-                _CPU.Zflag = off.Zflag;
-                _CPU.isExecuting = true;
-                _CPU.currPCB = off;
-                TSOS.Control.updatePCBTable();
-                TSOS.Control.updateDiskTable();
+                else {
+                    var on = _CPU.currPCB;
+                    on.state = "waiting";
+                    var off = _ReadyQ.dequeue();
+                    off.state = "running";
+                    //if(off.location==1){
+                    /*
+                     off.location=0;
+                     off.base=on.base;
+                     off.limit=on.limit;
+                     off.PC=off.base+off.PC;
+                     on.PC=on.PC-on.base;
+                     on.base=0;
+                     on.limit=0;
+
+
+
+                     on.location=1;
+                     _MemMan.exchange(off,on);
+                     */
+                    // }
+                    _ReadyQ.enqueue(on);
+                    //_StdOut.advanceLine();
+                    _Kernel.krnTrace("cpuched ENQUEUE PID= " + on.pid + " PC= " + on.PC);
+                    //_StdOut.advanceLine();
+                    _Kernel.krnTrace("cpusched DEQUEUE PID= " + off.pid + " PC= " + off.PC);
+                    _CPU.PC = off.PC;
+                    _CPU.Acc = off.Acc;
+                    _CPU.Xreg = off.Xreg;
+                    _CPU.Yreg = off.Yreg;
+                    _CPU.Zflag = off.Zflag;
+                    _CPU.currPCB = off;
+                    TSOS.Control.updatePCBTable();
+                    TSOS.Control.updateDiskTable();
+                    _CPU.isExecuting = true;
+                }
             }
             this.counter = 0;
         };

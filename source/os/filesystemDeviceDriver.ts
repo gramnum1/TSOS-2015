@@ -25,7 +25,7 @@ module TSOS {
 
         public init():void{
             for(var i=0; i<60; i++){
-                this.emptyData+="~~";
+                this.emptyData+="00";
 
             }
             this.Meta="0000";
@@ -83,7 +83,7 @@ module TSOS {
 
         }
         private fillerBlock(data): string{
-            _Kernel.krnTrace("data length: "+data.length);
+            //_Kernel.krnTrace("data length: "+data.length);
             var fill="";
             for(var i=0; i<(124-data.length); i++){
                 fill+="0";
@@ -91,7 +91,7 @@ module TSOS {
             return data.concat(fill);
 
         }private fillerData(data): string{
-        _Kernel.krnTrace("data length: "+data.length);
+        //_Kernel.krnTrace("data length: "+data.length);
         var fill="";
         for(var i=0; i<(120-data.length); i++){
             fill+="0";
@@ -126,7 +126,7 @@ module TSOS {
 
 
                         }while(MBR!="000");
-                        read=Utils.hexToString(read);
+                        //read=Utils.hexToString(read);
                         _Kernel.krnTrace("FSDD>RF READ: "+read);
 
 
@@ -144,7 +144,9 @@ module TSOS {
 
         }
         public writeReplace(filename, data, pcb): void{
-           _Kernel.krnTrace("FSDD>WR data length: "+data.length);
+           // data=Utils.stringToHex(data);
+            //filename=this.fillerData(Utils.stringToHex(filename));
+            _Kernel.krnTrace("FSDD>WR data length: "+data.length);
             var numBlocks=Math.ceil(data.length/60);
             _Kernel.krnTrace("FSDD>WR Num Blocks: "+numBlocks);
             var temp;
@@ -162,8 +164,10 @@ module TSOS {
                     if (temp == filename) {
 
                         MBR = this.getMBR(0, s, b);
+                        //newfilename=this.fillerBlock("1"+MBR.concat(pcb.pid));
                         newfilename="1"+MBR.concat(pcb.pid);
                         _Kernel.krnTrace("FSDD>WR new filename: "+newfilename);
+
                         sessionStorage.setItem("0"+s+""+b, newfilename );
 
 
@@ -182,6 +186,7 @@ module TSOS {
                             }
                             //_Kernel.krnTrace(write);
                             //_Kernel.krnTrace(pointer.toString());
+                            //write=this.fillerData(write);
                             sessionStorage.setItem(MBR, "1"+nextBlock.concat(write));
                             write="";
                             limit=0;
@@ -213,9 +218,63 @@ module TSOS {
 
 
         }
+        public writeSwap(data, filename): void{
+
+            var hexfilename=this.fillerData(Utils.stringToHex(filename));
+           // _Kernel.krnTrace("FSDD>WS data length: "+data.length);
+            var numBlocks=Math.ceil(data.length/60);
+            _Kernel.krnTrace("FSDD>WS Num Blocks: "+numBlocks);
+            var temp;
+            var MBR;
+            var pointer=0;
+            var write="";
+            var nextBlock;
+            var limit=0;
+            var newfilename;
+
+
+            for (var s = 0; s < this.sections; s++) {
+                for (var b = 0; b < this.blocks; b++) {
+                    temp = this.getData(0, s, b);
+                    if (temp == hexfilename) {
+                        this.write(filename, data);
+                        _Kernel.krnTrace("FSDD>WS file found, writing file");
+                        return;
+                    }
+                }
+            }
+            _Kernel.krnTrace("FSDD>WS file not found, creating and writing file writing file");
+           this.createFile(filename);
+            this.write(filename, data);
+
+
+
+
+
+
+
+                        Control.updateDiskTable();
+                        return;
+
+
+
+
+
+
+
+
+
+                    }
+
+
+
+
+
+
+
 
         public write(filename, data): boolean {
-            data=Utils.stringToHex(data);
+            //data=Utils.stringToHex(data);
             filename=this.fillerData(Utils.stringToHex(filename));
 
 
@@ -251,6 +310,7 @@ module TSOS {
                             //_Kernel.krnTrace(pointer.toString());
 
                             var DATA=this.fillerBlock("1"+nextBlock.concat(write));
+                           // var DATA="1"+nextBlock.concat(write);
                             sessionStorage.setItem(MBR, DATA);
                             write="";
                             limit=0;
@@ -274,6 +334,7 @@ module TSOS {
                     }
 
                 }
+            _Kernel.krnTrace("FSDD>W File "+filename+" not found");
 
             return false;
         }
@@ -434,26 +495,41 @@ module TSOS {
         }
         public diskUse(params){
             var action=params[0];
-            var param1=params[1];
-            var param2;
+            var filename=params[1];
+            var data=params[2];
             switch (action){
                 case 0 /*create*/:
 
-                    _Kernel.krnTrace("FSDD>DU>CREATE filename: "+param1);
-                    if(_krnFSDD.createFile(param1)){
-                        _StdOut.putText("File "+param1+" Created Succesfully");
+                    _Kernel.krnTrace("FSDD>DU>CREATE filename: "+filename);
+                    if(_krnFSDD.createFile(filename)){
+                        _StdOut.putText("File "+filename+" Created Succesfully");
                         _StdOut.advanceLine();
                     }else{
-                        _StdOut.putText("File "+param1+" Not Created");
+                        _StdOut.putText("File "+filename+" Not Created");
                         _StdOut.advanceLine();
                     }
                     break;
                 case 1: /*read*/
-                    _Kernel.krnTrace("FSDD>DU>READ filename: "+param1);
-                    var read=_krnFSDD.readFile(param1);
-                    _StdOut.putText("File: "+param1);
+                    _Kernel.krnTrace("FSDD>DU>READ filename: "+filename);
+                    var read=_krnFSDD.readFile(filename);
+                    _StdOut.putText("File: "+filename);
                     _StdOut.advanceLine();
                     _StdOut.putText(read);
+                    break;
+                case 2: /*read return */
+                    var read=_krnFSDD.readFile(filename);
+
+                    _PROGRAM=read;
+                    _Kernel.krnTrace("FSDD>RR _PROGRAM: "+_PROGRAM);
+                    break;
+                case 3: /*writeswap*/
+                    this.writeSwap(data, filename);
+                    break;
+
+
+
+
+
 
             }
 

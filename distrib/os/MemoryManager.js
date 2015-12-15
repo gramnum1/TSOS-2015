@@ -100,33 +100,58 @@ var TSOS;
             else {
                 _StdOut.putText("Memory allocation " + index + " out of bounds. Base= " + _CPU.currPCB.base + " Limit= " + _CPU.currPCB.limit);
                 _StdOut.advanceLine();
+                _Kernel.krnTrace("[" + _CPU.currPCB.pid + "] MEMALLOC ERROR " + index + " out of bounds. Base= " + _CPU.currPCB.base + " Limit= " + _CPU.currPCB.limit);
                 _OsShell.shellKill(_CPU.currPCB.pid);
             }
         };
-        MemoryManager.prototype.exchange = function (fspcb, mempcb) {
-            _Kernel.krnTrace("MEMMAN>EX IN EXCH pid in= " + fspcb.pid + " pid out= " + mempcb.pid);
-            _Kernel.krnTrace("MEMMAN>EX mempcb [base,limit] [" + mempcb.base + "," + mempcb.limit + "]");
-            var start = mempcb.base;
-            var end = mempcb.limit;
-            var out = "";
-            var into = _krnFSDD.readFile(fspcb.pid);
-            var toMemory;
-            var index = mempcb.base;
+        MemoryManager.prototype.exchange = function (pcb) {
+            // _CPU.isExecuting = false;
+            var currprg = "";
+            var start = pcb.base;
+            var end = pcb.limit;
+            var blankcounter = 0;
             for (i = start; i < end; i++) {
-                out += _Mem.coreM[i];
+                currprg += _Mem.coreM[i];
             }
-            _Kernel.krnTrace("MEMMAN>EX INTO: " + into);
-            _Kernel.krnTrace("MEMMAN>EX OUT: " + out);
-            _krnFSDD.writeReplace(fspcb.pid, out, mempcb);
-            for (var i = 0; i < into.length; i++) {
+            _Kernel.krnTrace("MM>EX CURRPRG: " + currprg);
+            var newPCB = _ReadyQ.dequeue();
+            _Kernel.krnTrace("MM>EX offcb " + newPCB.pid + " loc " + newPCB.location);
+            newPCB.base = pcb.base;
+            newPCB.limit = pcb.limit;
+            newPCB.PC = newPCB.base + newPCB.PC;
+            newPCB.location = 0;
+            newPCB.status = "running";
+            pcb.PC = pcb.PC - pcb.base;
+            pcb.base = 0;
+            pcb.limit = 0;
+            pcb.location = 1;
+            pcb.status = "waiting";
+            var newprg = _krnFSDD.readFile(newPCB.pid);
+            _Kernel.krnTrace("MM>EX NEW PROGRAM: " + newprg);
+            var toMemory;
+            var index = newPCB.base;
+            _Kernel.krnTrace("MM>EX new program length=" + newprg.length);
+            for (var i = 0; i < newprg.length; i++) {
                 //pull bytes out of string two char at a time
-                toMemory = into.slice(i, i + 2);
+                toMemory = newprg.slice(i, i + 2);
                 //throw byte into memory
                 _Mem.coreM[index] = toMemory;
-                // _Kernel.krnTrace("Index: " + index + " value: " + _Mem.coreM[index].toString());
-                i++;
+                //_Kernel.krnTrace("Index: " + index + " value: " + _Mem.coreM[index].toString());
                 index++;
+                i++;
             }
+            _krnFSDD.writeSwap(currprg, pcb.pid);
+            _ReadyQ.enqueue(pcb);
+            _CPU.PC = newPCB.PC;
+            _CPU.Acc = newPCB.Acc;
+            _CPU.Xreg = newPCB.Xreg;
+            _CPU.Yreg = newPCB.Yreg;
+            _CPU.Zflag = newPCB.Zflag;
+            _CPU.currPCB = newPCB;
+            //CPU.isExecuting = true;
+            //_krnFSDD.writeSwap(currprg, pcb);
+            TSOS.Control.updatePCBTable();
+            TSOS.Control.updateDiskTable();
         };
         MemoryManager.prototype.retrieve = function (pcb) {
             var program = _krnFSDD.readFile(pcb.pid);

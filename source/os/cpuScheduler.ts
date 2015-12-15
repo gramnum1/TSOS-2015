@@ -44,63 +44,70 @@ module TSOS {
         cpu
 
          */
-        public change(): void{
-            if(_ReadyQ.getSize()>0) {
+        public change(): void {
+            if (_ReadyQ.getSize() > 0) {
+                if (_ReadyQ.getObj(0).location == 1) {
+                    _Kernel.krnTrace("Swap from memory");
+                    _KernelInterruptQueue.enqueue(new Interrupt(SWAP_IRQ, 0));
+                } else {
 
-                var on=_CPU.currPCB;
-                on.state="waiting";
+
+                var on = _CPU.currPCB;
+                on.state = "waiting";
 
                 var off = _ReadyQ.dequeue();
-                off.state="running";
-                if(off.location==1){
 
-                    off.location=0;
-                    off.base=on.base;
-                    off.limit=on.limit;
-                    off.PC=off.base+off.PC;
-                    on.PC=on.PC-on.base;
-                    on.base=0;
-                    on.limit=0;
+                    off.state = "running";
+                    //if(off.location==1){
+
+                    /*
+                     off.location=0;
+                     off.base=on.base;
+                     off.limit=on.limit;
+                     off.PC=off.base+off.PC;
+                     on.PC=on.PC-on.base;
+                     on.base=0;
+                     on.limit=0;
 
 
 
-                    on.location=1;
-                    _MemMan.exchange(off,on);
+                     on.location=1;
+                     _MemMan.exchange(off,on);
+                     */
+                    // }
+                    _ReadyQ.enqueue(on);
+                    //_StdOut.advanceLine();
+                    _Kernel.krnTrace("cpuched ENQUEUE PID= " + on.pid + " PC= " + on.PC);
+                    //_StdOut.advanceLine();
+
+
+                    _Kernel.krnTrace("cpusched DEQUEUE PID= " + off.pid + " PC= " + off.PC);
+
+
+                    _CPU.PC = off.PC;
+                    _CPU.Acc = off.Acc;
+                    _CPU.Xreg = off.Xreg;
+                    _CPU.Yreg = off.Yreg;
+                    _CPU.Zflag = off.Zflag;
+
+                    _CPU.currPCB = off;
+                    Control.updatePCBTable();
+                    Control.updateDiskTable();
+                    _CPU.isExecuting = true;
                 }
-                _ReadyQ.enqueue(on);
-                //_StdOut.advanceLine();
-                _Kernel.krnTrace("cpuched ENQUEUE PID= " + on.pid+ " PC= "+on.PC);
-                //_StdOut.advanceLine();
-
-
-                _Kernel.krnTrace("cpusched DEQUEUE PID= " + off.pid+" PC= "+off.PC);
-
-
-
-
-                _CPU.PC = off.PC;
-                _CPU.Acc = off.Acc;
-                _CPU.Xreg = off.Xreg;
-                _CPU.Yreg = off.Yreg;
-                _CPU.Zflag = off.Zflag;
-                _CPU.isExecuting = true;
-                _CPU.currPCB = off;
-                Control.updatePCBTable();
-                Control.updateDiskTable();
-
-
-
-
-
             }
-            this.counter=0;
+
+
+                this.counter = 0;
+            }
 
 
 
 
 
 
-        }
+
+
         /*replace()
         used when executing process finishes
         simply dequeues off of
@@ -109,6 +116,7 @@ module TSOS {
          */
         public replace(): void{
             var off = _ReadyQ.dequeue();
+
             //_Kernel.krnTrace("DEQUEUE PID= " + off.pid);
             //_StdOut.advanceLine();
             off.state="running";

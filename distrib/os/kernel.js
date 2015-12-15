@@ -150,6 +150,11 @@ var TSOS;
                     _krnFSDD.isr(params);
                     _Mode = 1;
                     break;
+                case SWAP_IRQ:
+                    _Mode = 0;
+                    _MemMan.exchange(_CPU.currPCB);
+                    _Mode = 1;
+                    break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }

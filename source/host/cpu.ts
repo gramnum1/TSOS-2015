@@ -60,12 +60,13 @@ module TSOS {
 
 
             if (this.isExecuting) {
+
                 //check to see if _CPUSCHED needs to init
                 if(this.currPCB==null){
 
 
                     this.run.play();
-                    _KernelInterruptQueue.enqueue( new Interrupt(CPUSCHED_INIT_IRQ));
+                    _KernelInterruptQueue.enqueue( new Interrupt(CPUSCHED_INIT_IRQ,0));
 
                    if(this.currPCB!=null) {
                        this.PC = this.currPCB.base;
@@ -87,7 +88,7 @@ module TSOS {
                 if(_StepMode==false){
                     _Kernel.krnTrace('CPU cycle');
                     this.execute();
-                    _Kernel.krnTrace("PCB "+this.currPCB.pid+" b,l,pc "+this.currPCB.base+", "+this.currPCB.limit+", "+this.currPCB.PC);
+                    //_Kernel.krnTrace("PCB "+this.currPCB.pid+" b,l,pc "+this.currPCB.base+", "+this.currPCB.limit+", "+this.currPCB.PC);
                 }
                 /*If step mode is on and
                  *Step button has been pressed
@@ -95,7 +96,7 @@ module TSOS {
                 if(_StepMode==true && _Step==true){
                     _Kernel.krnTrace('CPU cycle');
                     this.execute();
-                    _Kernel.krnTrace("PCB "+this.currPCB.pid+" b,l,pc "+this.currPCB.base+", "+this.currPCB.limit+", "+this.currPCB.PC);
+                    //_Kernel.krnTrace("PCB "+this.currPCB.pid+" b,l,pc "+this.currPCB.base+", "+this.currPCB.limit+", "+this.currPCB.PC);
                     _Step=false;
                 }
 
@@ -112,6 +113,8 @@ module TSOS {
 
         }
         public execute(){
+            //Control.memoryPlace();
+
 
             var instruction;
             var i;
@@ -119,6 +122,7 @@ module TSOS {
             var b;
             var c;
             var char;
+            var store;
             instruction = _Mem.coreM[this.PC];
             if(_CPUSCHED.counter<_CPUSCHED.quantum) {
                 switch (instruction) {
@@ -135,6 +139,7 @@ module TSOS {
                             this.currPCB.Zflag=this.Zflag;
                             Control.updatePCBTable();
                             //interrupt for replacement
+
                             _KernelInterruptQueue.enqueue(new Interrupt(CPUSCHED_REPLACE_IRQ,0));
 
                             this.done.play();
@@ -164,6 +169,7 @@ module TSOS {
                         this.op = "A0";
                         this.PC++;
                         this.Yreg = parseInt(_Mem.coreM[this.PC], 16);
+                        _Kernel.krnTrace("PROCESSOR>A0 LOADING Y REG WITH "+this.Yreg+" FROM Mem "+this.PC);
                         this.PC++;
                         break;
                     //load Acc from memory
@@ -177,7 +183,12 @@ module TSOS {
                     case "8D":
                         this.op = "8d";
                         i = _MemMan.toAddress();
-                        _Mem.coreM[i] = this.Acc.toString(16);
+                         store=this.Acc.toString(16);
+                        if(store.length<2){
+                            store="0"+store;
+                        }
+                        _Mem.coreM[i] = store;
+                        _Kernel.krnTrace("PROCESSOR>8d> storing "+store+"to Mem "+i);
                         this.PC++;
                         break;
                     //Add to Acc from memory with carry
@@ -202,6 +213,7 @@ module TSOS {
                         this.op = "AC";
                         i = _MemMan.toAddress();
                         this.Yreg = parseInt(_Mem.coreM[i], 16);
+                        _Kernel.krnTrace("PROCESSOR>AC LOADING Y REG WITH "+this.Yreg+" FROM _MEM "+i);
                         this.PC++;
                         break;
                     //increment byte
@@ -210,7 +222,12 @@ module TSOS {
                         i = _MemMan.toAddress();
                         a = parseInt(_Mem.coreM[i], 16);
                         a = a + 1;
-                        _Mem.coreM[i] = a.toString(16);
+                        store=a.toString(16);
+                        if(store.length<2){
+                            store="0"+store;
+                        }
+
+                        _Mem.coreM[i] =store;//16
                         this.PC++;
                         break;
                     //No op
@@ -259,14 +276,16 @@ module TSOS {
                         //print int
                         if (this.Xreg == 1) {
                             _StdOut.putText(this.Yreg.toString());
+                            _Kernel.krnTrace("PROCESSOR>FF "+this.currPCB.pid+" print "+this.Yreg.toString());
                             this.PC++;
                             //print string
                         } else if (this.Xreg == 2) {
                             i = this.Yreg+this.currPCB.base;
-                            while (_Mem.coreM[i] != 00) {
+                            while (_Mem.coreM[i] != "00") {
 
                                 char = String.fromCharCode(parseInt(_Mem.coreM[i], 16));
                                 _StdOut.putText(char);
+
                                 i++;
                             }
 
@@ -318,6 +337,7 @@ module TSOS {
             this.currPCB.Yreg=this.Yreg;
             this.currPCB.Zflag=this.Zflag;
             //interrupt for change
+
             _KernelInterruptQueue.enqueue(new Interrupt(CPUSCHED_CHANGE_IRQ, 0));
 
 
@@ -356,6 +376,7 @@ module TSOS {
 
 
         }
+
 
 
 

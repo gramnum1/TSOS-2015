@@ -27,7 +27,7 @@ var TSOS;
         };
         FSDD.prototype.init = function () {
             for (var i = 0; i < 60; i++) {
-                this.emptyData += "~~";
+                this.emptyData += "00";
             }
             this.Meta = "0000";
             for (var t = 0; t < this.tracks; t++) {
@@ -60,7 +60,7 @@ var TSOS;
             return false;
         };
         FSDD.prototype.fillerBlock = function (data) {
-            _Kernel.krnTrace("data length: " + data.length);
+            //_Kernel.krnTrace("data length: "+data.length);
             var fill = "";
             for (var i = 0; i < (124 - data.length); i++) {
                 fill += "0";
@@ -68,7 +68,7 @@ var TSOS;
             return data.concat(fill);
         };
         FSDD.prototype.fillerData = function (data) {
-            _Kernel.krnTrace("data length: " + data.length);
+            //_Kernel.krnTrace("data length: "+data.length);
             var fill = "";
             for (var i = 0; i < (120 - data.length); i++) {
                 fill += "0";
@@ -97,7 +97,7 @@ var TSOS;
                             //_Kernel.krnTrace("nextRead: "+nextRead);
                             MBR = nextRead;
                         } while (MBR != "000");
-                        read = TSOS.Utils.hexToString(read);
+                        //read=Utils.hexToString(read);
                         _Kernel.krnTrace("FSDD>RF READ: " + read);
                         return read;
                     }
@@ -106,6 +106,8 @@ var TSOS;
             _StdOut.putText("File " + filename + " not found");
         };
         FSDD.prototype.writeReplace = function (filename, data, pcb) {
+            // data=Utils.stringToHex(data);
+            //filename=this.fillerData(Utils.stringToHex(filename));
             _Kernel.krnTrace("FSDD>WR data length: " + data.length);
             var numBlocks = Math.ceil(data.length / 60);
             _Kernel.krnTrace("FSDD>WR Num Blocks: " + numBlocks);
@@ -121,6 +123,7 @@ var TSOS;
                     temp = this.getData(0, s, b);
                     if (temp == filename) {
                         MBR = this.getMBR(0, s, b);
+                        //newfilename=this.fillerBlock("1"+MBR.concat(pcb.pid));
                         newfilename = "1" + MBR.concat(pcb.pid);
                         _Kernel.krnTrace("FSDD>WR new filename: " + newfilename);
                         sessionStorage.setItem("0" + s + "" + b, newfilename);
@@ -139,6 +142,7 @@ var TSOS;
                             }
                             //_Kernel.krnTrace(write);
                             //_Kernel.krnTrace(pointer.toString());
+                            //write=this.fillerData(write);
                             sessionStorage.setItem(MBR, "1" + nextBlock.concat(write));
                             write = "";
                             limit = 0;
@@ -152,8 +156,36 @@ var TSOS;
                 }
             }
         };
+        FSDD.prototype.writeSwap = function (data, filename) {
+            var hexfilename = this.fillerData(TSOS.Utils.stringToHex(filename));
+            // _Kernel.krnTrace("FSDD>WS data length: "+data.length);
+            var numBlocks = Math.ceil(data.length / 60);
+            _Kernel.krnTrace("FSDD>WS Num Blocks: " + numBlocks);
+            var temp;
+            var MBR;
+            var pointer = 0;
+            var write = "";
+            var nextBlock;
+            var limit = 0;
+            var newfilename;
+            for (var s = 0; s < this.sections; s++) {
+                for (var b = 0; b < this.blocks; b++) {
+                    temp = this.getData(0, s, b);
+                    if (temp == hexfilename) {
+                        this.write(filename, data);
+                        _Kernel.krnTrace("FSDD>WS file found, writing file");
+                        return;
+                    }
+                }
+            }
+            _Kernel.krnTrace("FSDD>WS file not found, creating and writing file writing file");
+            this.createFile(filename);
+            this.write(filename, data);
+            TSOS.Control.updateDiskTable();
+            return;
+        };
         FSDD.prototype.write = function (filename, data) {
-            data = TSOS.Utils.stringToHex(data);
+            //data=Utils.stringToHex(data);
             filename = this.fillerData(TSOS.Utils.stringToHex(filename));
             var numBlocks = Math.ceil(data.length / 60);
             _Kernel.krnTrace("Num Blocks: " + numBlocks);
@@ -181,6 +213,7 @@ var TSOS;
                             //_Kernel.krnTrace(write);
                             //_Kernel.krnTrace(pointer.toString());
                             var DATA = this.fillerBlock("1" + nextBlock.concat(write));
+                            // var DATA="1"+nextBlock.concat(write);
                             sessionStorage.setItem(MBR, DATA);
                             write = "";
                             limit = 0;
@@ -191,6 +224,7 @@ var TSOS;
                     }
                 }
             }
+            _Kernel.krnTrace("FSDD>W File " + filename + " not found");
             return false;
         };
         FSDD.prototype.delete = function (filename) {
@@ -320,26 +354,35 @@ var TSOS;
         };
         FSDD.prototype.diskUse = function (params) {
             var action = params[0];
-            var param1 = params[1];
-            var param2;
+            var filename = params[1];
+            var data = params[2];
             switch (action) {
                 case 0 /*create*/:
-                    _Kernel.krnTrace("FSDD>DU>CREATE filename: " + param1);
-                    if (_krnFSDD.createFile(param1)) {
-                        _StdOut.putText("File " + param1 + " Created Succesfully");
+                    _Kernel.krnTrace("FSDD>DU>CREATE filename: " + filename);
+                    if (_krnFSDD.createFile(filename)) {
+                        _StdOut.putText("File " + filename + " Created Succesfully");
                         _StdOut.advanceLine();
                     }
                     else {
-                        _StdOut.putText("File " + param1 + " Not Created");
+                        _StdOut.putText("File " + filename + " Not Created");
                         _StdOut.advanceLine();
                     }
                     break;
                 case 1:
-                    _Kernel.krnTrace("FSDD>DU>READ filename: " + param1);
-                    var read = _krnFSDD.readFile(param1);
-                    _StdOut.putText("File: " + param1);
+                    _Kernel.krnTrace("FSDD>DU>READ filename: " + filename);
+                    var read = _krnFSDD.readFile(filename);
+                    _StdOut.putText("File: " + filename);
                     _StdOut.advanceLine();
                     _StdOut.putText(read);
+                    break;
+                case 2:
+                    var read = _krnFSDD.readFile(filename);
+                    _PROGRAM = read;
+                    _Kernel.krnTrace("FSDD>RR _PROGRAM: " + _PROGRAM);
+                    break;
+                case 3:
+                    this.writeSwap(data, filename);
+                    break;
             }
         };
         return FSDD;

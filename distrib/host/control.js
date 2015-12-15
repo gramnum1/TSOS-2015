@@ -251,11 +251,18 @@ var TSOS;
                         }
                         else {
                             _MemTable.rows[rowIndex].cells[colIndex].innerHTML = _Mem.coreM[memoryIndex];
+                            _MemTable.rows[rowIndex].cells[colIndex].style.backgroundColor = "white";
                             memoryIndex++;
                         }
                     }
                 }
             }
+        };
+        Control.memoryPlace = function () {
+            var row = _CPU.PC / 8;
+            var cell = _CPU.PC % 8 + 1;
+            // _Kernel.krnTrace("["+row+"]["+cell+"]");
+            _MemTable.rows[row].cells[cell].style.backgroundColor = "green";
         };
         /*
         updatePCBTable()
@@ -264,11 +271,13 @@ var TSOS;
         Control.updatePCBTable = function () {
             _PCBTable.rows[1].cells[0].innerHTML = _CPU.currPCB.pid;
             _PCBTable.rows[1].cells[1].innerHTML = _CPU.currPCB.state;
-            _PCBTable.rows[1].cells[2].innerHTML = _CPU.currPCB.PC;
-            _PCBTable.rows[1].cells[3].innerHTML = _CPU.currPCB.Acc;
-            _PCBTable.rows[1].cells[4].innerHTML = _CPU.currPCB.Xreg;
-            _PCBTable.rows[1].cells[5].innerHTML = _CPU.currPCB.Yreg;
-            _PCBTable.rows[1].cells[6].innerHTML = _CPU.currPCB.Zflag;
+            _PCBTable.rows[1].cells[2].innerHTML = _CPU.currPCB.base;
+            _PCBTable.rows[1].cells[3].innerHTML = _CPU.currPCB.limit;
+            _PCBTable.rows[1].cells[4].innerHTML = _CPU.currPCB.PC;
+            _PCBTable.rows[1].cells[5].innerHTML = _CPU.currPCB.Acc;
+            _PCBTable.rows[1].cells[6].innerHTML = _CPU.currPCB.Xreg;
+            _PCBTable.rows[1].cells[7].innerHTML = _CPU.currPCB.Yreg;
+            _PCBTable.rows[1].cells[8].innerHTML = _CPU.currPCB.Zflag;
         };
         /*updateReadyTable()
         dynamically updates the Ready Table with

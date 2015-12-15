@@ -64,8 +64,11 @@ var TSOS;
         Utils.hexToString = function (hex) {
             var str = "";
             var array = hex.match(/.{1,2}/g);
+            //_Kernel.krnTrace("UT>H2S ARRAY: "+array.toString());
             for (var i = 0; i < array.length; i++) {
-                str += String.fromCharCode(this.hexToDec(array[i]));
+                var c = String.fromCharCode(this.hexToDec(array[i]));
+                // _Kernel.krnTrace("UT>H2S Character "+c+" code: "+this.hexToDec(array[i]));
+                str += c;
             }
             return str;
         };

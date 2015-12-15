@@ -31,6 +31,8 @@ const CPUSCHED_REPLACE_IRQ: number=4;
 
 const DISK_IRQ: number=5;
 
+const SWAP_IRQ: number=6;
+
 
 
 
@@ -77,7 +79,7 @@ var _KernelInterruptQueue;          // Initializing this to null (which I would 
 var _KernelInputQueue: any = null;  // Is this better? I don't like uninitialized variables. But I also don't like using the type specifier 'any'
 var _KernelBuffers: any[] = null;   // when clearly 'any' is not what we want. There is likely a better way, but what is it?
 var _ReadyQ: any=null;
-
+var _PROGRAM: string="";
 // Standard input and output
 var _StdIn;    // Same "to null or not to null" issue as above.
 var _StdOut;
