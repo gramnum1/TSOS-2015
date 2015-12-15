@@ -156,55 +156,6 @@ var TSOS;
                 }
             }
         };
-        /*
-        public writeSwap(oldfilename,data, filename): void{
-
-            var hexfilename=this.fillerData(Utils.stringToHex(filename));
-           // _Kernel.krnTrace("FSDD>WS data length: "+data.length);
-            var numBlocks=Math.ceil(data.length/60);
-            _Kernel.krnTrace("FSDD>WS Num Blocks: "+numBlocks);
-            var temp;
-            var MBR;
-            var pointer=0;
-            var write="";
-            var nextBlock;
-            var limit=0;
-            var newfilename;
-
-
-            for (var s = 0; s < this.sections; s++) {
-                for (var b = 0; b < this.blocks; b++) {
-                    temp = this.getData(0, s, b);
-                    if (temp == hexfilename) {
-                        this.write(filename, data);
-                        _Kernel.krnTrace("FSDD>WS file found, writing file");
-                        return;
-                    }
-                }
-            }
-            _Kernel.krnTrace("FSDD>WS file not found, creating and writing file writing file");
-           this.createFile(filename);
-            this.write(filename, data);
-
-
-
-
-
-
-
-                        Control.updateDiskTable();
-                        return;
-
-
-
-
-
-
-
-
-
-                    }
-*/
         FSDD.prototype.writeSwap = function (oldfilename, data, filename) {
             this.delete(oldfilename);
             this.createFile(filename);
@@ -406,6 +357,7 @@ var TSOS;
                 case 1:
                     _Kernel.krnTrace("FSDD>DU>READ filename: " + filename);
                     var read = _krnFSDD.readFile(filename);
+                    read = TSOS.Utils.hexToString(read);
                     _StdOut.putText("File: " + filename);
                     _StdOut.advanceLine();
                     _StdOut.putText(read);
@@ -414,9 +366,6 @@ var TSOS;
                     var read = _krnFSDD.readFile(filename);
                     _PROGRAM = read;
                     _Kernel.krnTrace("FSDD>RR _PROGRAM: " + _PROGRAM);
-                    break;
-                case 3:
-                    this.writeSwap(data, filename);
                     break;
             }
         };

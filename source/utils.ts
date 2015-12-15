@@ -58,7 +58,10 @@ module TSOS {
 
             for(var i=0; i<str.toString().length;i++){
                 var temp=this.decToHex(str.toString().charCodeAt(i));
-              temp=new Array(2-temp.length).join('0')+temp;
+              if(temp.length<2){
+                  temp="0"+temp;
+              }
+
               hexString+=temp;
 
             }
@@ -66,12 +69,14 @@ module TSOS {
         }
         public static hexToString(hex: string):string{
             var str="";
-            var array=hex.match(/.{1,2}/g);
-            //_Kernel.krnTrace("UT>H2S ARRAY: "+array.toString());
-            for(var i=0; i<array.length;i++){
-                var c=String.fromCharCode(this.hexToDec(array[i]));
-               // _Kernel.krnTrace("UT>H2S Character "+c+" code: "+this.hexToDec(array[i]));
+
+
+            
+            for(var i=0; i<hex.length-1;i++){
+                var c=String.fromCharCode(this.hexToDec(hex.charAt(i)+hex.charAt(i+1)));
+                _Kernel.krnTrace("UT>H2S Character "+c+" code: "+this.hexToDec(hex.charAt(i)+hex.charAt(i+1)));
                 str+=c;
+                i++;
 
             }
             return str;

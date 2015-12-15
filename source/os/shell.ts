@@ -729,6 +729,10 @@ module TSOS {
 
             var i=0;
             var input=args.toString();
+            if(args.toString().includes(String.fromCharCode(34))==false){
+                _StdOut.putText("Invalid write");
+                return;
+            }
             //args=args.toString().replace(/,/g, " ");
            // _Kernel.krnTrace("input: "+args);
             var filename="";
