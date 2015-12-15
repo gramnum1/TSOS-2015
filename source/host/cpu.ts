@@ -360,6 +360,7 @@ module TSOS {
             //stop executing noise
             this.run.repeat=false;
             this.run.pause();
+            _krnFSDD.delete(this.currPCB.pid);
 
             //reset cpu
             this.init();
@@ -370,6 +371,7 @@ module TSOS {
             }
             _StdOut.advanceLine();
             _OsShell.putPrompt();
+
 
 
 

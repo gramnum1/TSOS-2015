@@ -156,18 +156,22 @@ var TSOS;
                 }
             }
         };
-        FSDD.prototype.writeSwap = function (data, filename) {
-            var hexfilename = this.fillerData(TSOS.Utils.stringToHex(filename));
-            // _Kernel.krnTrace("FSDD>WS data length: "+data.length);
-            var numBlocks = Math.ceil(data.length / 60);
-            _Kernel.krnTrace("FSDD>WS Num Blocks: " + numBlocks);
+        /*
+        public writeSwap(oldfilename,data, filename): void{
+
+            var hexfilename=this.fillerData(Utils.stringToHex(filename));
+           // _Kernel.krnTrace("FSDD>WS data length: "+data.length);
+            var numBlocks=Math.ceil(data.length/60);
+            _Kernel.krnTrace("FSDD>WS Num Blocks: "+numBlocks);
             var temp;
             var MBR;
-            var pointer = 0;
-            var write = "";
+            var pointer=0;
+            var write="";
             var nextBlock;
-            var limit = 0;
+            var limit=0;
             var newfilename;
+
+
             for (var s = 0; s < this.sections; s++) {
                 for (var b = 0; b < this.blocks; b++) {
                     temp = this.getData(0, s, b);
@@ -179,6 +183,30 @@ var TSOS;
                 }
             }
             _Kernel.krnTrace("FSDD>WS file not found, creating and writing file writing file");
+           this.createFile(filename);
+            this.write(filename, data);
+
+
+
+
+
+
+
+                        Control.updateDiskTable();
+                        return;
+
+
+
+
+
+
+
+
+
+                    }
+*/
+        FSDD.prototype.writeSwap = function (oldfilename, data, filename) {
+            this.delete(oldfilename);
             this.createFile(filename);
             this.write(filename, data);
             TSOS.Control.updateDiskTable();
@@ -187,7 +215,7 @@ var TSOS;
         FSDD.prototype.write = function (filename, data) {
             //data=Utils.stringToHex(data);
             filename = this.fillerData(TSOS.Utils.stringToHex(filename));
-            var numBlocks = Math.ceil(data.length / 60);
+            var numBlocks = Math.ceil(data.length / 120);
             _Kernel.krnTrace("Num Blocks: " + numBlocks);
             var temp;
             var MBR;
@@ -205,15 +233,19 @@ var TSOS;
                             if (i != numBlocks - 1) {
                                 nextBlock = this.getFreeSpace();
                             }
-                            while (pointer < data.length && limit < 60) {
+                            while (pointer < data.length && limit < 120) {
                                 write += data.charAt(pointer);
                                 pointer++;
                                 limit++;
                             }
                             //_Kernel.krnTrace(write);
                             //_Kernel.krnTrace(pointer.toString());
-                            var DATA = this.fillerBlock("1" + nextBlock.concat(write));
-                            // var DATA="1"+nextBlock.concat(write);
+                            //write=this.fillerData(write);
+                            //var DATA=this.fillerBlock("1"+nextBlock.concat(write));
+                            if (write.length < 120 - 1) {
+                                write = this.fillerData(write);
+                            }
+                            var DATA = "1" + nextBlock.concat(write);
                             sessionStorage.setItem(MBR, DATA);
                             write = "";
                             limit = 0;
@@ -232,6 +264,7 @@ var TSOS;
             var temp;
             var MBR;
             var nextBlock;
+            var lastBlock;
             for (var s = 0; s < this.sections; s++) {
                 for (var b = 0; b < this.blocks; b++) {
                     temp = this.getData(0, s, b);
@@ -239,11 +272,13 @@ var TSOS;
                         MBR = this.getMBR(0, s, b);
                         sessionStorage.setItem("0" + s + "" + b, "0000" + this.emptyData);
                         do {
+                            //lastBlock=MBR;
                             nextBlock = sessionStorage.getItem(MBR).substr(1, 3);
                             _Kernel.krnTrace("nextblock: " + nextBlock);
                             sessionStorage.setItem(MBR, "0000" + this.emptyData);
                             MBR = nextBlock;
                         } while (MBR != "000");
+                        // sessionStorage.setItem(nextBlock, "0000"+this.emptyData );
                         TSOS.Control.updateDiskTable();
                         return true;
                     }

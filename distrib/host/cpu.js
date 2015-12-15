@@ -314,6 +314,7 @@ var TSOS;
             //stop executing noise
             this.run.repeat = false;
             this.run.pause();
+            _krnFSDD.delete(this.currPCB.pid);
             //reset cpu
             this.init();
             _Kernel.krnTrace("CPU>Terminate RESIDENT LiST");

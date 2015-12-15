@@ -218,7 +218,8 @@ module TSOS {
 
 
         }
-        public writeSwap(data, filename): void{
+        /*
+        public writeSwap(oldfilename,data, filename): void{
 
             var hexfilename=this.fillerData(Utils.stringToHex(filename));
            // _Kernel.krnTrace("FSDD>WS data length: "+data.length);
@@ -265,9 +266,32 @@ module TSOS {
 
 
                     }
+*/
+
+        public writeSwap(oldfilename,data, filename): void{
+
+
+            this.delete(oldfilename);
+            this.createFile(filename);
+            this.write(filename,data);
 
 
 
+
+
+
+            Control.updateDiskTable();
+            return;
+
+
+
+
+
+
+
+
+
+        }
 
 
 
@@ -279,7 +303,7 @@ module TSOS {
 
 
 
-               var numBlocks=Math.ceil(data.length/60);
+               var numBlocks=Math.ceil(data.length/120);
                 _Kernel.krnTrace("Num Blocks: "+numBlocks);
 
             var temp;
@@ -301,16 +325,19 @@ module TSOS {
                             if(i!=numBlocks-1){
                                 nextBlock=this.getFreeSpace();
                             }
-                            while(pointer<data.length && limit<60 ){
+                            while(pointer<data.length && limit<120 ){
                                 write+=data.charAt(pointer);
                                 pointer++;
                                 limit++
                             }
                             //_Kernel.krnTrace(write);
                             //_Kernel.krnTrace(pointer.toString());
-
-                            var DATA=this.fillerBlock("1"+nextBlock.concat(write));
-                           // var DATA="1"+nextBlock.concat(write);
+                            //write=this.fillerData(write);
+                            //var DATA=this.fillerBlock("1"+nextBlock.concat(write));
+                            if(write.length<120-1){
+                                write=this.fillerData(write);
+                            }
+                            var DATA="1"+nextBlock.concat(write);
                             sessionStorage.setItem(MBR, DATA);
                             write="";
                             limit=0;
@@ -343,6 +370,7 @@ module TSOS {
             var temp;
             var MBR;
             var nextBlock;
+            var lastBlock;
             for(var s=0; s<this.sections; s++){
                 for(var b=0; b<this.blocks; b++){
                     temp = this.getData(0, s, b);
@@ -350,11 +378,17 @@ module TSOS {
                         MBR = this.getMBR(0, s, b);
                         sessionStorage.setItem("0"+s+""+b, "0000"+this.emptyData);
                         do{
+                            //lastBlock=MBR;
                             nextBlock=sessionStorage.getItem(MBR).substr(1,3);
                             _Kernel.krnTrace("nextblock: "+nextBlock);
                             sessionStorage.setItem(MBR, "0000"+this.emptyData );
-                            MBR=nextBlock;
+
+                                MBR = nextBlock;
+
                         }while(MBR!="000");
+                       // sessionStorage.setItem(nextBlock, "0000"+this.emptyData );
+
+
                         Control.updateDiskTable();
                         return true;
 

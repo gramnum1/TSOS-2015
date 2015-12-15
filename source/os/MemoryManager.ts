@@ -161,7 +161,7 @@ module TSOS {
 
 
 
-            var newprg=_krnFSDD.readFile(newPCB.pid);
+            var newprg=_krnFSDD.readFile(newPCB.pid).substr(0,509);
             _Kernel.krnTrace("MM>EX NEW PROGRAM: "+newprg);
 
 
@@ -190,7 +190,7 @@ module TSOS {
                 index++;
                     i++;
                 }
-            _krnFSDD.writeSwap(currprg,pcb.pid);
+            _krnFSDD.writeSwap(newPCB.pid,currprg,pcb.pid);
             _ReadyQ.enqueue(pcb);
 
 
@@ -231,6 +231,35 @@ module TSOS {
 
 
             }
+
+
+
+            }
+        public swapProgram(oldpcb, program){
+            var index=oldpcb.base;
+            var toMemory;
+            var toDisk="";
+            for(var i=oldpcb.base; i<oldpcb.limit; i++){
+                toDisk+=_Mem.coreM[index];
+                index++;
+            }
+            _Kernel.krnTrace("MM>SP toDisk: "+toDisk);
+            index=oldpcb.base;
+            for (var i =0; i < program.length; i++) {
+
+                //pull bytes out of string two char at a time
+                toMemory = program.slice(i, i + 2);
+                //throw byte into memory
+
+                _Mem.coreM[index] = toMemory;
+                // _Kernel.krnTrace("Index: " + index + " value: " + _Mem.coreM[index].toString());
+                i++;
+                index++;
+
+
+            }
+            _krnFSDD.createFile(oldpcb.pid);
+            _krnFSDD.write(oldpcb.pid, toDisk);
 
 
 

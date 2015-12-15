@@ -16,7 +16,37 @@ var TSOS;
         into the CPU
          */
         cpuScheduler.prototype.init = function () {
+            var oldprogram;
+            var found = false;
+            var i = 0;
+            var temp;
+            var replace;
             var first = _ReadyQ.dequeue();
+            if (first.location == 1) {
+                var program = _krnFSDD.readFile(first.pid);
+                _krnFSDD.delete(first.pid);
+                while (i < _ReadyQ.getSize() && !found) {
+                    temp = _ReadyQ.getObj(i);
+                    _Kernel.krnTrace("SCHED>INIT temp " + temp.pid + " location " + temp.location);
+                    if (temp.location == 0) {
+                        found = true;
+                    }
+                }
+                replace = _ReadyQ.remove(temp.pid);
+                _MemMan.swapProgram(replace, program);
+                first.base = replace.base;
+                first.limit = replace.limit;
+                first.location = 0;
+                first.PC = first.base;
+                replace.base = 0;
+                replace.limit = 0;
+                replace.PC = 0;
+                replace.location = 1;
+                _ReadyQ.enqueue(replace);
+                if (this.algorithm == "priority") {
+                    _ReadyQ.quicksort(0, _ReadyQ.getSize() - 1);
+                }
+            }
             first.state = "running";
             _CPU.currPCB = first;
             _CPU.PC = first.base;
@@ -82,7 +112,25 @@ var TSOS;
         pcb on CPU
          */
         cpuScheduler.prototype.replace = function () {
+            _krnFSDD.delete(_CPU.currPCB.pid);
             var off = _ReadyQ.dequeue();
+            if (off.location == 1) {
+                off.base = 0;
+                off.limit = 255;
+                var program = _krnFSDD.readFile(off.pid).substr(0, 509);
+                var index = off.base;
+                var toMemory;
+                _krnFSDD.delete(off.pid);
+                for (var i = 0; i < program.length; i++) {
+                    //pull bytes out of string two char at a time
+                    toMemory = program.slice(i, i + 2);
+                    //throw byte into memory
+                    _Mem.coreM[index] = toMemory;
+                    // _Kernel.krnTrace("Index: " + index + " value: " + _Mem.coreM[index].toString());
+                    i++;
+                    index++;
+                }
+            }
             //_Kernel.krnTrace("DEQUEUE PID= " + off.pid);
             //_StdOut.advanceLine();
             off.state = "running";

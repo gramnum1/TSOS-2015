@@ -126,7 +126,7 @@ var TSOS;
             pcb.limit = 0;
             pcb.location = 1;
             pcb.status = "waiting";
-            var newprg = _krnFSDD.readFile(newPCB.pid);
+            var newprg = _krnFSDD.readFile(newPCB.pid).substr(0, 509);
             _Kernel.krnTrace("MM>EX NEW PROGRAM: " + newprg);
             var toMemory;
             var index = newPCB.base;
@@ -140,7 +140,7 @@ var TSOS;
                 index++;
                 i++;
             }
-            _krnFSDD.writeSwap(currprg, pcb.pid);
+            _krnFSDD.writeSwap(newPCB.pid, currprg, pcb.pid);
             _ReadyQ.enqueue(pcb);
             _CPU.PC = newPCB.PC;
             _CPU.Acc = newPCB.Acc;
@@ -167,6 +167,28 @@ var TSOS;
                 i++;
                 index++;
             }
+        };
+        MemoryManager.prototype.swapProgram = function (oldpcb, program) {
+            var index = oldpcb.base;
+            var toMemory;
+            var toDisk = "";
+            for (var i = oldpcb.base; i < oldpcb.limit; i++) {
+                toDisk += _Mem.coreM[index];
+                index++;
+            }
+            _Kernel.krnTrace("MM>SP toDisk: " + toDisk);
+            index = oldpcb.base;
+            for (var i = 0; i < program.length; i++) {
+                //pull bytes out of string two char at a time
+                toMemory = program.slice(i, i + 2);
+                //throw byte into memory
+                _Mem.coreM[index] = toMemory;
+                // _Kernel.krnTrace("Index: " + index + " value: " + _Mem.coreM[index].toString());
+                i++;
+                index++;
+            }
+            _krnFSDD.createFile(oldpcb.pid);
+            _krnFSDD.write(oldpcb.pid, toDisk);
         };
         return MemoryManager;
     })();

@@ -477,7 +477,7 @@ module TSOS {
             if(args=="") {
                 priority = 10;
                 _Kernel.krnTrace("args nan");
-            }else if((priority=parseInt(args))<=0){
+            }else if((priority=parseInt(args))<0){
                 _StdOut.putText("Please enter a positive number");
                 return;
 
@@ -613,7 +613,7 @@ module TSOS {
             if(_CPUSCHED.algorithm=="priority"){
                 Resident_List.quicksort(0,Resident_List.getSize()-1);
                 for(var i=0; i<Resident_List.getSize(); i++) {
-                    _Kernel.krnTrace("RL " +Resident_List.getObj(i).pid+" Prior: "+Resident_List.getObj(i).priority);
+                    _Kernel.krnTrace("RL " +Resident_List.getObj(i).pid+" Prior: "+Resident_List.getObj(i).priority+" location: "+Resident_List.getObj(i).location);
                 }
             }
             while(Resident_List.isEmpty()==false) {
@@ -751,6 +751,7 @@ module TSOS {
                 j++;
             }
             filename=filename.trim();
+            data=Utils.stringToHex(data);
             _StdOut.putText("filename= "+filename+" data= "+data);
             if(_krnFSDD.write(filename, data)){
                 _StdOut.putText("file "+filename+" written successfully");
