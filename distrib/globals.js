@@ -21,6 +21,7 @@ var CPUSCHED_CHANGE_IRQ = 3;
 var CPUSCHED_REPLACE_IRQ = 4;
 var DISK_IRQ = 5;
 var SWAP_IRQ = 6;
+var DVU_IRQ = 7;
 var MAX_MEM = 768;
 //
 // Global Variables
@@ -34,6 +35,9 @@ var _Mem;
 var _MemMan;
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
+var _DISKVIEW;
+var Radius;
+var Center;
 var _Canvas; // Initialized in Control.hostInit().
 var _Bar; //initialized in Control.hostInit().
 var _Program; //initialized in Control.hostInit().
@@ -70,6 +74,7 @@ var _SarcasticMode = false;
 var _krnKeyboardDriver; //  = null;
 var _krnFSDD;
 var _hardwareClockID = null;
+var _BACK = null;
 // For testing (and enrichment)...
 var Glados = null; // This is the function Glados() in glados.js on Labouseur.com.
 var _GLaDOS = null; // If the above is linked in, this is the instantiated instance of Glados.

@@ -59,16 +59,12 @@ var TSOS;
                 if (temp.length < 2) {
                     temp = "0" + temp;
                 }
-                //temp=new Array(2-temp.length).join('0')+temp;
                 hexString += temp;
             }
             return hexString;
         };
         Utils.hexToString = function (hex) {
             var str = "";
-            var temp;
-            // var array=hex.match(/.{1,2}/g);
-            //_Kernel.krnTrace("UT>H2S ARRAY: "+array.toString());
             for (var i = 0; i < hex.length - 1; i++) {
                 var c = String.fromCharCode(this.hexToDec(hex.charAt(i) + hex.charAt(i + 1)));
                 _Kernel.krnTrace("UT>H2S Character " + c + " code: " + this.hexToDec(hex.charAt(i) + hex.charAt(i + 1)));

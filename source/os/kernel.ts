@@ -175,6 +175,18 @@ module TSOS {
                     _MemMan.exchange(_CPU.currPCB);
                     _Mode=1;
                     break;
+                case DVU_IRQ:
+                    _Mode=0;
+                    var t=params[0];
+                    var s=params[1];
+                    var b= params[2];
+                    var color=params[3];
+                    Control.updateDiskView(t,s,b,color);
+                   // this.sleep(500);
+                    _Mode=1;
+                    break;
+
+
 
 
 
@@ -242,5 +254,13 @@ module TSOS {
             img.src= "distrib/images/trap.jpg";
             this.krnShutdown();
         }
+        public sleep(milliseconds) {
+        var start = new Date().getTime();
+        for (var i = 0; i < 1e7; i++) {
+            if ((new Date().getTime() - start) > milliseconds){
+                break;
+            }
+        }
+    }
     }
 }

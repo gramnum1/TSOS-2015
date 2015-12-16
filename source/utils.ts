@@ -71,7 +71,7 @@ module TSOS {
             var str="";
 
 
-            
+
             for(var i=0; i<hex.length-1;i++){
                 var c=String.fromCharCode(this.hexToDec(hex.charAt(i)+hex.charAt(i+1)));
                 _Kernel.krnTrace("UT>H2S Character "+c+" code: "+this.hexToDec(hex.charAt(i)+hex.charAt(i+1)));

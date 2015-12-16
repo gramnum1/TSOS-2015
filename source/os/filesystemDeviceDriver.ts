@@ -8,7 +8,7 @@ module TSOS {
         public tracks=4;
         public sections=8;
         public blocks=8;
-        public blockLength=64;
+
 
         public Meta="";
         public emptyData="";
@@ -58,9 +58,11 @@ module TSOS {
 
         public createFile(filename): boolean{
             filename=Utils.stringToHex(filename);
+            var params=new Array(4);
             _Kernel.krnTrace("File name: "+filename);
             for(var s=0; s<this.sections; s++){
                 for(var b=0; b<this.blocks; b++){
+
                     var meta=this.getMeta(0,s,b);
                     if(meta.charAt(0)=="0"){
                         var dirLink=this.getFreeSpace();
@@ -69,6 +71,12 @@ module TSOS {
                             data=this.fillerBlock(data);
                             sessionStorage.setItem("0"+s+""+b, data);
                         }
+                        params[0]=0;
+                        params[1]=s;
+                        params[2]=b;
+                        params[3]="blue";
+                        _KernelInterruptQueue.enqueue(new Interrupt(DVU_IRQ, params ));
+                        //Control.updateDiskView(0,s,b,"green");
                         Control.updateDiskTable();
                         return true;
 
@@ -109,13 +117,28 @@ module TSOS {
             var pointer=0;
             var limit=0;
             var nextRead;
+            var lastRead;
+            var params=new Array(4);
             for(var s=0; s<this.sections; s++){
                 for(var b=0; b<this.blocks; b++){
                     temp=this.getData(0,s,b);
                     if(temp==filename){
+                       // Control.updateDiskView(0,s);
                         MBR=this.getMBR(0,s,b);
                         //_Kernel.krnTrace("MBR: "+MBR);
                         do{
+
+                          lastRead=MBR;
+                           params[0]= parseInt(lastRead.charAt(0));
+                           params[1]=parseInt(lastRead.charAt(1));
+                            params[2]=parseInt(lastRead.charAt(2));
+                            params[3]="green";
+
+
+                            _KernelInterruptQueue.enqueue(new Interrupt(DVU_IRQ, params ));
+                            //Control.updateDiskView(parseInt(lastRead.charAt(0)),parseInt(lastRead.charAt(1)),parseInt(lastRead.charAt(2)), "yellow");
+
+
                             //_Kernel.krnTrace("in do");
                             read+=sessionStorage.getItem(MBR).substr(4);
                            // _Kernel.krnTrace("Read: "+read);
@@ -126,6 +149,15 @@ module TSOS {
 
 
                         }while(MBR!="000");
+                        /*
+                        var track =parseInt(lastRead.charAt(0));
+                        var sector=parseInt(lastRead.charAt(1));
+                        var block=parseInt(lastRead.charAt(2));
+                       // track =parseInt(MBR.charAt(0));
+                        //sector=parseInt(MBR.charAt(1));
+                        _Kernel.krnTrace("track:"+track+" Sector: "+sector);
+                        Control.updateDiskView(track,sector, block, "green");
+                        */
                         //read=Utils.hexToString(read);
                         _Kernel.krnTrace("FSDD>RF READ: "+read);
 
@@ -141,81 +173,6 @@ module TSOS {
 
                 }
             _StdOut.putText("File "+filename+" not found");
-
-        }
-        public writeReplace(filename, data, pcb): void{
-           // data=Utils.stringToHex(data);
-            //filename=this.fillerData(Utils.stringToHex(filename));
-            _Kernel.krnTrace("FSDD>WR data length: "+data.length);
-            var numBlocks=Math.ceil(data.length/60);
-            _Kernel.krnTrace("FSDD>WR Num Blocks: "+numBlocks);
-            var temp;
-            var MBR;
-            var pointer=0;
-            var write="";
-            var nextBlock;
-            var limit=0;
-            var newfilename;
-
-
-            for (var s = 0; s < this.sections; s++) {
-                for (var b = 0; b < this.blocks; b++) {
-                    temp = this.getData(0, s, b);
-                    if (temp == filename) {
-
-                        MBR = this.getMBR(0, s, b);
-                        //newfilename=this.fillerBlock("1"+MBR.concat(pcb.pid));
-                        newfilename="1"+MBR.concat(pcb.pid);
-                        _Kernel.krnTrace("FSDD>WR new filename: "+newfilename);
-
-                        sessionStorage.setItem("0"+s+""+b, newfilename );
-
-
-                        for(var i=0; i<numBlocks; i++){
-                            nextBlock="000";
-                            if(i!=numBlocks-1){
-                                nextBlock=this.getMBR(parseInt(MBR.charAt(0)),parseInt(MBR.charAt(1)),parseInt(MBR.charAt(2)));
-                                if(nextBlock=="000"){
-                                    nextBlock=this.getFreeSpace();
-                                }
-                            }
-                            while(pointer<data.length && limit<60 ){
-                                write+=data.charAt(pointer);
-                                pointer++;
-                                limit++
-                            }
-                            //_Kernel.krnTrace(write);
-                            //_Kernel.krnTrace(pointer.toString());
-                            //write=this.fillerData(write);
-                            sessionStorage.setItem(MBR, "1"+nextBlock.concat(write));
-                            write="";
-                            limit=0;
-                            MBR=nextBlock;
-
-
-
-
-                        }
-                        _Kernel.krnTrace("FSDD>WR Write: "+write);
-                        _Kernel.krnTrace("FSDD>WR updating disk table");
-
-                        Control.updateDiskTable();
-                        return;
-
-
-
-
-
-
-
-
-
-                    }
-                }
-
-            }
-
-
 
         }
 
@@ -263,15 +220,28 @@ module TSOS {
             var write="";
             var nextBlock;
             var limit=0;
+            var lastBlock;
+            var params=new Array(4);
 
             for (var s = 0; s < this.sections; s++) {
                 for (var b = 0; b < this.blocks; b++) {
 
                     temp = this.getData(0, s, b);
                     if (temp == filename) {
+                        //Control.updateDiskView(0,s);
                         MBR = this.getMBR(0, s, b);
 
                         for(var i=0; i<numBlocks; i++){
+                            lastBlock=MBR;
+                            params[0]= parseInt(lastBlock.charAt(0));
+                            params[1]=parseInt(lastBlock.charAt(1));
+                            params[2]=parseInt(lastBlock.charAt(2));
+                            params[3]="yellow";
+
+
+                            _KernelInterruptQueue.enqueue(new Interrupt(DVU_IRQ, params ));
+
+
                             nextBlock="000";
                             if(i!=numBlocks-1){
                                 nextBlock=this.getFreeSpace();
@@ -288,6 +258,7 @@ module TSOS {
                             if(write.length<120-1){
                                 write=this.fillerData(write);
                             }
+
                             var DATA="1"+nextBlock.concat(write);
                             sessionStorage.setItem(MBR, DATA);
                             write="";
@@ -298,6 +269,7 @@ module TSOS {
 
 
                             }
+                        //Control.updateDiskView(parseInt(lastBlock.charAt(0)),parseInt(lastBlock.charAt(1)),parseInt(lastBlock.charAt(2)), "yellow");
                         Control.updateDiskTable();
                         return true;
 
@@ -322,6 +294,7 @@ module TSOS {
             var MBR;
             var nextBlock;
             var lastBlock;
+            var params=new Array(4);
             for(var s=0; s<this.sections; s++){
                 for(var b=0; b<this.blocks; b++){
                     temp = this.getData(0, s, b);
@@ -329,8 +302,14 @@ module TSOS {
                         MBR = this.getMBR(0, s, b);
                         sessionStorage.setItem("0"+s+""+b, "0000"+this.emptyData);
                         do{
-                            //lastBlock=MBR;
+
+                            lastBlock=MBR;
+                            params[0]= parseInt(lastBlock.charAt(0));
+                            params[1]=parseInt(lastBlock.charAt(1));
+                            params[2]=parseInt(lastBlock.charAt(2));
+                            params[3]="red";
                             nextBlock=sessionStorage.getItem(MBR).substr(1,3);
+                            _KernelInterruptQueue.enqueue(new Interrupt(DVU_IRQ, params ));
                             _Kernel.krnTrace("nextblock: "+nextBlock);
                             sessionStorage.setItem(MBR, "0000"+this.emptyData );
 
@@ -339,7 +318,7 @@ module TSOS {
                         }while(MBR!="000");
                        // sessionStorage.setItem(nextBlock, "0000"+this.emptyData );
 
-
+                        //Control.updateDiskView(parseInt(lastBlock.charAt(0)),parseInt(lastBlock.charAt(1)),parseInt(lastBlock.charAt(1)),"red");
                         Control.updateDiskTable();
                         return true;
 

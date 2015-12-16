@@ -33,6 +33,8 @@ const DISK_IRQ: number=5;
 
 const SWAP_IRQ: number=6;
 
+const DVU_IRQ: number=7;
+
 
 
 
@@ -52,7 +54,9 @@ var _MemMan: TSOS.MemoryManager;
 var _OSclock: number = 0;  // Page 23.
 
 var _Mode: number = 0;     // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
-
+var _DISKVIEW: HTMLCanvasElement;
+var Radius: number;
+var Center: number;
 var _Canvas: HTMLCanvasElement; // Initialized in Control.hostInit().
 var _Bar: HTMLTextAreaElement;  //initialized in Control.hostInit().
 var _Program: HTMLTextAreaElement;  //initialized in Control.hostInit().
@@ -97,6 +101,8 @@ var _krnKeyboardDriver; //  = null;
 var _krnFSDD;
 
 var _hardwareClockID: number = null;
+
+var _BACK: string=null;
 
 // For testing (and enrichment)...
 var Glados: any = null;  // This is the function Glados() in glados.js on Labouseur.com.

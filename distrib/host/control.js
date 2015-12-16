@@ -29,6 +29,7 @@ var TSOS;
         Control.hostInit = function () {
             // This is called from index.html's onLoad event via the onDocumentLoad function pointer.
             // Get a global reference to the canvas.  TODO: Should we move this stuff into a Display Device Driver?
+            _DISKVIEW = document.getElementById('canvas');
             _Canvas = document.getElementById('display');
             _Bar = document.getElementById('sbar'); //Status Bar HTML TextArea
             _Program = document.getElementById('taProgramInput'); //User Program Input TextArea
@@ -38,6 +39,7 @@ var TSOS;
             _ReadyTable = document.getElementById('readyQTable');
             _DiskTable = document.getElementById("diskTable");
             _Light = document.getElementById('light'); //Ligt to show whether cpu is executing or not
+            _BACK = null;
             HUM.addEventListener('ended', function () {
                 this.currentTime = 0;
                 this.play();
@@ -111,6 +113,7 @@ var TSOS;
             _Kernel.krnBootstrap(); // _GLaDOS.afterStartup() will get called in there, if configured.
             _Kernel.krnTrace("Tracks: " + _krnFSDD.tracks);
             this.initDiskTable();
+            this.init();
         };
         Control.hostBtnHaltOS_click = function (btn) {
             Control.hostLog("Emergency halt", "host");
@@ -326,6 +329,166 @@ var TSOS;
             else {
                 _Light.style.color = "red";
             }
+        };
+        Control.init = function () {
+            var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+            var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+            var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0) / 5;
+            var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) / 2;
+            var xhalf = w / 2;
+            var yhalf = h / 2;
+            _DISKVIEW.setAttribute("width", w);
+            _DISKVIEW.setAttribute("height", w);
+            var ctx = _DISKVIEW.getContext("2d");
+            var x = _DISKVIEW.offsetWidth / 2;
+            var y;
+            y = _DISKVIEW.offsetHeight / 2;
+            var i = 1;
+            var track = 1;
+            var sector = 2;
+            var k = 0;
+            ctx.font = '10pt Arial';
+            ctx.fillText('Disk Radar', 10, 10);
+            var radius = (w / 2) - 10;
+            var center = w / 2;
+            Radius = radius;
+            Center = center;
+            while (i >= 0) {
+                // ctx.clip();
+                ctx.beginPath();
+                ctx.arc(Center, Center, (Center - 10) * i, 0, 2 * Math.PI);
+                //
+                ctx.stroke();
+                ctx.closePath();
+                i -= .25;
+            }
+            while (k <= 2) {
+                ctx.beginPath();
+                ctx.moveTo(Center, Center);
+                ctx.arc(Center, Center, Radius, (k) * Math.PI, (k + .25) * Math.PI);
+                //ctx.strokeStyle="#FF0000";
+                ctx.lineTo(Center, Center);
+                ctx.stroke();
+                //ctx.clip();
+                ctx.closePath();
+                k += .25;
+            }
+            _BACK = _DISKVIEW.toDataURL();
+            _DISKVIEW.style.backgroundImage = "url('" + _BACK + "')";
+            ctx.clearRect(0, 0, width, height);
+        };
+        Control.updateDiskView = function (t, s, b, color) {
+            _Kernel.krnTrace("updating disk view " + t + " " + s + " " + b + " " + color);
+            var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+            var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+            var ctx = _DISKVIEW.getContext("2d");
+            ctx.clearRect(0, 0, width, height);
+            ctx.font = '10pt Arial';
+            ctx.fillStyle = "black";
+            ctx.fillText('(' + t + ',' + s + ',' + b + ')', 20, 25);
+            var track = t;
+            var sector = s;
+            var block = b;
+            var j;
+            var b;
+            var i = 1.0;
+            var c;
+            var k = 0;
+            switch (sector) {
+                case 0:
+                    j = 0;
+                    break;
+                case 1:
+                    j = .25;
+                    break;
+                case 2:
+                    j = .5;
+                    break;
+                case 3:
+                    j = .75;
+                    break;
+                case 4:
+                    j = 1.0;
+                    break;
+                case 5:
+                    j = 1.25;
+                    break;
+                case 6:
+                    j = 1.5;
+                    break;
+                case 7:
+                    j = 1.75;
+                    break;
+            }
+            b = block * .03125;
+            ctx.strokeStyle = "black";
+            while (i >= 0) {
+                // ctx.clip();
+                ctx.beginPath();
+                ctx.arc(Center, Center, (Center - 10) * i, 0, 2 * Math.PI);
+                c = this.getFill(i, track, color);
+                ctx.fillStyle = c;
+                ctx.fill();
+                //
+                ctx.stroke();
+                ctx.closePath();
+                i -= .25;
+            }
+            // ctx.clip();
+            ctx.strokeStyle = "red";
+            _Kernel.krnTrace("j= " + j + " b= " + b);
+            ctx.beginPath();
+            ctx.moveTo(Center, Center);
+            ctx.arc(Center, Center, Radius, (j + b) * Math.PI, (j + b + +.03125) * Math.PI);
+            // ctx.strokeStyle="#FF0000";
+            ctx.lineTo(Center, Center);
+            ctx.stroke();
+            //ctx.clip();
+            ctx.closePath();
+            ctx.strokeStyle = "black";
+            while (k <= 2) {
+                ctx.beginPath();
+                ctx.moveTo(Center, Center);
+                ctx.arc(Center, Center, Radius, (k) * Math.PI, (k + .25) * Math.PI);
+                // ctx.strokeStyle="#FF0000";
+                ctx.lineTo(Center, Center);
+                ctx.stroke();
+                //ctx.clip();
+                ctx.closePath();
+                k += .25;
+            }
+            /*ctx.moveTo(xhalf, height-100);
+             ctx.lineTo(xhalf, 100);
+             ctx.stroke();
+             ctx.moveTo(100,xhalf);
+             ctx.lineTo(height-100,xhalf);
+             ctx.stroke();
+             */
+            // _Kernel.sleep(250);
+        };
+        Control.getFill = function (i, track, action) {
+            switch (i) {
+                case 1.0:
+                    i = 3;
+                    break;
+                case .75:
+                    i = 2;
+                    break;
+                case .5:
+                    i = 1;
+                    break;
+                case .25:
+                    i = 0;
+                    break;
+            }
+            var color;
+            if (i == track) {
+                color = action;
+            }
+            else {
+                color = "white";
+            }
+            return color;
         };
         return Control;
     })();

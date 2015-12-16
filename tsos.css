@@ -1,5 +1,20 @@
 /* TSOS.css */
+.square{
 
+
+    margin: auto;
+    display: inline;
+
+   background: white;
+
+    border: 3px solid black;
+    margin-left:100px;
+}
+.cont{
+    margin-left: 50px;
+
+
+}
 body {
   background: #909193 url(distrib/images/newback.jpg) repeat;
   font-family: Helvetica, Verdana, Arial, sans-serif;
