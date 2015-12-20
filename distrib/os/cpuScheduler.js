@@ -63,7 +63,7 @@ var TSOS;
         cpuScheduler.prototype.change = function () {
             if (_ReadyQ.getSize() > 0) {
                 if (_ReadyQ.getObj(0).location == 1) {
-                    _Kernel.krnTrace("Swap from memory");
+                    _Kernel.krnTrace("CPUSCHED>CHANGE Swap from memory");
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SWAP_IRQ, 0));
                 }
                 else {
@@ -112,14 +112,18 @@ var TSOS;
         pcb on CPU
          */
         cpuScheduler.prototype.replace = function () {
+            _Kernel.krnTrace("CPUSCHED>REPLACE[currpcb] deleting " + _CPU.currPCB.pid);
             _krnFSDD.delete(_CPU.currPCB.pid);
             var off = _ReadyQ.dequeue();
             if (off.location == 1) {
-                off.base = 0;
-                off.limit = 255;
+                off.base = _CPU.currPCB.base;
+                off.limit = _CPU.currPCB.limit;
+                off.location = 0;
+                off.PC = off.PC + off.base;
                 var program = _krnFSDD.readFile(off.pid).substr(0, 509);
                 var index = off.base;
                 var toMemory;
+                _Kernel.krnTrace("CPUSCHED>REPLACE[disk] deleting " + off.pid);
                 _krnFSDD.delete(off.pid);
                 for (var i = 0; i < program.length; i++) {
                     //pull bytes out of string two char at a time

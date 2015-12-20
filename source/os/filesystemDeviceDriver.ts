@@ -57,6 +57,9 @@ module TSOS {
         }
 
         public createFile(filename): boolean{
+            if(this.fileExists(filename)){
+                return false;
+            }
             filename=Utils.stringToHex(filename);
             var params=new Array(4);
             _Kernel.krnTrace("File name: "+filename);
@@ -76,7 +79,7 @@ module TSOS {
                         params[2]=b;
                         params[3]="blue";
                         _KernelInterruptQueue.enqueue(new Interrupt(DVU_IRQ, params ));
-                        //Control.updateDiskView(0,s,b,"green");
+
                         Control.updateDiskTable();
                         return true;
 
@@ -106,7 +109,27 @@ module TSOS {
         }
         return data.concat(fill);
 
-    }
+            }
+
+       /*fileExists
+       checks to see if a file exists returns
+       true or false
+        */
+        private fileExists(filename):boolean {
+            filename=this.fillerData(Utils.stringToHex(filename));
+            var temp;
+            for (var s = 0; s < this.sections; s++) {
+                for (var b = 0; b < this.blocks; b++) {
+                    temp = this.getData(0, s, b);
+                    if (temp == filename) {
+                        return true;
+                    }
+
+
+                }
+            }
+        return false;
+        }
 
 
         public readFile(filename): String{
@@ -129,36 +152,25 @@ module TSOS {
                         do{
 
                           lastRead=MBR;
-                           params[0]= parseInt(lastRead.charAt(0));
-                           params[1]=parseInt(lastRead.charAt(1));
-                            params[2]=parseInt(lastRead.charAt(2));
-                            params[3]="green";
 
-
-                            _KernelInterruptQueue.enqueue(new Interrupt(DVU_IRQ, params ));
-                            //Control.updateDiskView(parseInt(lastRead.charAt(0)),parseInt(lastRead.charAt(1)),parseInt(lastRead.charAt(2)), "yellow");
-
-
-                            //_Kernel.krnTrace("in do");
                             read+=sessionStorage.getItem(MBR).substr(4);
-                           // _Kernel.krnTrace("Read: "+read);
+
                             nextRead=sessionStorage.getItem(MBR).substr(1,3);
-                            //_Kernel.krnTrace("nextRead: "+nextRead);
+
                             MBR=nextRead;
 
 
 
                         }while(MBR!="000");
-                        /*
-                        var track =parseInt(lastRead.charAt(0));
-                        var sector=parseInt(lastRead.charAt(1));
-                        var block=parseInt(lastRead.charAt(2));
-                       // track =parseInt(MBR.charAt(0));
-                        //sector=parseInt(MBR.charAt(1));
-                        _Kernel.krnTrace("track:"+track+" Sector: "+sector);
-                        Control.updateDiskView(track,sector, block, "green");
-                        */
-                        //read=Utils.hexToString(read);
+
+
+                        params[0]= parseInt(lastRead.charAt(0));
+                        params[1]=parseInt(lastRead.charAt(1));
+                        params[2]=parseInt(lastRead.charAt(2));
+                        params[3]="green";
+                        _KernelInterruptQueue.enqueue(new Interrupt(DVU_IRQ, params ));
+
+
                         _Kernel.krnTrace("FSDD>RF READ: "+read);
 
 
@@ -177,6 +189,7 @@ module TSOS {
         }
 
         public writeSwap(oldfilename,data, filename): void{
+            _Kernel.krnTrace("FSDD>WS DELETING "+oldfilename);
 
 
             this.delete(oldfilename);
@@ -206,6 +219,11 @@ module TSOS {
 
 
         public write(filename, data): boolean {
+
+            if(!this.fileExists(filename)||data==""){
+                return false;
+            }
+
             //data=Utils.stringToHex(data);
             filename=this.fillerData(Utils.stringToHex(filename));
 
@@ -228,18 +246,12 @@ module TSOS {
 
                     temp = this.getData(0, s, b);
                     if (temp == filename) {
-                        //Control.updateDiskView(0,s);
+
                         MBR = this.getMBR(0, s, b);
 
                         for(var i=0; i<numBlocks; i++){
                             lastBlock=MBR;
-                            params[0]= parseInt(lastBlock.charAt(0));
-                            params[1]=parseInt(lastBlock.charAt(1));
-                            params[2]=parseInt(lastBlock.charAt(2));
-                            params[3]="yellow";
 
-
-                            _KernelInterruptQueue.enqueue(new Interrupt(DVU_IRQ, params ));
 
 
                             nextBlock="000";
@@ -251,10 +263,7 @@ module TSOS {
                                 pointer++;
                                 limit++
                             }
-                            //_Kernel.krnTrace(write);
-                            //_Kernel.krnTrace(pointer.toString());
-                            //write=this.fillerData(write);
-                            //var DATA=this.fillerBlock("1"+nextBlock.concat(write));
+
                             if(write.length<120-1){
                                 write=this.fillerData(write);
                             }
@@ -269,7 +278,12 @@ module TSOS {
 
 
                             }
-                        //Control.updateDiskView(parseInt(lastBlock.charAt(0)),parseInt(lastBlock.charAt(1)),parseInt(lastBlock.charAt(2)), "yellow");
+
+                        params[0]= parseInt(lastBlock.charAt(0));
+                        params[1]=parseInt(lastBlock.charAt(1));
+                        params[2]=parseInt(lastBlock.charAt(2));
+                        params[3]="yellow";
+                        _KernelInterruptQueue.enqueue(new Interrupt(DVU_IRQ, params ));
                         Control.updateDiskTable();
                         return true;
 
@@ -289,6 +303,9 @@ module TSOS {
             return false;
         }
         public delete(filename): boolean{
+            if(!this.fileExists(filename)){
+                return false;
+            }
             filename=this.fillerData(Utils.stringToHex(filename));
             var temp;
             var MBR;
@@ -304,22 +321,23 @@ module TSOS {
                         do{
 
                             lastBlock=MBR;
-                            params[0]= parseInt(lastBlock.charAt(0));
-                            params[1]=parseInt(lastBlock.charAt(1));
-                            params[2]=parseInt(lastBlock.charAt(2));
-                            params[3]="red";
+
                             nextBlock=sessionStorage.getItem(MBR).substr(1,3);
-                            _KernelInterruptQueue.enqueue(new Interrupt(DVU_IRQ, params ));
+
                             _Kernel.krnTrace("nextblock: "+nextBlock);
                             sessionStorage.setItem(MBR, "0000"+this.emptyData );
 
                                 MBR = nextBlock;
 
                         }while(MBR!="000");
-                       // sessionStorage.setItem(nextBlock, "0000"+this.emptyData );
 
-                        //Control.updateDiskView(parseInt(lastBlock.charAt(0)),parseInt(lastBlock.charAt(1)),parseInt(lastBlock.charAt(1)),"red");
+                        params[0]= parseInt(lastBlock.charAt(0));
+                        params[1]=parseInt(lastBlock.charAt(1));
+                        params[2]=parseInt(lastBlock.charAt(2));
+                        params[3]="red";
+                        _KernelInterruptQueue.enqueue(new Interrupt(DVU_IRQ, params ));
                         Control.updateDiskTable();
+
                         return true;
 
 
@@ -399,6 +417,9 @@ module TSOS {
             return "na";
         }
 
+        /*exchange for runone
+
+         */
         public exchange(fspcb, mempcb): void{
             _Kernel.krnTrace("MEMMAN>EX IN EXCH pid in= "+fspcb.pid+" pid out= "+mempcb.pid);
             _Kernel.krnTrace("MEMMAN>EX mempcb [base,limit] ["+mempcb.base+","+mempcb.limit+"]");
@@ -431,6 +452,9 @@ module TSOS {
             }
 
         }
+        /*
+        retrieve for runone
+         */
 
         public retrieve(pcb): void{
             var program=_krnFSDD.readFile(pcb.pid);
@@ -468,9 +492,12 @@ module TSOS {
                     if(_krnFSDD.createFile(filename)){
                         _StdOut.putText("File "+filename+" Created Succesfully");
                         _StdOut.advanceLine();
+                        _StdOut.putText(">");
+
                     }else{
                         _StdOut.putText("File "+filename+" Not Created");
                         _StdOut.advanceLine();
+                        _StdOut.putText(">");
                     }
                     break;
                 case 1: /*read*/
@@ -480,12 +507,9 @@ module TSOS {
                     _StdOut.putText("File: "+filename);
                     _StdOut.advanceLine();
                     _StdOut.putText(read);
-                    break;
-                case 2: /*read return */
-                    var read=_krnFSDD.readFile(filename);
+                    _StdOut.advanceLine();
+                    _StdOut.putText(">");
 
-                    _PROGRAM=read;
-                    _Kernel.krnTrace("FSDD>RR _PROGRAM: "+_PROGRAM);
                     break;
 
 

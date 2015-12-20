@@ -111,6 +111,7 @@ var TSOS;
                             this.currPCB.Zflag = this.Zflag;
                             TSOS.Control.updatePCBTable();
                             //interrupt for replacement
+                            //_Kernel.krnTrace("CPUSCHED>CPU>00 REPLACE INTERUPT "+this.currPCB.pid);
                             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPUSCHED_REPLACE_IRQ, 0));
                             this.done.play();
                         }
@@ -138,7 +139,7 @@ var TSOS;
                         this.op = "A0";
                         this.PC++;
                         this.Yreg = parseInt(_Mem.coreM[this.PC], 16);
-                        _Kernel.krnTrace("PROCESSOR>A0 LOADING Y REG WITH " + this.Yreg + " FROM Mem " + this.PC);
+                        // _Kernel.krnTrace("PROCESSOR>A0 LOADING Y REG WITH "+this.Yreg+" FROM Mem "+this.PC);
                         this.PC++;
                         break;
                     //load Acc from memory
@@ -157,7 +158,7 @@ var TSOS;
                             store = "0" + store;
                         }
                         _Mem.coreM[i] = store;
-                        _Kernel.krnTrace("PROCESSOR>8d> storing " + store + "to Mem " + i);
+                        //_Kernel.krnTrace("PROCESSOR>8d> storing "+store+"to Mem "+i);
                         this.PC++;
                         break;
                     //Add to Acc from memory with carry
@@ -182,7 +183,7 @@ var TSOS;
                         this.op = "AC";
                         i = _MemMan.toAddress();
                         this.Yreg = parseInt(_Mem.coreM[i], 16);
-                        _Kernel.krnTrace("PROCESSOR>AC LOADING Y REG WITH " + this.Yreg + " FROM _MEM " + i);
+                        // _Kernel.krnTrace("PROCESSOR>AC LOADING Y REG WITH "+this.Yreg+" FROM _MEM "+i);
                         this.PC++;
                         break;
                     //increment byte
@@ -242,7 +243,7 @@ var TSOS;
                         //print int
                         if (this.Xreg == 1) {
                             _StdOut.putText(this.Yreg.toString());
-                            _Kernel.krnTrace("PROCESSOR>FF " + this.currPCB.pid + " print " + this.Yreg.toString());
+                            //_Kernel.krnTrace("PROCESSOR>FF "+this.currPCB.pid+" print "+this.Yreg.toString());
                             this.PC++;
                         }
                         else if (this.Xreg == 2) {
@@ -314,10 +315,11 @@ var TSOS;
             //stop executing noise
             this.run.repeat = false;
             this.run.pause();
+            // _Kernel.krnTrace("CPU>TERMINATE Deleting "+this.currPCB.pid);
             _krnFSDD.delete(this.currPCB.pid);
             //reset cpu
             this.init();
-            _Kernel.krnTrace("CPU>Terminate RESIDENT LiST");
+            // _Kernel.krnTrace("CPU>Terminate RESIDENT LiST");
             for (var i = 0; i < Resident_List.getSize(); i++) {
                 _Kernel.krnTrace("pid:" + Resident_List.getObj(i).pid + " location: " + Resident_List.getObj(i).location);
             }

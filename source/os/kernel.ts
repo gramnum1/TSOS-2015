@@ -48,6 +48,9 @@ module TSOS {
             _krnFSDD=new FSDD();
             _krnFSDD.driverEntry();
             this.krnTrace(_krnFSDD.status);
+            Control.initDiskTable();
+            Control.init();
+
 
 
             //
@@ -172,7 +175,9 @@ module TSOS {
                     break;
                 case SWAP_IRQ:
                     _Mode=0;
-                    _MemMan.exchange(_CPU.currPCB);
+
+                        _MemMan.exchange(_CPU.currPCB);
+
                     _Mode=1;
                     break;
                 case DVU_IRQ:

@@ -112,8 +112,6 @@ var TSOS;
             _Mode = 1;
             _Kernel.krnBootstrap(); // _GLaDOS.afterStartup() will get called in there, if configured.
             _Kernel.krnTrace("Tracks: " + _krnFSDD.tracks);
-            this.initDiskTable();
-            this.init();
         };
         Control.hostBtnHaltOS_click = function (btn) {
             Control.hostLog("Emergency halt", "host");
@@ -330,6 +328,9 @@ var TSOS;
                 _Light.style.color = "red";
             }
         };
+        /*init()
+        initializes the disk radar
+         */
         Control.init = function () {
             var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
             var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
@@ -337,6 +338,7 @@ var TSOS;
             var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) / 2;
             var xhalf = w / 2;
             var yhalf = h / 2;
+            //responsively set width and height of canvas
             _DISKVIEW.setAttribute("width", w);
             _DISKVIEW.setAttribute("height", w);
             var ctx = _DISKVIEW.getContext("2d");
@@ -344,8 +346,6 @@ var TSOS;
             var y;
             y = _DISKVIEW.offsetHeight / 2;
             var i = 1;
-            var track = 1;
-            var sector = 2;
             var k = 0;
             ctx.font = '10pt Arial';
             ctx.fillText('Disk Radar', 10, 10);
@@ -353,30 +353,33 @@ var TSOS;
             var center = w / 2;
             Radius = radius;
             Center = center;
+            //Draw tracks
             while (i >= 0) {
-                // ctx.clip();
                 ctx.beginPath();
                 ctx.arc(Center, Center, (Center - 10) * i, 0, 2 * Math.PI);
-                //
                 ctx.stroke();
                 ctx.closePath();
                 i -= .25;
             }
+            //draw sectors
             while (k <= 2) {
                 ctx.beginPath();
                 ctx.moveTo(Center, Center);
                 ctx.arc(Center, Center, Radius, (k) * Math.PI, (k + .25) * Math.PI);
-                //ctx.strokeStyle="#FF0000";
                 ctx.lineTo(Center, Center);
                 ctx.stroke();
-                //ctx.clip();
                 ctx.closePath();
                 k += .25;
             }
+            //set drawing to canvas background and clear drawing
             _BACK = _DISKVIEW.toDataURL();
             _DISKVIEW.style.backgroundImage = "url('" + _BACK + "')";
             ctx.clearRect(0, 0, width, height);
         };
+        /*updateDiskView
+        takes t, s, b and a color and
+        updates the disk radar
+         */
         Control.updateDiskView = function (t, s, b, color) {
             _Kernel.krnTrace("updating disk view " + t + " " + s + " " + b + " " + color);
             var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
@@ -385,7 +388,24 @@ var TSOS;
             ctx.clearRect(0, 0, width, height);
             ctx.font = '10pt Arial';
             ctx.fillStyle = "black";
-            ctx.fillText('(' + t + ',' + s + ',' + b + ')', 20, 25);
+            var act;
+            //translate color to an action
+            switch (color) {
+                case "red":
+                    act = "delete";
+                    break;
+                case "blue":
+                    act = "create";
+                    break;
+                case "green":
+                    act = "read";
+                    break;
+                case "yellow":
+                    act = "write";
+                    break;
+            }
+            //write text on radar
+            ctx.fillText('(' + t + ',' + s + ',' + b + ') ' + act, 20, 25);
             var track = t;
             var sector = s;
             var block = b;
@@ -394,6 +414,7 @@ var TSOS;
             var i = 1.0;
             var c;
             var k = 0;
+            //translate sector to an angle
             switch (sector) {
                 case 0:
                     j = 0;
@@ -420,8 +441,10 @@ var TSOS;
                     j = 1.75;
                     break;
             }
+            //translate block to an angle
             b = block * .03125;
             ctx.strokeStyle = "black";
+            //draw tracks, fill if current track
             while (i >= 0) {
                 // ctx.clip();
                 ctx.beginPath();
@@ -436,36 +459,26 @@ var TSOS;
             }
             // ctx.clip();
             ctx.strokeStyle = "red";
+            //draw sector/block area
             _Kernel.krnTrace("j= " + j + " b= " + b);
             ctx.beginPath();
             ctx.moveTo(Center, Center);
             ctx.arc(Center, Center, Radius, (j + b) * Math.PI, (j + b + +.03125) * Math.PI);
-            // ctx.strokeStyle="#FF0000";
             ctx.lineTo(Center, Center);
             ctx.stroke();
-            //ctx.clip();
             ctx.closePath();
             ctx.strokeStyle = "black";
             while (k <= 2) {
                 ctx.beginPath();
                 ctx.moveTo(Center, Center);
                 ctx.arc(Center, Center, Radius, (k) * Math.PI, (k + .25) * Math.PI);
-                // ctx.strokeStyle="#FF0000";
                 ctx.lineTo(Center, Center);
                 ctx.stroke();
-                //ctx.clip();
                 ctx.closePath();
                 k += .25;
             }
-            /*ctx.moveTo(xhalf, height-100);
-             ctx.lineTo(xhalf, 100);
-             ctx.stroke();
-             ctx.moveTo(100,xhalf);
-             ctx.lineTo(height-100,xhalf);
-             ctx.stroke();
-             */
-            // _Kernel.sleep(250);
         };
+        //gets fill color for track
         Control.getFill = function (i, track, action) {
             switch (i) {
                 case 1.0:

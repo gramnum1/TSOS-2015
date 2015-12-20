@@ -105,53 +105,60 @@ var TSOS;
             }
         };
         MemoryManager.prototype.exchange = function (pcb) {
-            // _CPU.isExecuting = false;
-            var currprg = "";
-            var start = pcb.base;
-            var end = pcb.limit;
-            var blankcounter = 0;
-            for (i = start; i < end; i++) {
-                currprg += _Mem.coreM[i];
+            if (_ReadyQ.isEmpty() == false) {
+                // _CPU.isExecuting = false;
+                var currprg = "";
+                var start = pcb.base;
+                var end = pcb.limit;
+                var blankcounter = 0;
+                for (i = start; i < end; i++) {
+                    currprg += _Mem.coreM[i];
+                }
+                _Kernel.krnTrace("MM>EX oldpcb " + pcb.pid + "base lim " + pcb.base + " " + pcb.limit);
+                _Kernel.krnTrace("MM>EX CURRPRG: " + currprg);
+                _Kernel.krnTrace("MM>EX ATTEMPTING DEQUEUE");
+                var newPCB = _ReadyQ.dequeue();
+                _Kernel.krnTrace("MM>EX newpcb " + newPCB.pid + " loc " + newPCB.location);
+                newPCB.base = pcb.base;
+                newPCB.limit = pcb.limit;
+                newPCB.PC = newPCB.base + newPCB.PC;
+                newPCB.location = 0;
+                newPCB.state = "running";
+                pcb.PC = pcb.PC - pcb.base;
+                pcb.base = 0;
+                pcb.limit = 0;
+                pcb.location = 1;
+                pcb.state = "waiting";
+                var newprg = _krnFSDD.readFile(newPCB.pid).substr(0, 509);
+                _Kernel.krnTrace("MM>EX NEW PROGRAM: " + newprg);
+                var toMemory;
+                var index = newPCB.base;
+                _Kernel.krnTrace("MM>EX new program length=" + newprg.length);
+                for (var i = 0; i < newprg.length; i++) {
+                    //pull bytes out of string two char at a time
+                    toMemory = newprg.slice(i, i + 2);
+                    //throw byte into memory
+                    _Mem.coreM[index] = toMemory;
+                    //_Kernel.krnTrace("Index: " + index + " value: " + _Mem.coreM[index].toString());
+                    index++;
+                    i++;
+                }
+                _krnFSDD.writeSwap(newPCB.pid, currprg, pcb.pid);
+                _ReadyQ.enqueue(pcb);
+                _CPU.PC = newPCB.PC;
+                _CPU.Acc = newPCB.Acc;
+                _CPU.Xreg = newPCB.Xreg;
+                _CPU.Yreg = newPCB.Yreg;
+                _CPU.Zflag = newPCB.Zflag;
+                _CPU.currPCB = newPCB;
+                //CPU.isExecuting = true;
+                //_krnFSDD.writeSwap(currprg, pcb);
+                TSOS.Control.updatePCBTable();
+                TSOS.Control.updateDiskTable();
             }
-            _Kernel.krnTrace("MM>EX CURRPRG: " + currprg);
-            var newPCB = _ReadyQ.dequeue();
-            _Kernel.krnTrace("MM>EX offcb " + newPCB.pid + " loc " + newPCB.location);
-            newPCB.base = pcb.base;
-            newPCB.limit = pcb.limit;
-            newPCB.PC = newPCB.base + newPCB.PC;
-            newPCB.location = 0;
-            newPCB.status = "running";
-            pcb.PC = pcb.PC - pcb.base;
-            pcb.base = 0;
-            pcb.limit = 0;
-            pcb.location = 1;
-            pcb.status = "waiting";
-            var newprg = _krnFSDD.readFile(newPCB.pid).substr(0, 509);
-            _Kernel.krnTrace("MM>EX NEW PROGRAM: " + newprg);
-            var toMemory;
-            var index = newPCB.base;
-            _Kernel.krnTrace("MM>EX new program length=" + newprg.length);
-            for (var i = 0; i < newprg.length; i++) {
-                //pull bytes out of string two char at a time
-                toMemory = newprg.slice(i, i + 2);
-                //throw byte into memory
-                _Mem.coreM[index] = toMemory;
-                //_Kernel.krnTrace("Index: " + index + " value: " + _Mem.coreM[index].toString());
-                index++;
-                i++;
+            else {
+                _Kernel.krnTrace("MM>EX RQ empty trying to swap " + pcb.pid);
             }
-            _krnFSDD.writeSwap(newPCB.pid, currprg, pcb.pid);
-            _ReadyQ.enqueue(pcb);
-            _CPU.PC = newPCB.PC;
-            _CPU.Acc = newPCB.Acc;
-            _CPU.Xreg = newPCB.Xreg;
-            _CPU.Yreg = newPCB.Yreg;
-            _CPU.Zflag = newPCB.Zflag;
-            _CPU.currPCB = newPCB;
-            //CPU.isExecuting = true;
-            //_krnFSDD.writeSwap(currprg, pcb);
-            TSOS.Control.updatePCBTable();
-            TSOS.Control.updateDiskTable();
         };
         MemoryManager.prototype.retrieve = function (pcb) {
             var program = _krnFSDD.readFile(pcb.pid);

@@ -43,6 +43,8 @@ var TSOS;
             _krnFSDD = new TSOS.FSDD();
             _krnFSDD.driverEntry();
             this.krnTrace(_krnFSDD.status);
+            TSOS.Control.initDiskTable();
+            TSOS.Control.init();
             //
             // ... more?
             //

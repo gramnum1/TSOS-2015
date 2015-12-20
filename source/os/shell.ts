@@ -715,7 +715,9 @@ module TSOS {
             var filename=args;
             _Kernel.krnTrace("Creating File "+filename);
 
+
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(DISK_IRQ, [0 , filename]));
+
 
         }
 
@@ -731,15 +733,17 @@ module TSOS {
             var input=args.toString();
             if(args.toString().includes(String.fromCharCode(34))==false){
                 _StdOut.putText("Invalid write");
+                _StdOut.advanceLine();
+                _StdOut.putText(">");
                 return;
             }
             //args=args.toString().replace(/,/g, " ");
-           // _Kernel.krnTrace("input: "+args);
+            _Kernel.krnTrace("input: "+args);
             var filename="";
             var data="";
             while(i<args.length || args.toString().charAt(i)!=String.fromCharCode(44)){
                 filename+=args.toString().charAt(i);
-                //_Kernel.krnTrace(filename);
+
                 i++;
 
 
@@ -750,13 +754,21 @@ module TSOS {
             var j = i+2;
             while(j<args.length||args.toString().charAt(j)!=String.fromCharCode(34)){
                // _Kernel.krnTrace("j: "+j);
+
                 data+=args.toString().charAt(j);
-                //_Kernel.krnTrace(data);
+                _Kernel.krnTrace(data);
                 j++;
+            }
+            if(data==""||filename==""){
+                _StdOut.putText("file or data not specified");
+                _StdOut.advanceLine();
+                _StdOut.putText(">");
+                return;
+
             }
             filename=filename.trim();
             data=Utils.stringToHex(data);
-            _StdOut.putText("filename= "+filename+" data= "+data);
+            //_StdOut.putText("filename= "+filename+" data= "+data);
             if(_krnFSDD.write(filename, data)){
                 _StdOut.putText("file "+filename+" written successfully");
                 _StdOut.advanceLine();
@@ -771,9 +783,11 @@ module TSOS {
             if(_krnFSDD.delete(filename)){
                 _StdOut.putText("File "+filename+" deleted successfully");
                 _StdOut.advanceLine();
+                _StdOut.putText(">");
             }else{
                 _StdOut.putText("Error Deleting File "+filename);
                 _StdOut.advanceLine();
+                _StdOut.putText(">");
 
             }
         }

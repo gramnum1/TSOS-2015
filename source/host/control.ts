@@ -139,10 +139,11 @@ module TSOS {
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new Kernel();
             _Mode=1;
+
             _Kernel.krnBootstrap();  // _GLaDOS.afterStartup() will get called in there, if configured.
             _Kernel.krnTrace("Tracks: "+_krnFSDD.tracks);
-            this.initDiskTable();
-            this.init();
+
+
         }
 
         public static hostBtnHaltOS_click(btn): void {
@@ -423,6 +424,11 @@ module TSOS {
                 _Light.style.color="red";
             }
         }
+
+
+        /*init()
+        initializes the disk radar
+         */
         public static init() {
 
             var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
@@ -431,6 +437,7 @@ module TSOS {
             var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) / 2;
             var xhalf = w / 2;
             var yhalf = h / 2;
+            //responsively set width and height of canvas
             _DISKVIEW.setAttribute("width", w);
             _DISKVIEW.setAttribute("height", w);
             var ctx = _DISKVIEW.getContext("2d");
@@ -438,8 +445,7 @@ module TSOS {
             var y;
             y = _DISKVIEW.offsetHeight / 2;
             var i = 1;
-            var track = 1;
-            var sector = 2;
+
             var k=0;
             ctx.font = '10pt Arial';
             ctx.fillText('Disk Radar', 10, 10);
@@ -453,51 +459,34 @@ module TSOS {
             Radius = radius;
             Center = center;
 
+            //Draw tracks
             while(i>=0) {
 
-
-                // ctx.clip();
                 ctx.beginPath();
                 ctx.arc(Center, Center, (Center - 10) * i, 0, 2 * Math.PI);
-
-
-
-                //
-
-
 
                 ctx.stroke();
                 ctx.closePath();
 
-
-
-
-
-
-
-
                 i-=.25;
 
             }
+            //draw sectors
             while(k<=2){
                 ctx.beginPath();
                 ctx.moveTo(Center, Center);
                 ctx.arc(Center, Center, Radius, (k) * Math.PI, (k +.25) * Math.PI);
-
-                 //ctx.strokeStyle="#FF0000";
-
-
                 ctx.lineTo(Center, Center);
 
                 ctx.stroke();
-                //ctx.clip();
+
                 ctx.closePath();
                 k+=.25;
 
             }
 
 
-
+            //set drawing to canvas background and clear drawing
             _BACK=_DISKVIEW.toDataURL();
             _DISKVIEW.style.backgroundImage="url('"+_BACK+"')";
             ctx.clearRect(0,0,width,height);
@@ -508,6 +497,10 @@ module TSOS {
 
 
         }
+        /*updateDiskView
+        takes t, s, b and a color and
+        updates the disk radar
+         */
         public static updateDiskView(t,s,b, color): void{
             _Kernel.krnTrace("updating disk view "+t+" "+s+" "+ b+" "+color);
             var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
@@ -516,7 +509,26 @@ module TSOS {
             ctx.clearRect(0,0,width,height);
             ctx.font = '10pt Arial';
             ctx.fillStyle="black";
-            ctx.fillText('('+t+','+s+','+b+')', 20, 25);
+            var act;
+            //translate color to an action
+            switch(color){
+                case "red":
+                    act="delete";
+                    break;
+                case "blue":
+                    act="create";
+                    break;
+                case "green":
+                    act="read";
+                    break;
+                case "yellow":
+                    act="write";
+                    break;
+
+
+            }
+            //write text on radar
+            ctx.fillText('('+t+','+s+','+b+') '+act, 20, 25);
         var track=t;
         var sector=s;
             var block=b;
@@ -529,7 +541,7 @@ module TSOS {
 
 
 
-
+       //translate sector to an angle
         switch(sector){
             case 0:
                 j=0;
@@ -560,13 +572,14 @@ module TSOS {
 
 
         }
+            //translate block to an angle
             b=block*.03125;
             ctx.strokeStyle="black";
 
 
 
 
-
+            //draw tracks, fill if current track
             while(i>=0) {
 
 
@@ -605,19 +618,18 @@ module TSOS {
 
             ctx.strokeStyle="red";
 
-
+       //draw sector/block area
        _Kernel.krnTrace("j= "+j+ " b= "+b);
             ctx.beginPath();
             ctx.moveTo(Center, Center);
             ctx.arc(Center, Center, Radius, (j+b) * Math.PI, (j+b+ +.03125) * Math.PI);
 
-            // ctx.strokeStyle="#FF0000";
 
 
             ctx.lineTo(Center, Center);
 
             ctx.stroke();
-            //ctx.clip();
+
             ctx.closePath();
             ctx.strokeStyle="black";
             while(k<=2){
@@ -625,64 +637,21 @@ module TSOS {
                 ctx.moveTo(Center, Center);
                 ctx.arc(Center, Center, Radius, (k) * Math.PI, (k +.25) * Math.PI);
 
-                // ctx.strokeStyle="#FF0000";
 
 
                 ctx.lineTo(Center, Center);
 
                 ctx.stroke();
-                //ctx.clip();
+
                 ctx.closePath();
                 k+=.25;
 
             }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /*ctx.moveTo(xhalf, height-100);
-         ctx.lineTo(xhalf, 100);
-         ctx.stroke();
-         ctx.moveTo(100,xhalf);
-         ctx.lineTo(height-100,xhalf);
-         ctx.stroke();
-         */
-
-           // _Kernel.sleep(250);
-
     }
+
+        //gets fill color for track
         private static  getFill(i, track, action){
         switch(i){
             case 1.0:
