@@ -101,7 +101,7 @@ var TSOS;
         Console.prototype.scroll = function () {
             //capture existing text
             var myImageData = _DrawingContext.getImageData(0, this.currentFontSize + 7, _Canvas.width, _Canvas.height);
-            _Kernel.krnTrace("EXTEND!!!!!");
+            // _Kernel.krnTrace("EXTEND!!!!!");
             this.clearScreen();
             this.currentYPosition -= _DefaultFontSize +
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +

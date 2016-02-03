@@ -133,7 +133,7 @@ var TSOS;
                     }
                 }
             }
-            _StdOut.putText("File " + filename + " not found");
+            _StdOut.putText("File " + TSOS.Utils.hexToString(filename) + " not found");
         };
         FSDD.prototype.writeSwap = function (oldfilename, data, filename) {
             _Kernel.krnTrace("FSDD>WS DELETING " + oldfilename);
@@ -194,7 +194,7 @@ var TSOS;
                     }
                 }
             }
-            _Kernel.krnTrace("FSDD>W File " + filename + " not found");
+            _Kernel.krnTrace("FSDD>W File " + TSOS.Utils.hexToString(filename) + " not found");
             return false;
         };
         FSDD.prototype.delete = function (filename) {

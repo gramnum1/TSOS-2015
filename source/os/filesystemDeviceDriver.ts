@@ -184,7 +184,7 @@ module TSOS {
                 }
 
                 }
-            _StdOut.putText("File "+filename+" not found");
+            _StdOut.putText("File "+Utils.hexToString(filename)+" not found");
 
         }
 
@@ -298,7 +298,7 @@ module TSOS {
                     }
 
                 }
-            _Kernel.krnTrace("FSDD>W File "+filename+" not found");
+            _Kernel.krnTrace("FSDD>W File "+Utils.hexToString(filename)+" not found");
 
             return false;
         }

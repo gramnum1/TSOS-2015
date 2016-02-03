@@ -108,7 +108,7 @@ module TSOS {
         public scroll():void{
             //capture existing text
             var myImageData = _DrawingContext.getImageData(0,this.currentFontSize+7,_Canvas.width, _Canvas.height);
-            _Kernel.krnTrace("EXTEND!!!!!");
+           // _Kernel.krnTrace("EXTEND!!!!!");
             this.clearScreen();
             this.currentYPosition -= _DefaultFontSize +
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
@@ -169,6 +169,7 @@ module TSOS {
             //         Consider fixing that.
             if (text !== "") {
                 // Draw the text at the current X and Y coordinates.
+
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
                 // Move the current X position.
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);

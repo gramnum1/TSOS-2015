@@ -43,11 +43,14 @@
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
    <!-- Uncomment this line below to enable GLaDOS testing -->
-   <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script>
+   <!--<script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script>-->
     <!--Bootstrap JS -->
     <script type="text/javascript" src="js/jquery-1.11.3.js"></script>
     <script type="text/javascript" src="js/bootstrap.js"></script>
     <script type="text/javascript" src="js/bootstrap-switch.js"></script>
+
+
+
     
     
     
@@ -87,6 +90,19 @@
        <input  name="stepMode" type="checkbox" data-on-color="success" data-off-color="danger"data-inverse="true" data-label-text="Step" data-size="large"  onchange="TSOS.Control.singleStepToggle(this)" checked />
        <button class="btn btn-primary" id="step" onclick="TSOS.Control.step(this)" disabled style="display: none;">
            <span class="glyphicon glyphicon-play"></span></button>
+
+    <label for="prgmselect" style="color: white;">Program Select:</label>
+    <select name="prgmselect" onchange="TSOS.Control.programChange(this.value);">
+        <option value=""></option>
+        <option value="12DONE">12DONE</option>
+        <option value="2and5">Print 2 and 5</option>
+        <option value="counting">Counting Program</option>
+        <option value="limits">Memory Limits Test</option>
+
+
+
+
+    </select>
     <img class="logo" src="distrib/images/ironboss.png"/>
     </div>
     

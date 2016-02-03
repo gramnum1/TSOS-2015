@@ -16,6 +16,7 @@
  * Note: You could theoretically make up your own letters and symbols for your OS.
  *       That might be fun.
  * ----------------- */
+///<reference path="../globals.ts" />
 var TSOS;
 (function (TSOS) {
     var CanvasTextFunctions = (function () {
@@ -45,6 +46,7 @@ var TSOS;
             var total = 0;
             var len = str.length;
             var mag = size / 25.0;
+            _Kernel.krnTrace("x=" + x + " y=" + y);
             ctx.save();
             ctx.lineCap = "round";
             ctx.lineWidth = 2.0 * mag;
@@ -52,7 +54,7 @@ var TSOS;
             for (var i = 0; i < len; i++) {
                 var c = CanvasTextFunctions.letter(str.charAt(i));
                 //line wrap
-                if (x > 490) {
+                if (x > 470) {
                     x = 0 + c.width * mag;
                     _StdOut.advanceLine();
                 }

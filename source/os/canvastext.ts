@@ -16,6 +16,7 @@
  * Note: You could theoretically make up your own letters and symbols for your OS.
  *       That might be fun.
  * ----------------- */
+///<reference path="../globals.ts" />
 
 module TSOS {
 
@@ -149,6 +150,9 @@ module TSOS {
             var total = 0;
             var len = str.length;
             var mag = size / 25.0;
+            _Kernel.krnTrace("x="+x+" y="+y );
+
+
 
             ctx.save();
             ctx.lineCap = "round";
@@ -162,10 +166,16 @@ module TSOS {
 
                 var c = CanvasTextFunctions.letter(str.charAt(i));
                 //line wrap
-                if(x>490){
+                if(x>470){
+
                     x=0+c.width*mag;
 
+
+
                     _StdOut.advanceLine();
+
+
+
 
                 }
                 if (!c) {
