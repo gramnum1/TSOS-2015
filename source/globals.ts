@@ -13,7 +13,7 @@
 //
 const APP_NAME: string    = "IRON B[OS]S";   // 'cause Bob and I were at a loss for a better name.
 
-const APP_VERSION: string = "0.31";   // What did you expect?
+const APP_VERSION: string = "0.32";   // What did you expect?
 
 
 
